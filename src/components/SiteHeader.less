@@ -1,0 +1,49 @@
+@import "../common/veriables.less";
+
+.component.site-header{
+  @base-color:@minor-color; //#58A83F;
+  @bar-height:3rem;
+  height: @bar-height;
+  background-color: @minor-color;
+  border-bottom: 1px solid @base-color;
+  box-sizing: border-box;
+  .header-logo{
+    display: block;
+    width: 10rem;
+    height: @bar-height;
+    float: left;
+    background: url('../img/logo.png') center no-repeat;
+    background-size: 85%;
+    -webkit-filter: drop-shadow(1px 1px 1px darken(@base-color,5));
+    filter: drop-shadow(1px 1px 1px darken(@base-color,5));
+  }
+  .header-action{
+    line-height: @bar-height;
+    color: #fff;
+    font-size: .7rem;
+    text-align: right;
+    margin-right: 1rem;
+    .header-tip{
+      color: red;
+      font-size: 20px;
+    }
+    .action-user-name {
+      cursor: pointer;
+    }
+    .action-user-name:hover{
+      color: #555;
+    }
+    nav>span{
+      margin-left:1rem;
+      span{
+        margin-left: .2rem;
+      }
+      &.action-log-out{
+        cursor: pointer;
+      }
+      &.action-log-out:hover{
+        color: #555;
+      }
+    }
+  }
+}
