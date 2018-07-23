@@ -16,48 +16,49 @@ interface Iprop {
 export const routes = [{
   breadcrumbName:'首页',
   component:Home,
-  path:"/",
+  path: '/',
   sideIcon: 'anticon anticon-picture',
 }, {
   breadcrumbName:'首页2',
   children: [{
     breadcrumbName:'首页2.1',
     component:Home2,
-    path:"/home",
+    path:'/home',
     sideIcon: 'anticon anticon-file-word',
   }, {
     breadcrumbName:'首页2.2',
     component:Home2,
-    path:"/home2",
+    path:'/home2',
     sideIcon: 'anticon anticon-file-word',
   }],
   component:Home2,
-  path:"/home1",
+  path:'/home1',
   sideIcon: 'anticon anticon-file-word',
 }, {
   breadcrumbName:'首页3',
   children: [{
     breadcrumbName:'首页3.1',
     component:Home2,
-    path:"/home3",
+    path:'/home3',
     sideIcon: 'anticon anticon-file-word',
   }, {
     breadcrumbName:'首页3.2',
     component:Home2,
-    path:"/home32",
+    path:'/home32',
     sideIcon: 'anticon anticon-file-word',
   }],
   component:Home2,
-  path:"/home31",
+  path:'/home31',
   sideIcon: 'anticon anticon-file-word',
 },  {
   component:NotFound,
   isFull: false,
   isNotMenu: true,
-  path:"*",
+  path:'*',
 }];
 
 export const routesList: Iprop[] = [];
+export const routesObject: any = {};
 for (const iterator of routes) {
   if(!!iterator.children && iterator.children.length > 0) {
     for (const iterator2 of iterator.children) {
@@ -66,6 +67,7 @@ for (const iterator of routes) {
         exact: true,
         ...iterator2
       });
+      routesObject[iterator2.path] = iterator2.breadcrumbName;
     }
   }
   const i = {...iterator};
@@ -74,9 +76,11 @@ for (const iterator of routes) {
     exact: true,
     ...i
   });
+  routesObject[i.path] = i.breadcrumbName;
 }
 
 export default {
   routes,
-  routesList
+  routesList,
+  routesObject
 };
