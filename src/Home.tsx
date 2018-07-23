@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import './Home.less';
 
 class Home extends React.Component<any, any> {
   public render() {
-    return (<div>
-      <Link to="/wwww"> wwww </Link>
+    return (<div className="home">
+      <h3>Welcome!</h3>
+      <h4>欢迎登录优居小程序后台管理系统!</h4>
     </div>)
   }
 }

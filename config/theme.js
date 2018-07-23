@@ -11,8 +11,10 @@ module.exports = () => {
     '@menu-dark-bg': '#404040',
     '@menu-dark-color': 'rgba(255, 255, 255, 0.67)',
     '@menu-dark-highlight-color': '#fff',
-    'menu-dark-item-selected-bg': '#948d7b',
+    '@menu-dark-item-selected-bg': '#948d7b',
     '@layout-sider-background': '#404040',
     '@layout-trigger-background': '#404040',
+    '@table-header-bg': '#e1e1e1',
+    '@table-row-hover-bg': '#f7f6f5',
   };
 };

@@ -114,5 +114,11 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "proxy": {
+    "/api2/": {
+      "target": "http://xcx.yoju360.com/",
+      "secure": "false"
+    }
   }
 }

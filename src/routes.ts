@@ -1,10 +1,12 @@
+import * as React from "react";
 import Home from './Home';
-import Home2 from './Home2';
+import BannerList from './BannerList';
+import BannerAdd from './BannerAdd';
 import NotFound from './NotFound';
 
 interface Iprop {
   breadcrumbName?: string,
-  component:typeof Home,
+  component: typeof React.Component,
   exact?: boolean, // 默认是true
   path: string,
   sideIcon?: string,
@@ -14,43 +16,29 @@ interface Iprop {
 }
 
 export const routes = [{
-  breadcrumbName:'首页',
-  component:Home,
+  breadcrumbName:'主页',
+  component: Home,
+  isNotMenu: true,
   path: '/',
   sideIcon: 'anticon anticon-picture',
 }, {
-  breadcrumbName:'首页2',
+  breadcrumbName:'banner图管理',
   children: [{
-    breadcrumbName:'首页2.1',
-    component:Home2,
-    path:'/home',
-    sideIcon: 'anticon anticon-file-word',
-  }, {
-    breadcrumbName:'首页2.2',
-    component:Home2,
-    path:'/home2',
+    breadcrumbName:'banner管理',
+    children: [{
+      breadcrumbName:'banner图片添加',
+      component: BannerAdd,
+      path:'/add',
+      sideIcon: 'anticon anticon-file-word',
+    }],
+    component: BannerList,
+    path:'/banner',
     sideIcon: 'anticon anticon-file-word',
   }],
-  component:Home2,
-  path:'/home1',
+  component:BannerList,
+  path:'/manage',
   sideIcon: 'anticon anticon-file-word',
 }, {
-  breadcrumbName:'首页3',
-  children: [{
-    breadcrumbName:'首页3.1',
-    component:Home2,
-    path:'/home3',
-    sideIcon: 'anticon anticon-file-word',
-  }, {
-    breadcrumbName:'首页3.2',
-    component:Home2,
-    path:'/home32',
-    sideIcon: 'anticon anticon-file-word',
-  }],
-  component:Home2,
-  path:'/home31',
-  sideIcon: 'anticon anticon-file-word',
-},  {
   component:NotFound,
   isFull: false,
   isNotMenu: true,
@@ -63,11 +51,21 @@ for (const iterator of routes) {
   if(!!iterator.children && iterator.children.length > 0) {
     for (const iterator2 of iterator.children) {
       iterator2.path = iterator.path + iterator2.path;
+      for (const iterator3 of iterator2.children) {
+        iterator3.path = iterator2.path + iterator3.path;
+        routesList.push({
+          exact: true,
+          ...iterator3
+        });
+        routesObject[iterator3.path] = iterator3.breadcrumbName;
+      }
+      const i2 = {...iterator2};
+      delete i2.children;
       routesList.push({
         exact: true,
-        ...iterator2
+        ...i2
       });
-      routesObject[iterator2.path] = iterator2.breadcrumbName;
+      routesObject[i2.path] = i2.breadcrumbName;
     }
   }
   const i = {...iterator};
@@ -78,6 +76,8 @@ for (const iterator of routes) {
   });
   routesObject[i.path] = i.breadcrumbName;
 }
+
+console.log(routesList,routesObject);
 
 export default {
   routes,

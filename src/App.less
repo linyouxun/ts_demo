@@ -2,7 +2,7 @@ html, body, #root, .app{
   font-size: 20px;
   height: 100%;
   width: 100%;
-  background: #fff;
+  background: #eeeeee;
   color: #333;
   .wrapper {
     height: calc(100% - 3rem);
@@ -16,4 +16,26 @@ html, body, #root, .app{
       box-sizing: border-box;
     }
   }
+  .ant-table tbody td {
+    padding: .5rem 16px;
+  }
 }
+
+.clearfix {
+  zoom:1;
+  &::after, &::before {
+    content: " ";
+    display: table;
+  }
+  &::after {
+    clear: both;
+    visibility: hidden;
+    font-size: 0;
+    height: 0
+  }
+}
+
+.page {
+  margin: .5rem;
+}
+

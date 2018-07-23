@@ -14,7 +14,7 @@ export class SiteBreadcrumb extends React.Component<any, any> {
     if (location.pathname === '/') {
       return (
         <Breadcrumb>
-          <Item key={'/'}><Link to={'/'}>首页</Link></Item>
+          <Item key={'/'}><Link to={'/'}>{routes['/']}</Link></Item>
         </Breadcrumb>
       );
     }
