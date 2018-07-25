@@ -116,9 +116,12 @@
     "extends": "react-app"
   },
   "proxy": {
-    "/api2/": {
-      "target": "http://xcx.yoju360.com/",
-      "secure": "false"
+    "/api/": {
+      "target": "http://121.41.58.94:5002",
+      "secure": false,
+      "pathRewrite": {
+        "^/api": ""
+      }
     }
   }
 }
