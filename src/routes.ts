@@ -2,6 +2,8 @@ import * as React from "react";
 import Home from './Home';
 import BannerList from './BannerList';
 import BannerAdd from './BannerAdd';
+import CaseList from './CaseList';
+import CaseAdd from './CaseAdd';
 import NotFound from './NotFound';
 
 interface Iprop {
@@ -37,6 +39,28 @@ export const routes = [{
   }],
   component:BannerList,
   path:'/manage',
+  sideIcon: 'anticon anticon-file-word',
+}, {
+  breadcrumbName:'案例管理',
+  children: [{
+    breadcrumbName:'案例列表',
+    children: [{
+      breadcrumbName:'案例添加',
+      component: CaseAdd,
+      path:'/add',
+      sideIcon: 'anticon anticon-file-word',
+    }, {
+      breadcrumbName:'案例修改',
+      component: CaseAdd,
+      path:'/modify',
+      sideIcon: 'anticon anticon-file-word',
+    }],
+    component: CaseList,
+    path:'/list',
+    sideIcon: 'anticon anticon-file-word',
+  }],
+  component:CaseList,
+  path:'/case',
   sideIcon: 'anticon anticon-file-word',
 }, {
   component:NotFound,

@@ -16,5 +16,6 @@ module.exports = () => {
     '@layout-trigger-background': '#404040',
     '@table-header-bg': '#e1e1e1',
     '@table-row-hover-bg': '#f7f6f5',
+    '@input-height-base': '30px',
   };
 };

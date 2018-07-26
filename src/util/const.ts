@@ -7,7 +7,32 @@ export const PAGE = {
   offset: 0,
 }
 
+// 装修类型
+export const DECORATIONSTYLE = {
+  chinese: {
+    id: '2',
+    name: '中式',
+  },
+  european: {
+    id: '3',
+    name: '欧式',
+  },
+  modern: {
+    id: '1',
+    name: '现代',
+  },
+  northernEuropean: {
+    id: '4',
+    name: '北欧',
+  },
+  simple: {
+    id: '0',
+    name: '简约',
+  },
+}
+
 export default {
+  DECORATIONSTYLE,
   IMGSERVER,
   PAGE,
 }
