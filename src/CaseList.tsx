@@ -68,9 +68,9 @@ class CaseList extends React.Component<any, any> {
     });
     this.setState({loading: false});
     if (res.code !== 200) {
-      message.error(`id为${record.id}的商品删除失败`);
+      message.error(`id为${record.id}的案例删除失败`);
     } else {
-      message.success(`id为${record.id}的商品删除成功`);
+      message.success(`id为${record.id}的案例删除成功`);
       this.loadData();
     }
   }
