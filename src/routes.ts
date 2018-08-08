@@ -4,6 +4,9 @@ import BannerList from './BannerList';
 import BannerAdd from './BannerAdd';
 import CaseList from './CaseList';
 import CaseAdd from './CaseAdd';
+// 活动页面配置
+import ActiveList from './active/ActiveList';
+import ActiveAdd from './active/ActiveAdd';
 import NotFound from './NotFound';
 
 interface Iprop {
@@ -61,6 +64,28 @@ export const routes = [{
   }],
   component:CaseList,
   path:'/case',
+  sideIcon: 'anticon anticon-file-word',
+}, {
+  breadcrumbName:'活动推广页面配置',
+  children: [{
+    breadcrumbName:'页面配置列表',
+    children: [{
+      breadcrumbName:'页面配置添加',
+      component: ActiveAdd,
+      path:'/add',
+      sideIcon: 'anticon anticon-file-word',
+    }, {
+      breadcrumbName:'页面配置修改',
+      component: ActiveAdd,
+      path:'/modify',
+      sideIcon: 'anticon anticon-file-word',
+    }],
+    component: ActiveList,
+    path:'/list',
+    sideIcon: 'anticon anticon-file-word',
+  }],
+  component:ActiveList,
+  path:'/active',
   sideIcon: 'anticon anticon-file-word',
 }, {
   component:NotFound,

@@ -14,10 +14,13 @@ const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-
+const theme = require('./theme');
+const tsImportPluginFactory = require('ts-import-plugin');
 const publicPath = paths.servedPath;
 const shouldUseRelativeAssetPaths = publicPath === './';
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
+
+console.log('log', process.env.GENERATE_SOURCEMAP)
 const publicUrl = publicPath.slice(0, -1);
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
@@ -95,7 +98,7 @@ module.exports = {
       '.jsx',
     ],
     alias: {
-      
+
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
@@ -142,7 +145,7 @@ module.exports = {
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
-              
+
               compact: true,
             },
           },
@@ -156,23 +159,18 @@ module.exports = {
                 options: {
                   // disable type checker - we will use it in fork plugin
                   transpileOnly: true,
+                  getCustomTransformers: () => ({
+                    before: [ tsImportPluginFactory({
+                      libraryName: 'antd',
+                      libraryDirectory: 'lib',
+                      style: true
+                    }) ]
+                  }),
                   configFile: paths.appTsProdConfig
                 },
               },
             ],
           },
-          // The notation here is somewhat confusing.
-          // "postcss" loader applies autoprefixer to our CSS.
-          // "css" loader resolves paths in CSS and adds assets as dependencies.
-          // "style" loader normally turns CSS into JS modules injecting <style>,
-          // but unlike in development configuration, we do something different.
-          // `ExtractTextPlugin` first applies the "postcss" and "css" loaders
-          // (second argument), then grabs the result CSS and puts it into a
-          // separate file in our build process. This way we actually ship
-          // a single CSS file in production instead of JS code injecting <style>
-          // tags. If you use code splitting, however, any async bundles will still
-          // use the "style" loader inside the async code so CSS from them won't be
-          // in the main CSS file.
           {
             test: /\.css$/,
             loader: ExtractTextPlugin.extract(
@@ -219,6 +217,39 @@ module.exports = {
               )
             ),
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+          },
+          {
+            test: /\.less$/,
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  importLoaders: 1,
+                },
+              },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes'),
+                    autoprefixer({
+                      browsers: [
+                        '>1%',
+                        'last 4 versions',
+                        'Firefox ESR',
+                        'not ie < 9',
+                      ],
+                      flexbox: 'no-2009',
+                    }),
+                  ],
+                },
+              }, {
+                loader: 'less-loader',
+                options: { javascriptEnabled: true, modifyVars: theme() }
+              },
+            ],
           },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
