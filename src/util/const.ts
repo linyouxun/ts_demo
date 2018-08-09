@@ -1,4 +1,4 @@
-export const IMGSERVER = 'http://localhost:4000';
+export const IMGSERVER = 'http://localhost:3100';
 // 初始化分页
 export const PAGE = {
   defaultPageSize: 10,

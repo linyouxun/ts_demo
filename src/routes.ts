@@ -126,8 +126,6 @@ for (const iterator of routes) {
   routesObject[i.path] = i.breadcrumbName;
 }
 
-console.log(routesList,routesObject);
-
 export default {
   routes,
   routesList,
