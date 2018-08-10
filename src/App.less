@@ -21,10 +21,30 @@ html, body, #root, .app{
     padding: .5rem 16px;
   }
 }
+
 * {
   box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: none;
+  -webkit-touch-callout: none;
+  -webkit-font-smoothing: antialiased
 }
-
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #c2c2c2;
+  background-clip: padding-box;
+  min-height: 28px;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: transparent;
+}
 .clearfix {
   zoom:1;
   &::after, &::before {

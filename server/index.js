@@ -2,6 +2,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const path = require('path');
 const koaBody = require('koa-body');
+const sizeOf = require('image-size');
 const app = new Koa();
 const router = new Router();
 const util = require('./utils/tools');
@@ -86,11 +87,14 @@ router.options('/upload',function (ctx, next) {
 //文件上传服务
 router.post('/upload', function (ctx, next) {
   const { files } = ctx.request;
+  var dimensions = sizeOf(files.file.path);
   // 图片上传成功
   if (!!files) {
     ctx.body = {
       data: {
-        imageUrl: files.file.imgPath
+        imageUrl: files.file.imgPath,
+        width: dimensions.width,
+        height: dimensions.height,
       },
       msg: 'success',
       code: 200
@@ -99,7 +103,8 @@ router.post('/upload', function (ctx, next) {
     ctx.body = {
       data: {
         imageUrl: '',
-        serverPath: 'http://localhost:3100'
+        width: 0,
+        height: 0,
       },
       msg: 'falied',
       code: 400

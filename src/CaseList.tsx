@@ -86,7 +86,7 @@ class CaseList extends React.Component<any, any> {
     this.setState({loading: false})
     if (res.code === 200) {
       this.setState({
-        caseList: res.data
+        caseList: res.data.data
       })
     } else if (res.errorCode === -2) {
       Modal.error({

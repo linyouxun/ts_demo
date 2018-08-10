@@ -89,7 +89,7 @@ export const routes = [{
   sideIcon: 'anticon anticon-file-word',
 }, {
   component:NotFound,
-  isFull: false,
+  isFull: true,
   isNotMenu: true,
   path:'*',
 }];

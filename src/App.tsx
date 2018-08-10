@@ -18,7 +18,7 @@ class App extends React.Component<any, any> {
           <div className="container" key="container">
             <SiteBreadcrumb routes={routesObject}/>
             <Switch>
-              {routesList.map((item: any, index: number) => <Route key={index} {...item} />)}
+              {routesList.filter((item: any) => !item.isFull).map((item: any, index: number) => <Route key={index} {...item} />)}
             </Switch>
             <SiteFooter />
           </div>

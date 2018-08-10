@@ -1,78 +1,21 @@
 import * as React from 'react';
 import ContentHeader from "../components/ContentHeader";
 // import FormField from "../components/FormField";
+import PickerButton from '../components/PickerButton';
 import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input } from 'antd';
 const ButtonGroup = Button.Group;
-import { IMGSERVER } from '../util/const';
-
+import { IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem } from '../util/const';
+import ActiveView, { IConfigObj } from './components/ActiveView';
 import './ActiveAdd.less';
 
 interface IComponentType {
-  key: string;
+  key: string | number;
   name: string;
 }
-
-interface IConfigList {
-  key: string;
-  name: string;
-  config: any;
-}
-
-enum FILETYPE {
-  done = 'done',
-  removed = 'removed',
-  uploading = 'uploading',
-  error = 'error',
-}
-
-// 箭头参数
-enum ARROW {
-  UP = -1,
-  DELETE = 0,
-  DOWM = 1,
-}
-
-const componentType = {
-  form: {
-    key: '2',
-    name: '报名框'
-  },
-  pic: {
-    key: '1',
-    name: '图片'
-  },
-}
-const formItem = {
-  moblie: {
-    name: '电话号码',
-    value: '请输入电话号码'
-  },
-  name: {
-    name: '姓名',
-    value: '请输入姓名'
-  },
-  undefined1: {
-    name: '自定义',
-    value: ''
-  },
-  undefined2: {
-    name: '自定义2',
-    value: ''
-  },
-  undefined3: {
-    name: '自定义3',
-    value: ''
-  },
-  undefined4: {
-    name: '自定义4',
-    value: ''
-  },
-}
-
 
 class ActiveAdd extends React.Component<any, any> {
-  public static componentType = componentType;
-  public static formItem = formItem;
+  public static componentType = ActiveComponentType;
+  public static formItem = ActiveFormItem;
   constructor(props: any) {
     super(props);
     this.addComponent = this.addComponent.bind(this);
@@ -82,7 +25,9 @@ class ActiveAdd extends React.Component<any, any> {
     this.handleImgChange = this.handleImgChange.bind(this);
     this.submitConfig = this.submitConfig.bind(this);
     this.state = {
+      // configList: [],
       configList: [],
+      configBase: {},
       modalVisible: false,
       previewImage: '',
       previewVisible: false,
@@ -110,31 +55,44 @@ class ActiveAdd extends React.Component<any, any> {
   // 选择添加组件
   public selectComponent(type: IComponentType) {
     const { configList } = this.state;
+    const configTempList = configList.filter((item:any) => item.name === type.name);
+    let count = 1;
+    if (configTempList.length > 0) {
+      count = configTempList.reduce((item: any, item2: any) => {
+        if(+item.count > +item2.count) {
+          return item;
+        } else {
+          return item2;
+        }
+      }).count + 1;
+    }
+    const configObj = {
+      key: type.key,
+      name: type.name,
+      count,
+      config: {}
+    }
     switch(type.key) {
-      case componentType.pic.key: {
-        configList.push({
-          config: {
-            fileList: [],
-          },
-          key: type.key,
-          name: type.name,
-        });
+      case ActiveAdd.componentType.pic.key: {
+        configObj.config = {
+          fileList: []
+        }
         break;
       }
-      case componentType.form.key: {
-        configList.push({
-          config: {
-            checkList: ['moblie'],
-          },
-          key: type.key,
-          name: type.name,
-        });
+      case ActiveAdd.componentType.form.key: {
+        configObj.config = {
+          checkList: ['moblie'],
+          moblie: ActiveAdd.formItem.moblie.value,
+        }
         break;
       }
       default: {
         break;
       }
     }
+    configList.push({
+      ...configObj
+    });
     this.setState({
       configList
     }, () => {
@@ -164,6 +122,8 @@ class ActiveAdd extends React.Component<any, any> {
     switch(status) {
       case FILETYPE.done: {
         const imgUrl = item.file.response.data.imageUrl;
+        const height = item.file.response.data.height;
+        const width = item.file.response.data.width;
         configObj.config.fileList = configObj.config.fileList.map((file: any) => {
           if (file.uid !== item.file.uid) {
             return file;
@@ -172,18 +132,19 @@ class ActiveAdd extends React.Component<any, any> {
             ...file,
             thumbUrl: IMGSERVER + imgUrl,
             url: IMGSERVER + imgUrl,
+            height,
+            width,
           }
         });
         configList[index] = configObj;
         break;
       }
-      // case FILETYPE.uploading: {}
-      // case FILETYPE.removed: {}
-      // case FILETYPE.error: {}
+      case FILETYPE.uploading:
+      case FILETYPE.removed:
+      case FILETYPE.error:
       default: {
         configObj.config.fileList = item.fileList;
         configList[index] = configObj;
-        break;
       }
     }
     this.setState({ configList });
@@ -194,6 +155,9 @@ class ActiveAdd extends React.Component<any, any> {
     const index = key.split('-')[0];
     const configObj = configList[index];
     configObj.config.checkList = [...item];
+    item.map((i: string) => {
+      configObj.config[i] = ActiveAdd.formItem[i].value;
+    });
     configList[index] = configObj;
     this.setState({
       configList
@@ -264,8 +228,28 @@ class ActiveAdd extends React.Component<any, any> {
       </div>
     </div>);
   }
+  // 基本信息
+  public renderBaseComponent() {
+    return (<div className="active-view">
+      <div className="active-view-name">
+        基本信息
+      </div>
+      <div className="active-view-content">
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>标题:</Col>
+          <Col span={20}><Input size="large" /></Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>背景颜色:</Col>
+          <Col span={20}>
+            <PickerButton/>
+          </Col>
+        </Row>
+      </div>
+    </div>);
+  }
   // 图片组件
-  public renderImgComponent(configObj: IConfigList, key: string) {
+  public renderImgComponent(configObj: IConfigObj, key: string) {
     const { name, config } = configObj;
     const { previewVisible, previewImage } = this.state;
     const uploadButton = (
@@ -293,7 +277,7 @@ class ActiveAdd extends React.Component<any, any> {
     </div>);
   }
   // 表单组件
-  public renderFormComponent(configObj: IConfigList, key: string) {
+  public renderFormComponent(configObj: IConfigObj, key: string) {
     const { name, config } = configObj;
     const checkListDom = [];
     for (const itemName in ActiveAdd.formItem) {
@@ -320,13 +304,13 @@ class ActiveAdd extends React.Component<any, any> {
   // 组件选择
   public renderComponentList() {
     const { configList } = this.state;
-    const domList = configList.map((item: IConfigList, index: number) => {
+    const domList = configList.map((item: IConfigObj, index: number) => {
       switch(item.key) {
-        case '1': {
-          return this.renderImgComponent(item, `${index}-${item.key}`);
+        case ActiveAdd.componentType.pic.key: {
+          return this.renderImgComponent(item, `${index}-${item.key}-${item.name}.${item.count}`);
         }
-        case '2': {
-          return this.renderFormComponent(item, `${index}-${item.key}`);
+        case ActiveAdd.componentType.form.key: {
+          return this.renderFormComponent(item, `${index}-${item.key}-${item.name}.${item.count}`);
         }
         default: {
           break;
@@ -349,11 +333,13 @@ class ActiveAdd extends React.Component<any, any> {
     </div>)
   }
   public render(): JSX.Element {
-    return (<div className="page">
+    const { configList } = this.state;
+    return (<div className="page active-page">
       <ContentHeader title="活动推广页面配置-添加" />
       <div className="active-config">
         <div className="active-config-content">
           <div className="active-config-content-header">配置信息:</div>
+          {this.renderBaseComponent()}
           {this.renderComponentList()}
           <div className="active-config-content-btns">
             <Button onClick={this.addComponent}>添加组件</Button>
@@ -361,7 +347,7 @@ class ActiveAdd extends React.Component<any, any> {
           </div>
         </div>
         <div className="active-config-view">
-          配置界面
+          <ActiveView configList={configList}/>
         </div>
       </div>
       <Modal
