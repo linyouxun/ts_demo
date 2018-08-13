@@ -24,14 +24,31 @@ class ActiveAdd extends React.Component<any, any> {
     this.handleImgPreview = this.handleImgPreview.bind(this);
     this.handleImgChange = this.handleImgChange.bind(this);
     this.submitConfig = this.submitConfig.bind(this);
+
     this.state = {
       // configList: [],
       configList: [],
-      configBase: {},
+      configBase: {
+        title: '',
+        bgColor: 'rgb(239, 239, 239)',
+      },
       modalVisible: false,
       previewImage: '',
       previewVisible: false,
     }
+  }
+
+  public handleChange(key: string, e: any) {
+    const {configBase} = this.state;
+    if (key === 'title') {
+      configBase.title = e.target.value;
+    }
+    if (key === 'color') {
+      configBase.bgColor = e.hex;
+    }
+    this.setState({
+      configBase
+    });
   }
   public submitConfig() {
     const { configList } = this.state;
@@ -230,6 +247,7 @@ class ActiveAdd extends React.Component<any, any> {
   }
   // 基本信息
   public renderBaseComponent() {
+    const {configBase} = this.state;
     return (<div className="active-view">
       <div className="active-view-name">
         基本信息
@@ -237,12 +255,12 @@ class ActiveAdd extends React.Component<any, any> {
       <div className="active-view-content">
         <Row style={{paddingBottom: '.5rem'}}>
           <Col className="ant-form-item-label" span={4}>标题:</Col>
-          <Col span={20}><Input size="large" /></Col>
+          <Col span={20}><Input size="large" onChange={this.handleChange.bind(this, 'title')}/></Col>
         </Row>
         <Row style={{paddingBottom: '.5rem'}}>
           <Col className="ant-form-item-label" span={4}>背景颜色:</Col>
           <Col span={20}>
-            <PickerButton/>
+            <PickerButton handleChange={this.handleChange.bind(this, 'color')} size="large" color={configBase.bgColor}/>
           </Col>
         </Row>
       </div>
@@ -268,7 +286,7 @@ class ActiveAdd extends React.Component<any, any> {
           onPreview={this.handleImgPreview}
           onChange={this.handleImgChange.bind(this, key)}
         >
-          {config.fileList.length >= 1 ? null : uploadButton}
+          {config.fileList.length >= 5 ? null : uploadButton}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleImgCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
@@ -333,7 +351,7 @@ class ActiveAdd extends React.Component<any, any> {
     </div>)
   }
   public render(): JSX.Element {
-    const { configList } = this.state;
+    const { configList, configBase } = this.state;
     return (<div className="page active-page">
       <ContentHeader title="活动推广页面配置-添加" />
       <div className="active-config">
@@ -347,7 +365,7 @@ class ActiveAdd extends React.Component<any, any> {
           </div>
         </div>
         <div className="active-config-view">
-          <ActiveView configList={configList}/>
+          <ActiveView configList={configList} configBase={configBase}/>
         </div>
       </div>
       <Modal

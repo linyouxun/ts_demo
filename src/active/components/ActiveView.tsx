@@ -8,9 +8,14 @@ export interface IConfigObj {
   config: any;
   count: string | number;
 }
+export interface IConfigBase {
+  title: string;
+  bgColor: string;
+}
 
 interface IProps {
-  configList: IConfigObj[]
+  configList: IConfigObj[];
+  configBase: IConfigBase;
 }
 
 // export interface IConfigList {
@@ -46,7 +51,7 @@ class ActiveView extends React.Component<IProps, any> {
       <div className="active-component-header">
         配置预览:
       </div>
-      <section className='active-component-view'>
+      <section className='active-component-view' style={{backgroundColor: this.props.configBase.bgColor}}>
         {this.renderComponent()}
       </section>
     </div>);
