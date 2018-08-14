@@ -5,6 +5,7 @@ import PickerButton from '../components/PickerButton';
 import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input } from 'antd';
 const ButtonGroup = Button.Group;
 import { IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem } from '../util/const';
+import { fetchData } from "../util/request";
 import ActiveView, { IConfigObj } from './components/ActiveView';
 import './ActiveAdd.less';
 
@@ -50,9 +51,15 @@ class ActiveAdd extends React.Component<any, any> {
       configBase
     });
   }
-  public submitConfig() {
-    const { configList } = this.state;
-    console.log(configList);
+  public async submitConfig() {
+    const { configList, configBase } = this.state;
+    const res = await fetchData( {
+      configList: JSON.stringify(configList),
+      configBase: JSON.stringify(configBase)
+    }, 'http://127.0.0.1:3100/ap2/active/config', {
+      method: 'POST'
+    });
+    console.log(res);
   }
   // 添加组件弹框
   public addComponent() {
@@ -313,7 +320,7 @@ class ActiveAdd extends React.Component<any, any> {
           </Row>
         </Checkbox.Group>
         {config.checkList.map((itemName: string, index: number) => {
-          return <Input key={index} placeholder={`请输入默认${ActiveAdd.formItem[itemName].name}提示信息`} defaultValue={config[itemName] || ActiveAdd.formItem[itemName].value || ''} onChange={this.onCheckBoxInputChange.bind(this, key, itemName)}/>
+          return <Input key={index + ActiveAdd.formItem[itemName].name} placeholder={`请输入默认${ActiveAdd.formItem[itemName].name}提示信息`} defaultValue={config[itemName] || ActiveAdd.formItem[itemName].value || ''} onChange={this.onCheckBoxInputChange.bind(this, key, itemName)}/>
         })}
       </div>
     </div>);

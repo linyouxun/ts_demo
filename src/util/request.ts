@@ -11,7 +11,6 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
     }
   }
   const params: RequestInit = Object.assign(opts,{
-    credentials: 'include',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
@@ -21,7 +20,11 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
   } else {
     url += ('?' + objToUrlString(data))
   }
-  return fetch(preUrl + url, params).then(resp => {
+  if (!(new RegExp('http')).test(url)) {
+    url = preUrl + url;
+    params.credentials = 'include';
+  }
+  return fetch(url , params).then(resp => {
     return resp.json()
   }).catch(error => {
     return {
