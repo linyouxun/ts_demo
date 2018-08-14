@@ -2,7 +2,7 @@ const fs = require('fs');
 
 // 获取上传文件后缀
 function getUploadFileExt(name) {
-  let ext = name.split('.');
+  const ext = name.split('.');
   return ext[ext.length - 1];
 }
 
@@ -22,8 +22,14 @@ function checkDirExist(p) {
   }
 }
 
+// 判断文件是否存在
+function checkFileExist(p) {
+  return fs.existsSync(p);
+}
+
 module.exports = {
   getUploadFileExt,
   checkDirExist,
-  getUploadDirName
+  checkFileExist,
+  getUploadDirName,
 };
