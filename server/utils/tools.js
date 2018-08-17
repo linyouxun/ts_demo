@@ -27,9 +27,32 @@ function checkFileExist(p) {
   return fs.existsSync(p);
 }
 
+function setShortNum(num, minLen) {
+	let str = '';
+	const munLen = num.length;
+	if ( munLen>= minLen) {
+		return num;
+	}
+	for(let i = 0; i < minLen; i++) {
+		str += '0';
+	}
+	return str.substr(0, minLen - munLen) + num;
+}
+
+function copyObj(obj) {
+  let newObj = {};
+  for (const key in obj) {
+    if (object.hasOwnProperty(key)) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
+}
+
 module.exports = {
   getUploadFileExt,
   checkDirExist,
   checkFileExist,
   getUploadDirName,
+  setShortNum
 };

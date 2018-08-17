@@ -2,9 +2,11 @@ export const IMGSERVER = 'http://localhost:3100';
 // 初始化分页
 export const PAGE = {
   defaultPageSize: 10,
+  defaultCurrentPage: 1,
   defaultPageSizeOptions: ['10', '25', '50', '100'],
   limit: 10,
   offset: 0,
+  total: 0,
 }
 
 // 装修类型
@@ -61,27 +63,45 @@ export const ActiveComponentType = {
 export const ActiveFormItem = {
   moblie: {
     name: '电话号码',
-    value: '请输入电话号码'
+    tip: '请输入电话号码',
+    errorTip: '电话号码不能为空',
+    color: 'rgba(0,0,0,1)',
+    bgColor: 'rgba(255,255,255,1)',
   },
   name: {
     name: '姓名',
-    value: '请输入姓名'
+    tip: '请输入姓名',
+    errorTip: '姓名不能为空',
+    color: 'rgba(0,0,0,1)',
+    bgColor: 'rgba(255,255,255,1)',
   },
   undefined1: {
     name: '自定义',
-    value: '自定义'
+    tip: '自定义',
+    errorTip: '自定义不能为空',
+    color: 'rgba(0,0,0,1)',
+    bgColor: 'rgba(255,255,255,1)',
   },
   undefined2: {
     name: '自定义2',
-    value: '自定义2'
+    tip: '自定义2',
+    errorTip: '自定义2不能为空',
+    color: 'rgba(0,0,0,1)',
+    bgColor: 'rgba(255,255,255,1)',
   },
   undefined3: {
     name: '自定义3',
-    value: '自定义3'
+    tip: '自定义3',
+    errorTip: '自定义3不能为空',
+    color: 'rgba(0,0,0,1)',
+    bgColor: 'rgba(255,255,255,1)',
   },
   undefined4: {
     name: '自定义4',
-    value: '自定义4'
+    tip: '自定义4',
+    errorTip: '自定义4不能为空',
+    color: 'rgba(0,0,0,1)',
+    bgColor: 'rgba(255,255,255,1)',
   },
 }
 

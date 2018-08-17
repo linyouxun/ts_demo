@@ -2,7 +2,7 @@ import * as React from 'react';
 import ContentHeader from "../components/ContentHeader";
 // import FormField from "../components/FormField";
 import PickerButton from '../components/PickerButton';
-import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input } from 'antd';
+import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin } from 'antd';
 const ButtonGroup = Button.Group;
 import { IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem } from '../util/const';
 import { fetchData } from "../util/request";
@@ -36,6 +36,30 @@ class ActiveAdd extends React.Component<any, any> {
       modalVisible: false,
       previewImage: '',
       previewVisible: false,
+      loading: false
+    }
+  }
+
+  public async componentDidMount() {
+    if(/modify/.test(this.props.history.location.pathname)) {
+      this.setState({
+        loading: true
+      });
+      const res = await fetchData( {
+        id: this.props.history.location.search.split('=')[1]
+      }, 'http://localhost:3100/api2/active/list/item', {
+        method: 'GET'
+      });
+      this.setState({
+        loading: false
+      });
+      if (res.code === 200) {
+        delete res.result.configBase._id;
+        this.setState({
+          configList: res.result.configList,
+          configBase: res.result.configBase,
+        })
+      }
     }
   }
 
@@ -45,7 +69,7 @@ class ActiveAdd extends React.Component<any, any> {
       configBase.title = e.target.value;
     }
     if (key === 'color') {
-      configBase.bgColor = e.hex;
+      configBase.bgColor = `rgba(${e.rgb.r},${e.rgb.g},${e.rgb.b},${e.rgb.a})`;
     }
     this.setState({
       configBase
@@ -56,7 +80,7 @@ class ActiveAdd extends React.Component<any, any> {
     const res = await fetchData( {
       configList: JSON.stringify(configList),
       configBase: JSON.stringify(configBase)
-    }, 'http://127.0.0.1:3100/ap2/active/config', {
+    }, 'http://127.0.0.1:3100/api2/active/list/add', {
       method: 'POST'
     });
     console.log(res);
@@ -106,7 +130,18 @@ class ActiveAdd extends React.Component<any, any> {
       case ActiveAdd.componentType.form.key: {
         configObj.config = {
           checkList: ['moblie'],
-          moblie: ActiveAdd.formItem.moblie.value,
+          moblie: {
+            tip: ActiveAdd.formItem.moblie.tip,
+            errorTip: ActiveAdd.formItem.moblie.errorTip,
+            bgColor: ActiveAdd.formItem.moblie.bgColor,
+            color: ActiveAdd.formItem.moblie.color
+          },
+          button: {
+            tip: '提交信息',
+            errorTip: '',
+            bgColor: 'rgba(255,255,255,1)',
+            color: 'rgba(0,0,0,1)'
+          },
         }
         break;
       }
@@ -180,7 +215,14 @@ class ActiveAdd extends React.Component<any, any> {
     const configObj = configList[index];
     configObj.config.checkList = [...item];
     item.map((i: string) => {
-      configObj.config[i] = ActiveAdd.formItem[i].value;
+      if (!configObj.config[i]) {
+        configObj.config[i] = {
+          tip: ActiveAdd.formItem[i].tip,
+          errorTip: ActiveAdd.formItem[i].errorTip,
+          bgColor: ActiveAdd.formItem[i].bgColor,
+          color: ActiveAdd.formItem[i].color
+        };
+      }
     });
     configList[index] = configObj;
     this.setState({
@@ -188,15 +230,40 @@ class ActiveAdd extends React.Component<any, any> {
     });
   }
   // 复选框（输入款）事件监听
-  public onCheckBoxInputChange(key: string, inputKey: string, event: any) {
+  public onCheckBoxInputChange(key: string, inputKey: string, type: string, event: any) {
     const { configList } = this.state;
     const index = key.split('-')[0];
     const configObj = configList[index];
-    configObj.config[inputKey] = (event.target.value + '').trim();
+    switch (type) {
+      case 'tip': {
+        configObj.config[inputKey].tip = (event.target.value + '').trim();
+        break;
+      }
+      case 'errorTip': {
+        configObj.config[inputKey].errorTip = (event.target.value + '').trim();
+        break;
+      }
+      case 'bgColor': {
+        configObj.config[inputKey].bgColor = `rgba(${event.rgb.r},${event.rgb.g},${event.rgb.b},${event.rgb.a})`;
+        break;
+      }
+      case 'color': {
+        configObj.config[inputKey].color = `rgba(${event.rgb.r},${event.rgb.g},${event.rgb.b},${event.rgb.a})`;
+        break;
+      }
+
+      default:
+        break;
+    }
     configList[index] = configObj;
     this.setState({
       configList
     });
+  }
+  // 输入框背景颜色事件监听
+  public handleInputBgChange(inputItem: any, key: string) {
+    const { configList } = this.state;
+    console.log(configList);
   }
   public moveConfigList(key: string, arrwoType: number) {
     const { configList } = this.state;
@@ -262,7 +329,7 @@ class ActiveAdd extends React.Component<any, any> {
       <div className="active-view-content">
         <Row style={{paddingBottom: '.5rem'}}>
           <Col className="ant-form-item-label" span={4}>标题:</Col>
-          <Col span={20}><Input size="large" onChange={this.handleChange.bind(this, 'title')}/></Col>
+          <Col span={20}><Input size="large" value={configBase.title} onChange={this.handleChange.bind(this, 'title')}/></Col>
         </Row>
         <Row style={{paddingBottom: '.5rem'}}>
           <Col className="ant-form-item-label" span={4}>背景颜色:</Col>
@@ -320,8 +387,64 @@ class ActiveAdd extends React.Component<any, any> {
           </Row>
         </Checkbox.Group>
         {config.checkList.map((itemName: string, index: number) => {
-          return <Input key={index + ActiveAdd.formItem[itemName].name} placeholder={`请输入默认${ActiveAdd.formItem[itemName].name}提示信息`} defaultValue={config[itemName] || ActiveAdd.formItem[itemName].value || ''} onChange={this.onCheckBoxInputChange.bind(this, key, itemName)}/>
+          const inputItem = config[itemName];
+          return (<div key={index + ActiveAdd.formItem[itemName].name}>
+            <div className="active-view-content-form-name">{ActiveAdd.formItem[itemName].name}</div>
+            <Row style={{paddingBottom: '.5rem'}}>
+              <Col className="ant-form-item-label" span={4}>提示信息:</Col>
+              <Col span={20}>
+                <Input value={config[itemName].tip} placeholder={`请输入默认${ActiveAdd.formItem[itemName].name}提示信息`} onChange={this.onCheckBoxInputChange.bind(this, key, itemName, 'tip')}/>
+              </Col>
+            </Row>
+            <Row style={{paddingBottom: '.5rem'}}>
+              <Col className="ant-form-item-label" span={4}>信息提示:</Col>
+              <Col span={20}>
+                <Input value={config[itemName].errorTip} placeholder={`请输入默认${ActiveAdd.formItem[itemName].name}未填写信息提示`} onChange={this.onCheckBoxInputChange.bind(this, key, itemName, 'errorTip')}/>
+              </Col>
+            </Row>
+            <Row style={{paddingBottom: '.5rem'}}>
+              <Col className="ant-form-item-label" span={4}>字体颜色:</Col>
+              <Col span={20}>
+                <PickerButton size="default" handleChange={this.onCheckBoxInputChange.bind(this, key, itemName, 'color')} color={inputItem.color}/>
+              </Col>
+            </Row>
+            <Row style={{paddingBottom: '.5rem'}}>
+              <Col className="ant-form-item-label" span={4}>背景颜色:</Col>
+              <Col span={20}>
+                <PickerButton size="default" handleChange={this.onCheckBoxInputChange.bind(this, key, itemName, 'bgColor')} color={inputItem.bgColor}/>
+              </Col>
+            </Row>
+          </div>)
         })}
+
+        <div>
+          <div className="active-view-content-form-name">按钮信息</div>
+          <Row style={{paddingBottom: '.5rem'}}>
+            <Col className="ant-form-item-label" span={4}>文字:</Col>
+            <Col span={20}>
+              <Input value={config.button.tip} placeholder={`请输入按钮文字(必填)`} onChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'tip')}/>
+            </Col>
+          </Row>
+          <Row style={{paddingBottom: '.5rem'}}>
+            <Col className="ant-form-item-label" span={4}>提交文字</Col>
+            <Col span={20}>
+              <Input value={config.button.errorTip} placeholder={`请输入按钮提交文字信息(非必填)`} onChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'errorTip')}/>
+            </Col>
+          </Row>
+          <Row style={{paddingBottom: '.5rem'}}>
+            <Col className="ant-form-item-label" span={4}>按钮文字颜色:</Col>
+            <Col span={20}>
+              <PickerButton size="default" handleChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'color')} color={config.button.color}/>
+            </Col>
+          </Row>
+          <Row style={{paddingBottom: '.5rem'}}>
+            <Col className="ant-form-item-label" span={4}>按钮背景颜色:</Col>
+            <Col span={20}>
+              <PickerButton size="default" handleChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'bgColor')} color={config.button.bgColor}/>
+            </Col>
+          </Row>
+        </div>
+
       </div>
     </div>);
   }
@@ -358,8 +481,8 @@ class ActiveAdd extends React.Component<any, any> {
     </div>)
   }
   public render(): JSX.Element {
-    const { configList, configBase } = this.state;
-    return (<div className="page active-page">
+    const { configList, configBase, loading } = this.state;
+    return (<Spin spinning={loading} tip="加载中" wrapperClassName="page active-page">
       <ContentHeader title="活动推广页面配置-添加" />
       <div className="active-config">
         <div className="active-config-content">
@@ -376,14 +499,14 @@ class ActiveAdd extends React.Component<any, any> {
         </div>
       </div>
       <Modal
-          title="选择组件"
-          visible={this.state.modalVisible}
-          footer={false}
-          onCancel={this.handleCancel}
-        >
-        {this.renderComponents()}
-        </Modal>
-    </div>);
+        title="选择组件"
+        visible={this.state.modalVisible}
+        footer={false}
+        onCancel={this.handleCancel}
+      >
+      {this.renderComponents()}
+      </Modal>
+    </Spin>);
   }
 }
 

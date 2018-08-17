@@ -20,6 +20,7 @@
   },
   "exclude": [
     "server",
+    "static",
     "node_modules",
     "build",
     "scripts",

@@ -77,9 +77,9 @@ function AvtiveViewForm(props: any, key: string) {
   const { checkList } = props;
   return (<div key={key} className="active-component-view-form">
     {checkList.map((item: any, index: string) => {
-      return (<input key={index} className="input" type="text" placeholder={props[item]}/>);
+      return (<input style={{color: props[item].color, backgroundColor: props[item].bgColor}} key={index} className="input" type="text" placeholder={props[item].tip}/>);
     })}
-    <span className="submit">提交信息</span>
+    <span style={{color: props.button.color, backgroundColor: props.button.bgColor}} className="submit">{props.button.tip}</span>
   </div>)
 }
 

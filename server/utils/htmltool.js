@@ -184,13 +184,36 @@ function htmlForm(formData) {
   <div class="relative">
     <div class="form">
         ${inputs}
-        <div id="submit" class="submit-btn" onclick="send('${checkList.join("','")}')">报名即送顾家无忧枕</div>
+        <div style="color:${formData.button.color};background-color:${formData.button.bgColor}" id="submit" class="submit-btn" onclick="send('${checkList.join("','")}')">${formData.button.tip}</div>
     </div>
   </div>`;
 }
-function htmlInput(id, placeholder) {
+function htmlInput(id, inputItem) {
   return `
-    <input id="${id}" type="text" placeholder="${placeholder}">
+    <style>
+      #${id} {
+        color:${inputItem.color};
+        background-color:${inputItem.bgColor};
+        border: 1px solid ${inputItem.bgColor};
+      }
+      #${id}::-webkit-input-placeholder { /* WebKit browsers */
+        color:${inputItem.color};
+        background-color:${inputItem.bgColor};
+      }
+      #${id}::-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color:${inputItem.color};
+        background-color:${inputItem.bgColor};
+      }
+      #${id}::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color:${inputItem.color};
+        background-color:${inputItem.bgColor};
+      }
+      #${id}::-ms-input-placeholder { /* Internet Explorer 10+ */
+        color:${inputItem.color};
+        background-color:${inputItem.bgColor};
+      }
+    </style>
+    <input id="${id}" type="text" placeholder="${inputItem.tip}">
   `;
 }
 

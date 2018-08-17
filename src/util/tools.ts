@@ -47,7 +47,20 @@ export function urlStringToObj(s: string) {
   return params;
 }
 
+export function setShortNum(num: string, minLen: number) {
+	let str = '';
+	const munLen = num.length;
+	if ( munLen>= minLen) {
+		return num;
+	}
+	for(let i = 0; i < minLen; i++) {
+		str += '0';
+	}
+	return str.substr(0, minLen - munLen) + num;
+}
+
 export default {
   objToUrlString,
   urlStringToObj,
+  setShortNum,
 }
