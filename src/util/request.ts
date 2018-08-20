@@ -15,10 +15,10 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
   })
-  if (opts.method === 'POST') {
-    params.body = objToUrlString(data);
+  if (opts.method === 'GET') {
+    url += ('?' + objToUrlString(data));
   } else {
-    url += ('?' + objToUrlString(data))
+    params.body = objToUrlString(data);
   }
   if (!(new RegExp('http')).test(url)) {
     url = preUrl + url;

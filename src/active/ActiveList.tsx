@@ -84,8 +84,19 @@ class ActiveList extends React.Component<any, any> {
   public handleModify(record: any) {
     this.props.history.push(`/active/list/modify?id=${record._id}`);
   }
-  public deleteRecord() {
-    console.log('deleteRecord');
+  public async deleteRecord(record: any) {
+    this.setState({
+      loading: true
+    });
+    const res = await fetchData( {
+      id: record._id
+    }, 'http://127.0.0.1:3100/api2/active/list/delete', {
+      method: 'POST'
+    });
+    this.setState({
+      loading: false
+    });
+    console.log(res);
   }
   public onPageChange(current: any, pageSize: any) {
     const { activeList } = this.state;

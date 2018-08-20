@@ -42,6 +42,19 @@ exports.addConfigHtml = async (ctx, next) => {
   success(ctx, next, res);
 }
 
+exports.deleteConfigHtml = async (ctx, next) => {
+  const { id = '0' } = ctx.request.body;
+  if ( (id + '').trim().length !== 24 ) {
+    falied(ctx, next, 'id不能为空或者id不存在');
+  }
+  const res = await configHtmlHelper.deleteConfigHtmlItem(setShortNum(id, 24));
+  if (!!res) {
+    success(ctx, next, res);
+  } else {
+    falied(ctx, next, 'id不能为空或者id不存在');
+  }
+}
+
 exports.listConfigHtml = async(ctx, next) => {
   const { pageSize = 10, currentPage = 1, id = '0' } = ctx.request.query;
   if (+pageSize < 0) {

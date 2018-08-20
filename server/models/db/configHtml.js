@@ -53,6 +53,41 @@ ConfigHtmlSchema.pre('save', function(next) {
   next()
 })
 
+ConfigHtmlSchema.pre('save', function(next) {
+  console.log(this, 'sss');
+  if (this.isNew) {
+    this.meta.createAt = this.meta.updateAt = +Date.now()
+  }
+  else {
+    this.meta.updateAt = +Date.now()
+  }
+  next()
+})
+
+ConfigHtmlSchema.pre('remove', function(next) {
+  console.log('ConfigHtml');
+  console.log(this);
+  next();
+})
+
+ConfigImgSchema.pre('remove', function(next) {
+  console.log('ConfigItem');
+  console.log(this);
+  next();
+})
+
+ConfigFormSchema.pre('remove', function(next) {
+  console.log('ConfigImg');
+  console.log(this);
+  next();
+})
+
+ConfigItemSchema.pre('remove', function(next) {
+  console.log('ConfigForm');
+  console.log(this);
+  next();
+})
+
 // var ConfigHtml = mongoose.model('ConfigHtml', ConfigHtmlSchema, 'ConfigHtml');
 var ConfigHtml = mongoose.model('ConfigHtml', ConfigHtmlSchema);
 var ConfigItem = mongoose.model('ConfigItem', ConfigItemSchema);
