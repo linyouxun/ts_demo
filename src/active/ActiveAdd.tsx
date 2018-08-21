@@ -36,7 +36,8 @@ class ActiveAdd extends React.Component<any, any> {
       modalVisible: false,
       previewImage: '',
       previewVisible: false,
-      loading: false
+      loading: false,
+      id: '',
     }
   }
 
@@ -54,8 +55,8 @@ class ActiveAdd extends React.Component<any, any> {
         loading: false
       });
       if (res.code === 200) {
-        delete res.result.configBase._id;
         this.setState({
+          id: res.result._id,
           configList: res.result.configList,
           configBase: res.result.configBase,
         })
@@ -76,13 +77,24 @@ class ActiveAdd extends React.Component<any, any> {
     });
   }
   public async submitConfig() {
-    const { configList, configBase } = this.state;
-    const res = await fetchData( {
+    const { configList, configBase, id } = this.state;
+    const data: any = {
       configList: JSON.stringify(configList),
       configBase: JSON.stringify(configBase)
-    }, 'http://127.0.0.1:3100/api2/active/list/add', {
+    }
+    let url = 'http://127.0.0.1:3100/api2/active/list/add';
+    if (!!id) {
+      url = 'http://127.0.0.1:3100/api2/active/list/update';
+      data.id = id;
+    }
+    const res = await fetchData( data, url, {
       method: 'POST'
     });
+    if(res.code === 200) {
+      console.log('保存成功');
+    } else {
+      console.log('保存失败');
+    }
     console.log(res);
   }
   // 添加组件弹框
@@ -464,7 +476,7 @@ class ActiveAdd extends React.Component<any, any> {
           break;
         }
       }
-      return
+      return null;
     })
     return domList;
   }

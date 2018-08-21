@@ -31,9 +31,12 @@ class ActiveView extends React.Component<IProps, any> {
     const { configList } = this.props;
     return (<div>
       {configList.map((item: IConfigObj) => {
+        console.log(item);
         switch(item.key) {
           case ActiveView.componentType.pic.key: {
-            return AvtiveViewImg(item.config, `${item.key}-${item.name}.${item.count}`);
+            return AvtiveViewImg({
+              fileList: item.config.fileList
+            }, `${item.key}-${item.name}.${item.count}`);
           }
           case ActiveView.componentType.form.key: {
             return AvtiveViewForm(item.config, `${item.key}-${item.name}.${item.count}`);

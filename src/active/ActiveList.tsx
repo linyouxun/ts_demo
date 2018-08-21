@@ -48,10 +48,9 @@ class ActiveList extends React.Component<any, any> {
   }
   public componentDidMount() {
     const { pageSize, currentPage } = this.page;
-    const { activeList } = this.state;
-    this.loadList(pageSize, currentPage, activeList);
+    this.loadList(pageSize, currentPage);
   }
-  public async loadList(pageSize: number | string, currentPage: number | string, activeList: any) {
+  public async loadList(pageSize: number | string, currentPage: number | string) {
     this.setState({
       loading: true
     });
@@ -96,11 +95,13 @@ class ActiveList extends React.Component<any, any> {
     this.setState({
       loading: false
     });
-    console.log(res);
+    if (res.code === 200) {
+      const { pageSize, currentPage } = this.page;
+      this.loadList(pageSize, currentPage);
+    }
   }
   public onPageChange(current: any, pageSize: any) {
-    const { activeList } = this.state;
-    this.loadList(+pageSize, +current, activeList);
+    this.loadList(+pageSize, +current);
   }
   public render(): JSX.Element {
     const { loading, activeList, activeColumn } = this.state;

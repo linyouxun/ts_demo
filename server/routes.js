@@ -2,7 +2,8 @@ const Router = require('koa-router');
 const koaBody = require('koa-body');
 const path = require('path');
 const util = require('./utils/tools');
-const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml } = require('./controller/configHtml');
+const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml, updateConfigHtml } = require('./controller/configHtml');
+const { statistics } = require('./controller/statistics');
 const { addImg } = require('./controller/configFile');
 const { return204 } = require('./controller/base');
 
@@ -40,7 +41,10 @@ module.exports = function() {
   // 处理网页配置信息
   router.post('/api2/active/list/add', addConfigHtml);
   router.post('/api2/active/list/delete', deleteConfigHtml);
+  router.post('/api2/active/list/update', updateConfigHtml);
   router.get('/api2/active/list', listConfigHtml);
   router.get('/api2/active/list/item', getConfigHtmlItem);
+  // 统计
+  router.get('/statistics/count.png', statistics);
   return router;
 }
