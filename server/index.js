@@ -43,6 +43,11 @@ app.use(koaStatic(__dirname + '/../build'));
 app.use(koaStatic(__dirname + '/../static'));
 app.use(koaStatic(__dirname + '/../doc'));
 app.use(koaBody());
+// 查看远程IP地址
+app.use(async (ctx, next) => {
+  console.log(ctx.req.connection.remoteAddress);
+  next();
+})
 app.use(async (ctx, next) => {
   const startTime = new Date();
   ctx.set("Access-Control-Allow-Origin", "*");
