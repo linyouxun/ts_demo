@@ -1,7 +1,16 @@
-console.log('1',process.env.NODE_ENV);
-console.log('2');
-export const IMGSERVER = 'http://localhost:3100';
-export const APISERVER = 'http://localhost:3100';
+
+export const IMGSERVER = (function s() {
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3100';
+  }
+  return 'http://47.106.174.88';
+})();
+export const APISERVER = (function s() {
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3100';
+  }
+  return 'http://47.106.174.88';
+})();
 // 初始化分页
 export const PAGE = {
   defaultPageSize: 10,
