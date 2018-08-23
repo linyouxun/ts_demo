@@ -5,7 +5,7 @@ import ActiveFilter from "./components/ActiveFilter";
 import FormField from "../components/FormField";
 import { Table, Popconfirm } from 'antd';
 import { fetchData } from "../util/request";
-import { PAGE } from '../util/const';
+import { PAGE, APISERVER } from '../util/const';
 
 class ActiveList extends React.Component<any, any> {
   public page = {
@@ -57,7 +57,7 @@ class ActiveList extends React.Component<any, any> {
     const res = await fetchData( {
       pageSize,
       currentPage
-    }, 'http://127.0.0.1:3100/api2/active/list', {
+    }, `${APISERVER}/api2/active/list`, {
       method: 'GET'
     });
     this.setState({
@@ -89,7 +89,7 @@ class ActiveList extends React.Component<any, any> {
     });
     const res = await fetchData( {
       id: record._id
-    }, 'http://127.0.0.1:3100/api2/active/list/delete', {
+    }, `${APISERVER}/api2/active/list/delete`, {
       method: 'POST'
     });
     this.setState({

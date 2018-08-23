@@ -1,4 +1,7 @@
+console.log('1',process.env.NODE_ENV);
+console.log('2');
 export const IMGSERVER = 'http://localhost:3100';
+export const APISERVER = 'http://localhost:3100';
 // 初始化分页
 export const PAGE = {
   defaultPageSize: 10,

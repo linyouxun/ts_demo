@@ -45,8 +45,8 @@ app.use(koaStatic(__dirname + '/../doc'));
 app.use(koaBody());
 // 查看远程IP地址
 app.use(async (ctx, next) => {
-  console.log(ctx.req.connection.remoteAddress);
-  next();
+  ctx.ipv4 = ctx.req.headers['X-real-ip'] || '127.0.0.1';
+  await next();
 })
 app.use(async (ctx, next) => {
   const startTime = new Date();

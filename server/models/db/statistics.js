@@ -1,9 +1,9 @@
 // 当前页面：
-// 来源： source
 // ip:
 // 时间:
-// 设备型号:（操作系统， 屏幕分辨率，浏览器）
 // 地区：
+// 来源： source (图片上传))
+// 设备型号:（操作系统， 屏幕分辨率，浏览器）(图片上传)
 // 访客标识码
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
@@ -14,15 +14,14 @@ const StatisticsSchema = new Schema({
   timestamp: String,
   deviseStr: String,
   deviseInfo: {
-    os: String,
+    platform: String,
     screen: String,
     browser: String
   },
-  erea: {
+  city: {
     province: String,
     city: String,
-    provinceId: String,
-    cityId: String,
+    adcode: String,
   },
   // 拓展属性
   // userId: String,(通过cookie, 浏览器, 设备)

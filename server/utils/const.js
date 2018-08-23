@@ -1,3 +1,7 @@
+// 高德地图appkey
+const GAODE_KEY = 'f1f341fd8aa165eda6c0f29db0f5ef5d';
+
+
 // 活动报名配置选项
 const ActiveComponentType = {
   pic: {
@@ -11,5 +15,6 @@ const ActiveComponentType = {
 }
 
 module.exports = {
-  ActiveComponentType
+  ActiveComponentType,
+  GAODE_KEY
 }

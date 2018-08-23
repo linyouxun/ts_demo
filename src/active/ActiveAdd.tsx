@@ -4,7 +4,7 @@ import ContentHeader from "../components/ContentHeader";
 import PickerButton from '../components/PickerButton';
 import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin } from 'antd';
 const ButtonGroup = Button.Group;
-import { IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem } from '../util/const';
+import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem } from '../util/const';
 import { fetchData } from "../util/request";
 import ActiveView, { IConfigObj } from './components/ActiveView';
 import './ActiveAdd.less';
@@ -48,7 +48,7 @@ class ActiveAdd extends React.Component<any, any> {
       });
       const res = await fetchData( {
         id: this.props.history.location.search.split('=')[1]
-      }, 'http://localhost:3100/api2/active/list/item', {
+      }, `${APISERVER}/api2/active/list/item`, {
         method: 'GET'
       });
       this.setState({
@@ -82,9 +82,9 @@ class ActiveAdd extends React.Component<any, any> {
       configList: JSON.stringify(configList),
       configBase: JSON.stringify(configBase)
     }
-    let url = 'http://127.0.0.1:3100/api2/active/list/add';
+    let url = `${APISERVER}/api2/active/list/add`;
     if (!!id) {
-      url = 'http://127.0.0.1:3100/api2/active/list/update';
+      url = `${APISERVER}/api2/active/list/update`;
       data.id = id;
     }
     const res = await fetchData( data, url, {
@@ -366,7 +366,7 @@ class ActiveAdd extends React.Component<any, any> {
       {this.renderHeaderComponent(name, key)}
       <div className="active-view-content">
         <Upload
-          action="//127.0.0.1:3100/upload"
+          action={`${APISERVER}/upload`}
           listType="picture-card"
           fileList={config.fileList}
           onPreview={this.handleImgPreview}
