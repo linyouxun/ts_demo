@@ -1,5 +1,18 @@
 const fs = require('fs');
 
+// 解析url后缀参数
+function strToObj(str) {
+  if (str.trim() === '') return;
+  str = decodeURIComponent(str);
+  return str.split('&').map(item => {
+    var a = item.split('=');
+    return {
+      key: a[0],
+      value: a[1],
+    }
+  })
+}
+
 // 获取上传文件后缀
 function getUploadFileExt(name) {
   const ext = name.split('.');
@@ -54,5 +67,7 @@ module.exports = {
   checkDirExist,
   checkFileExist,
   getUploadDirName,
-  setShortNum
+  setShortNum,
+  strToObj,
+  copyObj
 };

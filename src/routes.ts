@@ -8,6 +8,8 @@ import CaseAdd from './CaseAdd';
 import ActiveList from './active/ActiveList';
 import ActiveAdd from './active/ActiveAdd';
 import NotFound from './NotFound';
+// 统计页面
+import StatisticsList from './statistics/StatisticsList';
 
 interface Iprop {
   breadcrumbName?: string,
@@ -86,6 +88,11 @@ export const routes = [{
   }],
   component:ActiveList,
   path:'/active',
+  sideIcon: 'anticon anticon-file-word',
+}, {
+  breadcrumbName:'页面统计',
+  component: StatisticsList,
+  path:'/statistics',
   sideIcon: 'anticon anticon-file-word',
 }, {
   component:NotFound,

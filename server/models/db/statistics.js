@@ -9,7 +9,15 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const StatisticsSchema = new Schema({
   currentHtml: String,
+  currentHtmlParams: [{
+    key: String,
+    value: String,
+  }],
   source: String,
+  sourceParams: [{
+    key: String,
+    value: String,
+  }],
   ip: String,
   timestamp: String,
   deviseStr: String,
@@ -18,7 +26,7 @@ const StatisticsSchema = new Schema({
     screen: String,
     browser: String
   },
-  city: {
+  cityInfo: {
     province: String,
     city: String,
     adcode: String,

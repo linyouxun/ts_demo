@@ -3,7 +3,7 @@ const koaBody = require('koa-body');
 const path = require('path');
 const util = require('./utils/tools');
 const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml, updateConfigHtml } = require('./controller/configHtml');
-const { statistics } = require('./controller/statistics');
+const { statistics, statisticsList } = require('./controller/statistics');
 const { cityLocation, cityList, cityListFull, citySetList } = require('./controller/city');
 const { addImg } = require('./controller/configFile');
 const { return204 } = require('./controller/base');
@@ -47,12 +47,13 @@ module.exports = function() {
   router.get('/api2/active/list/item', getConfigHtmlItem);
   // 统计
   router.get('/statistics/count.png', statistics);
+  router.get('/api2/statistics/list', statisticsList);
   // 城市
-  router.get('/city/location', cityLocation);
-  router.get('/city/list', cityList);
-  router.get('/city/listFull', cityListFull);
+  router.get('/api2/city/location', cityLocation);
+  router.get('/api2/city/list', cityList);
+  router.get('/api2/city/listFull', cityListFull);
 
   // 设置城市
-  // router.get('/city/setList', citySetList);
+  router.get('/api2/city/setList', citySetList);
   return router;
 }
