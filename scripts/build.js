@@ -1,6 +1,10 @@
 'use strict';
-process.env.BABEL_ENV = 'production';
-process.env.NODE_ENV = 'production';
+// process.env.BABEL_ENV = 'production';
+// process.env.NODE_ENV = 'production';
+console.log(process.env.NODE_ENV);
+process.env.BABEL_ENV = process.env.BABEL_ENV || 'production';
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
 process.env.GENERATE_SOURCEMAP = false;
 process.on('unhandledRejection', err => {
   throw err;

@@ -18,8 +18,8 @@ exports.addConfigStatisticsItem = async (config) => {
 exports.listStatisticsItem = async (currentPage, pageSize, params) => {
   let query = Statistics.find({});
   const total = await query.countDocuments();
-  query = Statistics.find({});
-  const list = await query.skip((currentPage - 1) * pageSize).limit(+pageSize).exec();
+  query = Statistics.find({}).sort({'_id': -1}).skip((currentPage - 1) * pageSize).limit(+pageSize);
+  const list = await query.exec();
   return {
     list,
     pageSize: +pageSize,

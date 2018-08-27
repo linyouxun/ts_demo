@@ -12,6 +12,7 @@ import './StatisticsList.less';
 enum FixedTpye {
   right = 'right',
   left = 'left',
+  center = 'center'
 }
 
 class StatisticsList extends React.Component<any, any> {
@@ -22,18 +23,18 @@ class StatisticsList extends React.Component<any, any> {
   }
   public state = {
     column: [
-      {title: '序号', dataIndex: 'index', width: 65, render:(text: any, record: any, index: any)=> {
+      {title: '序号', dataIndex: 'index', width: 90, align: FixedTpye.center, render:(text: any, record: any, index: any)=> {
         const { currentPage, pageSize } = this.page;
-        return <div>{ (currentPage - 1) * pageSize + index + 1 }</div>
+        return <div className="item-index">{ (currentPage - 1) * pageSize + index + 1 }</div>
       }},
-      {title: 'ID', dataIndex: '_id', width: 220,},
-      {title: '当前页面', dataIndex: 'currentHtml', render:(text: any,record: any, index: any)=> {
-        return  <div className="item-html">{text}</div>
+      {title: 'ID', dataIndex: '_id', width: 220},
+      {title: '当前页面', dataIndex: 'currentHtml', width: 635, render:(text: any,record: any, index: any)=> {
+        return  <div title={text} className="item-html">{text}</div>
       }},
       {title: '访问时间', dataIndex: 'createTime',width: 180, render:(text: any,record: any, index: any)=> {
-        return  <div>{moment(record.stamptime).format('YYYY-MM-DD hh:mm:ss')}</div>
+        return  <div>{moment(+record.timestamp).format('YYYY-MM-DD hh:mm:ss')}</div>
       }},
-      {dataIndex: 'operation', fixed: FixedTpye.right, width: 100, render:(text: number | string | boolean, record: object, index: number)=> {
+      {dataIndex: 'operation', width: 100, render:(text: number | string | boolean, record: object, index: number)=> {
         return <div>
           操作
         </div>
@@ -81,6 +82,7 @@ class StatisticsList extends React.Component<any, any> {
   public onPageChange(current: any, pageSize: any) {
     this.loadList(+pageSize, +current);
   }
+
   public render(): JSX.Element {
     const { column, loading, list } = this.state;
     const { pageSize, currentPage, total } = this.page;
@@ -112,7 +114,7 @@ class StatisticsList extends React.Component<any, any> {
         <StatisticsFilter onSubmit={this.onSubmit}/>
       </FormField>
       <FormField>
-        <Table scroll={{x:1200}} {...tableProps} />
+        <Table scroll={{x:1300}} {...tableProps} />
       </FormField>
     </div>;
   }

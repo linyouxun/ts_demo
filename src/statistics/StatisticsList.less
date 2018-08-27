@@ -1,7 +1,30 @@
 .statistics-list {
-  .item-html {
-    min-width: 635px;
-    word-break: break-all;
-    overflow: auto;
+  .item-index {
+    // width: 100px;;
+  }
+  td {
+    overflow: hidden;
+    .item-html {
+      max-width: 635px;
+      word-break: break-all;
+      white-space: nowrap;
+    }
+  }
+}
+
+
+.table-header {
+  text-align: right;
+  display: flex;
+  &-list {
+    flex: 1;
+    &-item {
+      display: inline-block;
+      padding: 0 16px;
+    }
+  }
+  &-set {
+    width: 50px;
+    text-align: center;
   }
 }
