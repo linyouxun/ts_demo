@@ -3,7 +3,7 @@ const { fetchData } = require('../utils/request');
 const { GAODE_KEY } = require('../utils/const');
 const { strToObj } = require('../utils/tools');
 const { ihdr, idat } = require('../utils/png');
-const { success } = require('./base');
+const { success, falied } = require('./base');
 const { addConfigStatisticsItem, listStatisticsItem } = require('../dbhelper/configStatistics');
 
 exports.statistics = async function(ctx, next) {
@@ -62,12 +62,18 @@ exports.statistics = async function(ctx, next) {
 
 exports.statisticsList = async function(ctx, next) {
   // 筛选条件
-  let { currentPage = 1, pageSize = 10 } = ctx.query;
+  let { currentPage = 1, pageSize = 10 , extraData = {}} = ctx.query;
   currentPage = Math.floor(currentPage);
   if (+currentPage < 1) {
     currentPage = 1;
   }
   const params = {};
+  try {
+    params = JSON.parse(extraData);
+  } catch (error) {
+    return falied(ctx, next, '额外参数出错了')
+  }
+  console.log(params);
   const res = await listStatisticsItem(+currentPage, +pageSize, params);
   success(ctx, next, res);
 }
