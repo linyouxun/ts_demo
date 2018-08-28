@@ -67,13 +67,13 @@ exports.statisticsList = async function(ctx, next) {
   if (+currentPage < 1) {
     currentPage = 1;
   }
-  const params = {};
+  let params = {};
   try {
     params = JSON.parse(extraData);
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
   }
-  console.log(params);
+
   const res = await listStatisticsItem(+currentPage, +pageSize, params);
   success(ctx, next, res);
 }

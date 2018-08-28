@@ -18,7 +18,25 @@ class StatisticsFilter extends React.Component<IProps & FormComponentProps, any>
     super(props);
     this.onSubmit = this.onSubmit.bind(this);
     this.onReset = this.onReset.bind(this);
+    this.filterOption = this.filterOption.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.state = {
+      inputValue: '全国'
+    }
   }
+
+  public onChange() {
+    this.setState({
+      inputValue: '全国'
+    });
+  }
+
+  public filterOption(inputValue: any) {
+    this.setState({
+      inputValue
+    });
+  }
+
   public onSubmit(e: any) {
     e.preventDefault();
     const {form, onSubmit} = this.props;
@@ -37,6 +55,7 @@ class StatisticsFilter extends React.Component<IProps & FormComponentProps, any>
   }
   public render(): JSX.Element {
     const {form, cityList} = this.props;
+    const { inputValue } = this.state;
     const {getFieldDecorator} = form;
     const formProps = {
       labelCol: {
@@ -47,7 +66,12 @@ class StatisticsFilter extends React.Component<IProps & FormComponentProps, any>
       },
     }
     const children = [];
-    for (const iterator of cityList) {
+    let i = 0;
+    const tempList = cityList.filter(item => RegExp(inputValue).test(item.name));
+    for (const iterator of tempList) {
+      if (i++ > 20) {
+        break;
+      }
       children.push(<Option key={iterator.adcode} value={iterator.name}>{iterator.name}</Option>);
     }
     return (
@@ -75,6 +99,9 @@ class StatisticsFilter extends React.Component<IProps & FormComponentProps, any>
                     mode="multiple"
                     style={{ width: '100%' }}
                     placeholder="页面访问城市"
+                    onSearch={this.filterOption}
+                    onChange={this.onChange}
+                    onBlur={this.onChange}
                   >
                     {children}
                   </Select>
@@ -88,6 +115,9 @@ class StatisticsFilter extends React.Component<IProps & FormComponentProps, any>
                     mode="multiple"
                     style={{ width: '100%' }}
                     placeholder="页面投放城市"
+                    onSearch={this.filterOption}
+                    onChange={this.onChange}
+                    onBlur={this.onChange}
                   >
                     {children}
                   </Select>

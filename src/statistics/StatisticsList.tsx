@@ -34,7 +34,7 @@ class StatisticsList extends React.Component<any, any> {
         return  <div title={text} className="item-html">{text}</div>
       }},
       {title: '访问时间', dataIndex: 'createTime',width: 180, render:(text: any,record: any, index: any)=> {
-        return  <div>{moment(+record.timestamp).format('YYYY-MM-DD hh:mm:ss')}</div>
+        return  <div>{moment(+record.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
       }},
       {dataIndex: 'operation', width: 100, render:(text: number | string | boolean, record: object, index: number)=> {
         return <div>
@@ -121,11 +121,13 @@ class StatisticsList extends React.Component<any, any> {
       data.time = [params.time[0].valueOf(), params.time[1].valueOf()];
     }
     this.extraData = data;
+    this.page.currentPage = 1;
     const { pageSize, currentPage } = this.page;
     this.loadList(pageSize, currentPage);
   }
   public onReset() {
     this.extraData = {};
+    this.page.currentPage = 1;
     const { pageSize, currentPage } = this.page;
     this.loadList(pageSize, currentPage);
   }
@@ -143,6 +145,7 @@ class StatisticsList extends React.Component<any, any> {
       dataSource: list,
       loading,
       pagination: {
+        current: currentPage,
         total,
         showSizeChanger: true,
         showQuickJumper: true,
