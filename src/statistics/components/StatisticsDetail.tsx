@@ -31,7 +31,7 @@ class StatisticsDetail extends React.Component<IStatisticsDetailProps, any> {
           <div className="ant-form-item-label"><label className="label">ip</label>{ip}</div>
         </Col>
         <Col span={18} title={source}>
-          <div className="ant-form-item-label"><label className="label">来源</label>{source}</div>
+          <div className="ant-form-item-label statistics-filter-source"><label className="label">来源</label>{source}</div>
         </Col>
       </Row>
       <Row>
