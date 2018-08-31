@@ -36,14 +36,28 @@ function saveHtml(id, htmlData) {
   const htmlRootPath =  path.resolve(__dirname, '../../static/html/', id+'');
   const htmlJsPath =  path.resolve(htmlRootPath, 'js');
   const htmlCssPath =  path.resolve(htmlRootPath, 'css');
+  const htmlImgPath =  path.resolve(htmlRootPath, 'img');
   // 判断创建目录
   util.checkDirExist(htmlRootPath);
   util.checkDirExist(htmlJsPath);
   util.checkDirExist(htmlCssPath);
+  util.checkDirExist(htmlImgPath);
   fs.writeFileSync(htmlRootPath + '/index.html', renderHtml(htmlData));
   fs.writeFileSync(htmlJsPath + '/index.js', renderJs(htmlData));
   fs.writeFileSync(htmlJsPath + '/layer.js', jsLayerRender());
   fs.writeFileSync(htmlCssPath + '/layer.css', cssLayerRender());
+  // 拷贝文件
+  for (const iterator of htmlData.configList) {
+    if (iterator.key === ActiveComponentType.pic.key) {
+      for (const iterator2 of iterator.config.fileList) {
+        const src = path.resolve(__dirname, '../../static/images/', './' + iterator2.url.split('images').pop());
+        const descSrc = path.resolve(htmlImgPath , './' + iterator2.url.split('/').pop());
+        util.copyFile(src, descSrc);
+      }
+    }
+  }
+  console.log(htmlRootPath);
+  util.tarDir(id, htmlRootPath);
 
   return {
     code: 200,

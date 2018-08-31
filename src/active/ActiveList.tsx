@@ -34,6 +34,8 @@ class ActiveList extends React.Component<any, any> {
           <Popconfirm title={'确定要删除么？？？'} onConfirm={this.deleteRecord.bind(this, record)} okText="是的" cancelText="点错了">
             <a className="dangerous-tips">删除</a>
           </Popconfirm>
+          <div className="ant-divider ant-divider-vertical"/>
+          <a className='primary-tips' onClick={this.downloadHtml.bind(this, record)}>下载</a>
         </div>
       }, title: '操作'}
     ],
@@ -45,6 +47,10 @@ class ActiveList extends React.Component<any, any> {
     this.onSubmit = this.onSubmit.bind(this);
     this.onAdd = this.onAdd.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
+  }
+
+  public downloadHtml(record: any) {
+    window.open(`/api2/active/download/${record._id}`);
   }
 
   public componentDidMount() {

@@ -2,7 +2,7 @@ const Router = require('koa-router');
 const koaBody = require('koa-body');
 const path = require('path');
 const util = require('./utils/tools');
-const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml, updateConfigHtml } = require('./controller/configHtml');
+const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml, updateConfigHtml, downloadData } = require('./controller/configHtml');
 const { statistics, statisticsList } = require('./controller/statistics');
 const { cityLocation, cityList, cityListFull, citySetList } = require('./controller/city');
 const { addImg } = require('./controller/configFile');
@@ -45,6 +45,8 @@ module.exports = function() {
   router.post('/api2/active/list/update', updateConfigHtml);
   router.get('/api2/active/list', listConfigHtml);
   router.get('/api2/active/list/item', getConfigHtmlItem);
+  router.get('/api2/active/download/:id', downloadData);
+
   // 统计
   router.get('/statistics/count.png', statistics);
   router.get('/api2/statistics/list', statisticsList);

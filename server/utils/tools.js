@@ -1,4 +1,5 @@
 const fs = require('fs');
+var exec = require('child_process').exec;
 
 // 解析url后缀参数
 function strToObj(str) {
@@ -51,6 +52,28 @@ function checkFileExist(p) {
   return fs.existsSync(p);
 }
 
+function copyFile(src, descSrc) {
+  if (checkFileExist(src)) {
+    fs.writeFileSync(descSrc, fs.readFileSync(src));
+    // fs.copyFile(src, descPath, fs.constants.COPYFILE_EXCL, (err) => {
+    //   console.log('1----------', err)
+    // });
+  }
+}
+
+function tarDir(id, path) {
+  var cmdStr = `cd ./static/html/${id} && tar cvf ${id}.tar * --exclude=${id}.tar `;
+  // tar -czf ${id}.tar ./static/html/${id} ./static/html/${id}/
+  console.log(cmdStr);
+  exec(cmdStr, function(err){
+    if(err) {
+      console.log('get weather api error:' + err);
+    } else {
+      console.log('success');
+    }
+  });
+}
+
 function setShortNum(num, minLen) {
 	let str = '';
 	const munLen = num.length;
@@ -81,5 +104,7 @@ module.exports = {
   setShortNum,
   strToObj,
   copyObj,
-  filterSpecialChar
+  filterSpecialChar,
+  copyFile,
+  tarDir
 };

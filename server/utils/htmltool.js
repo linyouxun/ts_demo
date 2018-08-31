@@ -168,7 +168,7 @@ function htmlImgList({fileList}) {
 function htmlImg(src) {
   return `
   <div>
-    <img src="${src}"/>
+    <img src="./img/${src.split('/').pop()}"/>
   </div>`;
 }
 

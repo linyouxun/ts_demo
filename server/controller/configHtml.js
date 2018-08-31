@@ -1,6 +1,8 @@
+const path = require('path');
+const fs = require('fs');
 const configHtmlHelper =  require('../dbhelper/configHtmlHelper');
 const { success, falied } = require('./base');
-const { setShortNum } = require('../utils/tools');
+const { setShortNum, checkFileExist } = require('../utils/tools');
 const { saveHtml } = require('../utils/html');
 
 
@@ -69,5 +71,18 @@ exports.getConfigHtmlItem = async(ctx, next) => {
     success(ctx, next, res);
   } else {
     falied(ctx, next, `id(${id})不能为空或者id不存在`);
+  }
+}
+
+exports.downloadData = async(ctx, next) => {
+  const { id } = ctx.params;
+  if(!!ctx.params.id) {
+    const pathUrl = path.resolve(__dirname, `../../static/html/${id}/${id}.tar`);
+    if (checkFileExist(pathUrl)) {
+      ctx.set('Content-disposition','attachment;filename=' + id + '.tar'); // 是设置下载的文件名
+      ctx.body = fs.createReadStream(pathUrl);
+    } else {
+      falied(ctx, next, '文件不存在 ^_^');
+    }
   }
 }
