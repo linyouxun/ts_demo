@@ -8,6 +8,7 @@ interface IProps {
   size?: ButtonSize;
   color: string;
   width?: string;
+  pos?: 'bottom' | 'top';
 }
 interface IStyleProps {
   backgroundColor: string;
@@ -40,7 +41,7 @@ export class PickerButton extends React.Component<IProps , any> {
       style.width = this.props.width;
     }
     return <Button style={style} size={this.props.size} className="picker-div" onClick={ this.handleClose.bind(this, true) }>
-      {flat ? <div className="display-color-picker" onClick={ this.handleClose.bind(this, false) }/> : null}
+      {flat ? <div className={'display-color-picker picker-' + (this.props.pos || 'top')} onClick={ this.handleClose.bind(this, false) }/> : null}
       {flat ? <SketchPicker color={this.props.color} onChange={ this.handleChange }/> : null}
     </Button>
   }

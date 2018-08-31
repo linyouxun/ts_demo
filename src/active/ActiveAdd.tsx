@@ -2,12 +2,14 @@ import * as React from 'react';
 import ContentHeader from "../components/ContentHeader";
 // import FormField from "../components/FormField";
 import PickerButton from '../components/PickerButton';
-import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin } from 'antd';
+import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin, Slider } from 'antd';
 const ButtonGroup = Button.Group;
-import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem } from '../util/const';
+import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem, marksWidth, marksRadius } from '../util/const';
 import { fetchData } from "../util/request";
 import ActiveView, { IConfigObj } from './components/ActiveView';
 import './ActiveAdd.less';
+
+
 
 interface IComponentType {
   key: string | number;
@@ -32,6 +34,9 @@ class ActiveAdd extends React.Component<any, any> {
       configBase: {
         title: '',
         bgColor: 'rgb(239, 239, 239)',
+        modelColor: 'rgb(158, 158, 158)',
+        formRadius: 0,
+        formWidth: [10, 90],
       },
       modalVisible: false,
       previewImage: '',
@@ -71,6 +76,15 @@ class ActiveAdd extends React.Component<any, any> {
     }
     if (key === 'color') {
       configBase.bgColor = `rgba(${e.rgb.r},${e.rgb.g},${e.rgb.b},${e.rgb.a})`;
+    }
+    if (key === 'modelColor') {
+      configBase.modelColor = `rgba(${e.rgb.r},${e.rgb.g},${e.rgb.b},${e.rgb.a})`;
+    }
+    if (key === 'formWidth') {
+      configBase.formWidth = e;
+    }
+    if (key === 'formRadius') {
+      configBase.formRadius = e;
     }
     this.setState({
       configBase
@@ -141,12 +155,18 @@ class ActiveAdd extends React.Component<any, any> {
       }
       case ActiveAdd.componentType.form.key: {
         configObj.config = {
-          checkList: ['moblie'],
-          moblie: {
-            tip: ActiveAdd.formItem.moblie.tip,
-            errorTip: ActiveAdd.formItem.moblie.errorTip,
-            bgColor: ActiveAdd.formItem.moblie.bgColor,
-            color: ActiveAdd.formItem.moblie.color
+          checkList: ['mobile', 'name'],
+          mobile: {
+            tip: ActiveAdd.formItem.mobile.tip,
+            errorTip: ActiveAdd.formItem.mobile.errorTip,
+            bgColor: ActiveAdd.formItem.mobile.bgColor,
+            color: ActiveAdd.formItem.mobile.color
+          },
+          name: {
+            tip: ActiveAdd.formItem.name.tip,
+            errorTip: ActiveAdd.formItem.name.errorTip,
+            bgColor: ActiveAdd.formItem.name.bgColor,
+            color: ActiveAdd.formItem.name.color
           },
           button: {
             tip: '提交信息',
@@ -305,6 +325,20 @@ class ActiveAdd extends React.Component<any, any> {
         configTmpList.splice(+index + 1, 0, ...configObj);
         break;
       }
+      case ARROW.HIDE: {
+        // 最小化
+        const configObj = configTmpList[index];
+        configObj.show = false;
+        configTmpList[index] = configObj;
+        break;
+      }
+      case ARROW.SHOW: {
+        // 最大化
+        const configObj = configTmpList[index];
+        configObj.show = true;
+        configTmpList[index] = configObj;
+        break;
+      }
       default:
         break;
     }
@@ -312,11 +346,18 @@ class ActiveAdd extends React.Component<any, any> {
       configList: configTmpList
     })
   }
-  public renderHeaderComponent(name: string | JSX.Element, key: string) {
+  public renderHeaderComponent(name: string | JSX.Element, key: string, show: boolean | undefined) {
     return (
     <div className="active-view-name">
       {name}
       <div className="close">
+        {
+          !show ? <Button title="展开" ghost={true} size="small" type="primary" onClick={this.moveConfigList.bind(this, key, ARROW.SHOW)}>
+            <Icon type="plus" />
+          </Button> : <Button title="缩小" ghost={true} size="small" type="primary" onClick={this.moveConfigList.bind(this, key, ARROW.HIDE)}>
+            <Icon type="minus" />
+          </Button>
+        }
         <ButtonGroup size="small">
           <Button title="上移" ghost={true} size="small" type="primary" onClick={this.moveConfigList.bind(this, key, ARROW.UP)}>
             <Icon type="arrow-up" />
@@ -346,7 +387,25 @@ class ActiveAdd extends React.Component<any, any> {
         <Row style={{paddingBottom: '.5rem'}}>
           <Col className="ant-form-item-label" span={4}>背景颜色:</Col>
           <Col span={20}>
-            <PickerButton handleChange={this.handleChange.bind(this, 'color')} size="large" color={configBase.bgColor}/>
+            <PickerButton pos={'bottom'} handleChange={this.handleChange.bind(this, 'color')} size="large" color={configBase.bgColor}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>弹框颜色:</Col>
+          <Col span={20}>
+            <PickerButton pos={'bottom'} handleChange={this.handleChange.bind(this, 'modelColor')} size="large" color={configBase.modelColor}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>表单宽度:</Col>
+          <Col span={20}>
+            <Slider range={true} marks={ marksWidth } step={1} value={configBase.formWidth} onChange={this.handleChange.bind(this, 'formWidth')}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>表单圆角:</Col>
+          <Col span={20}>
+            <Slider max={25} min={0} marks={ marksRadius } step={1} value={configBase.formRadius} onChange={this.handleChange.bind(this, 'formRadius')}/>
           </Col>
         </Row>
       </div>
@@ -354,7 +413,7 @@ class ActiveAdd extends React.Component<any, any> {
   }
   // 图片组件
   public renderImgComponent(configObj: IConfigObj, key: string) {
-    const { name, config } = configObj;
+    const { name, config, show = false } = configObj;
     const { previewVisible, previewImage } = this.state;
     const uploadButton = (
       <div>
@@ -362,9 +421,21 @@ class ActiveAdd extends React.Component<any, any> {
         <div className="ant-upload-text">Upload</div>
       </div>
     );
+    let style: {
+      height?: string;
+      overflow?: string;
+      padding?: string;
+    } = {
+      height: '0',
+      overflow: 'hidden',
+      padding: '0'
+    };
+    if (show) {
+      style = {}
+    }
     return (<div key={key} className="active-view">
-      {this.renderHeaderComponent(name, key)}
-      <div className="active-view-content">
+      {this.renderHeaderComponent(name, key, show)}
+      <div className="active-view-content" style={style}>
         <Upload
           action={`${APISERVER}/upload`}
           listType="picture-card"
@@ -382,7 +453,7 @@ class ActiveAdd extends React.Component<any, any> {
   }
   // 表单组件
   public renderFormComponent(configObj: IConfigObj, key: string) {
-    const { name, config } = configObj;
+    const { name, config, show } = configObj;
     const checkListDom = [];
     for (const itemName in ActiveAdd.formItem) {
       if (ActiveAdd.formItem.hasOwnProperty(itemName)) {
@@ -390,9 +461,21 @@ class ActiveAdd extends React.Component<any, any> {
         checkListDom.push(<Col key={itemName} span={4}><Checkbox value={itemName}>{element.name}</Checkbox></Col>);
       }
     }
+    let style: {
+      height?: string;
+      overflow?: string;
+      padding?: string;
+    } = {
+      height: '0',
+      overflow: 'hidden',
+      padding: '0'
+    };
+    if (show) {
+      style = {}
+    }
     return (<div key={key} className="active-view">
-      {this.renderHeaderComponent(name, key)}
-      <div className="active-view-content">
+      {this.renderHeaderComponent(name, key, show)}
+      <div className="active-view-content" style={style}>
         <Checkbox.Group style={{ width: '100%' }} defaultValue={config.checkList} onChange={this.onCheckBoxChange.bind(this, key)}>
           <Row>
             {checkListDom}

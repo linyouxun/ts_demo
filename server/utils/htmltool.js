@@ -1,4 +1,4 @@
-function htmlhead(title, bgColor) {
+function htmlhead(title, bgColor, modelColor) {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -12,6 +12,7 @@ function htmlhead(title, bgColor) {
               margin: 0;
               padding: 0;
               vertical-align: bottom;
+              box-sizing: border-box;
           }
           html, body {
               ${!!bgColor ? 'background:' + bgColor + ';'  : 'background: #e7165a;'}
@@ -26,12 +27,11 @@ function htmlhead(title, bgColor) {
               left: 1.5vw;
               right: 0;
               top: 4vw;
-              text-align: center;
               margin: 4vw 0;
           }
           input {
               outline: none;
-              width: 72vw;
+              width: 80vw;
               height: 11vw;
               line-height: 11vw;
               font-size: 3.5vw;
@@ -69,19 +69,17 @@ function htmlhead(title, bgColor) {
           }
 
           .submit-btn {
-              background: #fffc19;
-              width: 72vw;
+              width: 80vw;
               padding: 0 11px;
               height: 11vw;
               line-height: 11vw;
               font-size: 4vw;
-              color: #e74a75;
               border-radius: 5px;
               display: inline-block;
               margin-top: 2vw;
-              font-weight: 500;
               margin-left: 0.5vw;
               font-weight: bold;
+              text-align: center;
           }
 
           .modal-content {
@@ -104,7 +102,7 @@ function htmlhead(title, bgColor) {
           }
           .title {
               display: block;
-              background: #e6416c;
+              ${!!modelColor ? 'background:' + modelColor + ';': 'background: #9e9e9e;'}
               color: #fff;
               margin-top: -20px;
               height: 12vw;
@@ -128,7 +126,7 @@ function htmlhead(title, bgColor) {
               height: 11vw;
               line-height: 11vw;
               font-size: 5vw;
-              color: #e6416c;
+              ${!!modelColor ? 'color:' + modelColor + ';': 'color: #9e9e9e;'}
               display: inline-block;
               font-weight: 500;
               margin-bottom: -25px;
@@ -174,17 +172,30 @@ function htmlImg(src) {
   </div>`;
 }
 
-function htmlForm(formData) {
+function htmlForm(formData, count, configBase) {
   const { checkList } = formData;
   let inputs = '';
+  if (!configBase.formWidth || configBase.formWidth.length < 1) {
+    configBase.formWidth = [10, 90];
+  }
+  if (!configBase.formRadius) {
+    configBase.formRadius = 0;
+  }
   for(const item of checkList) {
-    inputs += htmlInput(item, formData[item])
+    inputs += htmlInput(item, formData[item], configBase)
   }
   return `
+  <style>
+    .form-item {
+      margin-left:${configBase.formWidth[0]}vw;
+      width:${configBase.formWidth[1] - configBase.formWidth[0]}vw;
+      border-radius: ${configBase.formRadius / 50 * 11}vw;
+    }
+  </style>
   <div class="relative">
     <div class="form">
         ${inputs}
-        <div style="color:${formData.button.color};background-color:${formData.button.bgColor}" id="submit" class="submit-btn" onclick="send('${checkList.join("','")}')">${formData.button.tip}</div>
+        <div style="color:${formData.button.color};background-color:${formData.button.bgColor}" id="submit" class="submit-btn form-item" onclick="send${count}('${checkList.join("','")}')">${formData.button.tip}</div>
     </div>
   </div>`;
 }
@@ -213,7 +224,7 @@ function htmlInput(id, inputItem) {
         background-color:${inputItem.bgColor};
       }
     </style>
-    <input id="${id}" type="text" placeholder="${inputItem.tip}">
+    <input id="${id}" class="form-item" placeholder="${inputItem.tip}">
   `;
 }
 
@@ -234,6 +245,7 @@ function htmlModel() {
 function htmlFooter() {
   return `
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="http://47.106.174.88/statistics/s.js"></script>
   <script src="./js/layer.js"></script>
   <script src="./js/index.js"></script>
   </body>
@@ -270,82 +282,117 @@ function jsLoction() {
   }
   getLoction();
   var city_id = '316';
-  var city_name = '广州';`;
+  var city_name = '广州';
+  var isSend = false;`;
 }
 
-function jsFormPost() {
+function jsFormPost(htmlData) {
+  var str = ''
+  htmlData.configList.filter(item => {
+    if(item.key == 2) {
+      str += `
+    function send${item.count}(${item.config.checkList.join(',')}) {
+        if (isSend) return;
+        ${item.config.checkList.map(item2 => {
+          return `
+        ${item2} = document.getElementById('${item2}').value || '';
+        if (!${item2}Check(${item2}, '${item.config[item2].errorTip}' || '')) return;`
+        }).join('')}
+        disableBtn${item.count}();
+        var url = 'http://m.yoju360.com/api/';
+        $.ajax({
+            url: url,
+            type:"POST",
+            dataType:"json",
+            data:{
+                apiURL: 'decorate/decoration/apply',
+                cityId: city_id,
+                cityName: city_name,
+                ${item.config.checkList.map(item2 => {
+                  if (item2 === 'name') {
+                    return `nickName: name,
+                cName: name,`
+                  }
+                  if (item2 === 'mobile') {
+                    return `
+                mobile: mobile,`
+                  }
+                }).join('')}
+                phoneMsg: 1,
+                smsMsg: 1,
+                utmSource: getUrlParam('utm_source'),
+                channelCity: getUrlParam('channel_city'),
+            },
+            success:function(response){
+                ableBtn${item.count}();
+                if (response.code == 200) {
+                    submit();
+                } else {
+                    layer.open({
+                        content: '网络出现问题，请重新提交'
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                }
+            },
+            error:function() {
+                ableBtn${item.count}();
+                layer.open({
+                    content: '网络出现问题，请重新提交'
+                    ,skin: 'msg'
+                    ,time: 2 //2秒后自动关闭
+                });
+            }
+        });
+    }
+    function ableBtn${item.count}() {
+      isSend = false;
+      document.getElementById('submit').style = 'color:${item.config.button.color};background-color:${item.config.button.bgColor}';
+      document.getElementById('submit').innerText = '${item.config.button.tip}';
+    }
+    function disableBtn${item.count}() {
+      isSend = true;
+      document.getElementById('submit').style = 'background: lightgray;color:#000';
+      document.getElementById('submit').innerText = '${!!item.config.button.errorTip ? item.config.button.errorTip : '预约提交中...'}';
+    }
+    `;
+    }
+  });
+  return str;
+}
+
+function jsExtra(htmlData) {
   return `
-  var isSend = false;
-  function send(params, params2) {
-      if (isSend) return;
-      var name = document.getElementById(params).value || '';
-      var phone = document.getElementById(params2).value || '';
-      if (name.trim().length == 0) {
-          return layer.open({
-              content: '姓名不能为空'
-              ,skin: 'msg'
-              ,time: 2 //2秒后自动关闭
-          });
-      }
-      if (phone.trim().length == 0) {
-          return layer.open({
-              content: '手机号码不能为空'
-              ,skin: 'msg'
-              ,time: 2 //2秒后自动关闭
-          });
-      }
-      if (!isPoneAvailable(phone)) {
-          return layer.open({
-              content: '手机号码格式错误'
-              ,skin: 'msg'
-              ,time: 2 //2秒后自动关闭
-          });
-      }
-      disableBtn();
-      var url = 'http://m.yoju360.com/api/';
-      $.ajax({
-          url: url,
-          type:"POST",
-          dataType:"json",
-          data:{
-              apiURL: 'decorate/decoration/apply',
-              cityId: city_id,
-              cityName: city_name,
-              nickName: name,
-              cName: name,
-              mobile: phone,
-              phoneMsg: 1,
-              smsMsg: 1,
-              utmSource: getUrlParam('utm_source'),
-              channelCity: getUrlParam('channel_city'),
-          },
-          success:function(response){
-              ableBtn();
-              if (response.code == 200) {
-                  submit();
-              } else {
-                  layer.open({
-                      content: '网络出现问题，请重新提交'
-                      ,skin: 'msg'
-                      ,time: 2 //2秒后自动关闭
-                  });
-              }
-          },
-          error:function() {
-              ableBtn();
-              layer.open({
-                  content: '网络出现问题，请重新提交'
-                  ,skin: 'msg'
-                  ,time: 2 //2秒后自动关闭
-              });
-          }
+  function mobileCheck(phone, tip) {
+    if (phone.trim().length == 0) {
+      layer.open({
+          content: tip || '手机号码不能为空'
+          ,skin: 'msg'
+          ,time: 2 //2秒后自动关闭
       });
+      return false;
+    }
+    if (!isPoneAvailable(phone)) {
+      layer.open({
+          content: '手机号码格式错误'
+          ,skin: 'msg'
+          ,time: 2 //2秒后自动关闭
+      });
+      return false;
+    }
+    return true;
   }
-  `;
-}
-
-function jsExtra() {
-  return `
+  function nameCheck(name, tip) {
+    if (name.trim().length == 0) {
+      layer.open({
+          content: tip || '姓名不能为空'
+          ,skin: 'msg'
+          ,time: 2 //2秒后自动关闭
+      });
+      return false;
+    }
+    return true;
+  }
   function isPoneAvailable(phone) {
       var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
       if (!myreg.test(phone)) {
@@ -354,18 +401,6 @@ function jsExtra() {
           return true;
       }
   }
-
-  function disableBtn() {
-      isSend = true;
-      document.getElementById('submit').style = 'background: lightgray;';
-      document.getElementById('submit').innerText = '预约提交中...';
-  }
-  function ableBtn() {
-      isSend = false;
-      document.getElementById('submit').style = '';
-      document.getElementById('submit').innerText = '报名即送顾家无忧枕';
-  }
-
 
   function submit() {
       document.getElementById('modal').style = "display:";

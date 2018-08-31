@@ -3,19 +3,22 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 const ConfigHtmlSchema = new Schema({
+  metaInfo: {
+    createtime: {
+      type: Number,
+      dafault: +Date.now()
+    },
+    updatetime: {
+      type: Number,
+      dafault: +Date.now()
+    }
+  },
   configBase: {
     bgColor: String,
     title: String,
-    meta: {
-      createAt: {
-        type: Number,
-        dafault: +Date.now()
-      },
-      updateAt: {
-        type: Number,
-        dafault: +Date.now()
-      }
-    }
+    modelColor: String,
+    formRadius: Number,
+    formWidth: [Number],
   },
   configList:[{
     config: {
@@ -26,7 +29,7 @@ const ConfigHtmlSchema = new Schema({
         url: String,
       }],
       checkList: [String],
-      moblie: {
+      mobile: {
         bgColor: String,
         color: String,
         tip: String,
@@ -78,10 +81,10 @@ const ConfigHtmlSchema = new Schema({
 
 ConfigHtmlSchema.pre('save', function(next) {
   if (this.isNew) {
-    this.configBase.meta.createAt = this.configBase.meta.updateAt = +Date.now()
+    this.metaInfo.createtime = this.metaInfo.updatetime = +Date.now()
   }
   else {
-    this.configBase.meta.updateAt = +Date.now()
+    this.metaInfo.updatetime = +Date.now()
   }
   next()
 })

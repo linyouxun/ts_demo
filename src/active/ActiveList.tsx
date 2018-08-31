@@ -22,10 +22,10 @@ class ActiveList extends React.Component<any, any> {
       {title: 'ID', dataIndex: '_id'},
       {title: '标题', dataIndex: 'title'},
       {title: '创建时间', dataIndex: 'createTime', render:(text: any,record: any, index: any)=> {
-        return  <div>{moment(record.meta.createAt).format('YYYY-MM-DD hh:mm:ss')}</div>
+        return  <div>{moment(record.createtime).format('YYYY-MM-DD hh:mm:ss')}</div>
       }},
       {title: '修改时间', dataIndex: 'updateTime', render:(text: any,record: any, index: any)=> {
-        return  <div>{moment(record.meta.createAt).format('YYYY-MM-DD hh:mm:ss')}</div>
+        return  <div>{moment(record.updateime).format('YYYY-MM-DD hh:mm:ss')}</div>
       }},
       {dataIndex: 'operation', render:(text: number | string | boolean, record: object, index: number)=> {
         return <div>
@@ -46,10 +46,12 @@ class ActiveList extends React.Component<any, any> {
     this.onAdd = this.onAdd.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
   }
+
   public componentDidMount() {
     const { pageSize, currentPage } = this.page;
     this.loadList(pageSize, currentPage);
   }
+
   public async loadList(pageSize: number | string, currentPage: number | string) {
     this.setState({
       loading: true
@@ -74,6 +76,7 @@ class ActiveList extends React.Component<any, any> {
       });
     }
   }
+
   public onSubmit() {
     console.log('onSubmit');
   }

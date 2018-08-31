@@ -25,8 +25,10 @@ exports.getConfigHtmlItem = async(objectId = '000000000000000000000000') => {
  */
 exports.updateConfigHtmlItem = async(objectId = '000000000000000000000000', config) => {
   const res = await ConfigHtml.findOne({'_id': mongoose.Types.ObjectId(objectId)}).exec();
+  const {metaInfo} = res;
+  metaInfo.updatetime = +new Date();
   if (!!res._id) {
-    const res2 = await ConfigHtml.update({'_id': mongoose.Types.ObjectId(objectId)}, config).exec();
+    const res2 = await ConfigHtml.update({'_id': mongoose.Types.ObjectId(objectId)}, Object.assign(config, {metaInfo})).exec();
     if (res2.ok > 0) {
       return res;
     }
@@ -45,6 +47,7 @@ exports.deleteConfigHtmlItem = async(objectId = '000000000000000000000000') => {
   return res;
 }
 
+
 /**
  * 查找配置列表信息
  */
@@ -57,7 +60,7 @@ exports.listConfigHtml = async(pageSize = 10, currentPage = 1, objectId = '00000
   list = list.map(item => {
     return {
       _id: item._id,
-      meta: item.configBase.meta,
+      meta: item.metaInfo,
       title: item.configBase.title,
     }
   })

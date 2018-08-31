@@ -6,54 +6,30 @@ const util = require('../utils/tools');
 
 
 function renderHtml(htmlData) {
-  let configBase = {};
-  let configList = [];
-  try {
-    configBase = JSON.parse(htmlData.configBase);
-    configList = JSON.parse(htmlData.configList);
-  } catch (error) {
-    return {
-      code: 400,
-      message: ''
-    }
-  }
-  let strHtml = htmlhead(configBase.title, configBase.bgColor);
+  const { configBase, configList } = htmlData;
+  let strHtml = htmlhead(configBase.title, configBase.bgColor, configBase.modelColor);
   for(const item of configList) {
-    strHtml += renderSection(item);
+    strHtml += renderSection(item, configBase);
   }
   strHtml += htmlModel() + htmlFooter();
   return strHtml;
 }
 
-function renderSection(configObj) {
+function renderSection(configObj, configBase) {
   switch (configObj.key) {
     case ActiveComponentType.pic.key:{
       return htmlImgList(configObj.config);
     }
     case ActiveComponentType.form.key:{
-      return htmlForm(configObj.config);
+      return htmlForm(configObj.config, configObj.count, configBase);
     }
     default:
       break;
   }
   return '';
 }
-function renderJs() {
-  return jsLoction() + jsFormPost() + jsExtra();
-}
-
-function renderSection(configObj) {
-  switch (configObj.key) {
-    case ActiveComponentType.pic.key:{
-      return htmlImgList(configObj.config);
-    }
-    case ActiveComponentType.form.key:{
-      return htmlForm(configObj.config);
-    }
-    default:
-      break;
-  }
-  return '';
+function renderJs(htmlData) {
+  return jsLoction() + jsFormPost(htmlData) + jsExtra(htmlData);
 }
 
 function saveHtml(id, htmlData) {
@@ -65,7 +41,7 @@ function saveHtml(id, htmlData) {
   util.checkDirExist(htmlJsPath);
   util.checkDirExist(htmlCssPath);
   fs.writeFileSync(htmlRootPath + '/index.html', renderHtml(htmlData));
-  fs.writeFileSync(htmlJsPath + '/index.js', renderJs());
+  fs.writeFileSync(htmlJsPath + '/index.js', renderJs(htmlData));
   fs.writeFileSync(htmlJsPath + '/layer.js', jsLayerRender());
   fs.writeFileSync(htmlCssPath + '/layer.css', cssLayerRender());
 

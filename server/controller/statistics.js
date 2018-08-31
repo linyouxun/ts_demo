@@ -1,7 +1,7 @@
 var parser = require('ua-parser-js');
 const { fetchData } = require('../utils/request');
 const { GAODE_KEY } = require('../utils/const');
-const { strToObj } = require('../utils/tools');
+const { strToObj, setShortNum, filterSpecialChar } = require('../utils/tools');
 const { ihdr, idat } = require('../utils/png');
 const { success, falied } = require('./base');
 const { addConfigStatisticsItem, listStatisticsItem } = require('../dbhelper/configStatistics');
@@ -70,6 +70,14 @@ exports.statisticsList = async function(ctx, next) {
   let params = {};
   try {
     params = JSON.parse(extraData);
+    if(!!params.id) {
+      if (params.id.length == 24 && /^[0-9a-f]*$/.test(params.id)) {} else {
+        params.id = setShortNum('1', 24);
+      }
+    }
+    if(!!params.html) {
+      params.html = filterSpecialChar(params.html);
+    }
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
   }

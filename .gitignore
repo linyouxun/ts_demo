@@ -9,7 +9,7 @@
 # production
 /build
 /static/*
-!/static/statistics
+#!/static/statistics
 !/static/test.html
 !/static/test2.html
 # misc

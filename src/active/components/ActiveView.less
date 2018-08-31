@@ -36,7 +36,7 @@
       background-color: transparent;
     }
     &-form {
-      text-align: center;
+      // text-align: center;
       padding-bottom: 20px;
       .input {
         outline: none;
@@ -47,6 +47,7 @@
         margin-top: 20px;
         border: 0;
         padding-left: 10px;
+        display: block;
       }
       .submit {
         display: block;
@@ -64,6 +65,46 @@
       }
       .submit:hover {
         opacity: .9;
+      }
+    }
+    .active-component-model {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: rgba(0,0,0,.5);
+      &-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80%;
+        background-color: #fff;
+        transform: translate(-50%, -50%);
+        border-radius: 5px;
+        text-align: center;
+        &-title {
+          height: 50px;
+          line-height: 50px;
+          font-size: 24px;
+          color: #fff;
+        }
+        &-tip {
+          line-height: 40px;
+          height: 40px;
+          color: #333;
+        }
+        &-tip2 {
+          line-height: 40px;
+          height: 40px;
+          color: #999;
+          font-size: 16px;
+        }
+        &-btn {
+          border-top: 1px solid #efefef;
+          line-height: 40px;
+          height: 40px;
+        }
       }
     }
   }

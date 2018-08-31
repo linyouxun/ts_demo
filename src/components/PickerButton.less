@@ -1,8 +1,14 @@
 .picker-div {
   width: 200px;
-  .sketch-picker {
+  .picker-bottom + .sketch-picker {
     position: absolute;
     top: calc(100% + 8px);
+    left: 0;
+    z-index: 999;
+  }
+  .picker-top + .sketch-picker {
+    position: absolute;
+    bottom: calc(100% + 8px);
     left: 0;
     z-index: 999;
   }

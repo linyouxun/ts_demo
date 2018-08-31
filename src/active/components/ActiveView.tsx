@@ -7,10 +7,14 @@ export interface IConfigObj {
   name: string;
   config: any;
   count: string | number;
+  show?: boolean | undefined;
 }
 export interface IConfigBase {
   title: string;
   bgColor: string;
+  modelColor: string;
+  formRadius: number,
+  formWidth: [number],
 }
 
 interface IProps {
@@ -27,11 +31,19 @@ interface IProps {
 class ActiveView extends React.Component<IProps, any> {
   public static componentType = ActiveComponentType;
   public static formItem = ActiveFormItem;
+  public state = {
+    show: false
+  }
+  public clickBtn(show: boolean) {
+    this.setState({
+      show
+    });
+  }
+
   public renderComponent() {
-    const { configList } = this.props;
+    const { configList, configBase } = this.props;
     return (<div>
       {configList.map((item: IConfigObj) => {
-        console.log(item);
         switch(item.key) {
           case ActiveView.componentType.pic.key: {
             return AvtiveViewImg({
@@ -39,7 +51,7 @@ class ActiveView extends React.Component<IProps, any> {
             }, `${item.key}-${item.name}.${item.count}`);
           }
           case ActiveView.componentType.form.key: {
-            return AvtiveViewForm(item.config, `${item.key}-${item.name}.${item.count}`);
+            return AvtiveViewForm(item.config, configBase, this.clickBtn.bind(this, true), `${item.key}-${item.name}.${item.count}`);
           }
           default: {
             break;
@@ -56,9 +68,23 @@ class ActiveView extends React.Component<IProps, any> {
       </div>
       <section className='active-component-view' style={{backgroundColor: this.props.configBase.bgColor}}>
         {this.renderComponent()}
+        {
+          this.state.show ? <AvtiveViewModel bgColor={this.props.configBase.modelColor} onClick={this.clickBtn.bind(this, false)}/> : null
+        }
       </section>
     </div>);
   }
+}
+
+function AvtiveViewModel(props: any) {
+  return <div className="active-component-model" onClick={props.onClick}>
+    <div className="active-component-model-content">
+      <div className="active-component-model-content-title" style={{backgroundColor: props.bgColor}}>提示</div>
+      <div className="active-component-model-content-tip">您填写的信息已提交成功</div>
+      <div className="active-component-model-content-tip2">感谢您的参与</div>
+      <div className="active-component-model-content-btn" style={{color: props.bgColor}}>确定</div>
+    </div>
+  </div>
 }
 
 function AvtiveViewImg(props: any, key: string) {
@@ -76,13 +102,28 @@ function AvtiveViewImg(props: any, key: string) {
   }
   return null;
 }
-function AvtiveViewForm(props: any, key: string) {
+function AvtiveViewForm(props: any, configBase: any, submit: any, key: string) {
   const { checkList } = props;
+  if (!configBase.formWidth || configBase.formWidth.length < 1) {
+    configBase.formWidth = [10, 90];
+  }
+  if (!configBase.formRadius) {
+    configBase.formRadius = 0;
+  }
+  const formStyle = {
+    marginLeft: (configBase.formWidth[0] * 5) + 'px',
+    width: ((configBase.formWidth[1] - configBase.formWidth[0]) * 5) + 'px',
+    borderRadius: configBase.formRadius + 'px',
+  };
   return (<div key={key} className="active-component-view-form">
     {checkList.map((item: any, index: string) => {
-      return (<input style={{color: props[item].color, backgroundColor: props[item].bgColor}} key={index} className="input" type="text" placeholder={props[item].tip}/>);
+      const inputStyle = {
+        color: props[item].color,
+        backgroundColor: props[item].bgColor
+      }
+      return (<input style={Object.assign({}, formStyle, inputStyle)} key={index} className="input" type="text" placeholder={props[item].tip}/>);
     })}
-    <span style={{color: props.button.color, backgroundColor: props.button.bgColor}} className="submit">{props.button.tip}</span>
+    <span onClick={submit} style={Object.assign({}, formStyle, {color: props.button.color, backgroundColor: props.button.bgColor})} className="submit">{props.button.tip}</span>
   </div>)
 }
 

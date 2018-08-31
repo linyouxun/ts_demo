@@ -13,6 +13,17 @@ function strToObj(str) {
   })
 }
 
+// 过滤js中的特殊字符
+function filterSpecialChar(s) {
+  var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]")
+  var rs = "";
+  for (var i = 0; i < s.length; i++) {
+  var c = s.substr(i, 1);
+    rs = rs + c.replace(pattern, '\\'+c);
+  }
+  return rs;
+}
+
 // 获取上传文件后缀
 function getUploadFileExt(name) {
   const ext = name.split('.');
@@ -69,5 +80,6 @@ module.exports = {
   getUploadDirName,
   setShortNum,
   strToObj,
-  copyObj
+  copyObj,
+  filterSpecialChar
 };
