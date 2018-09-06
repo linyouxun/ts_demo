@@ -10,6 +10,9 @@ import ActiveAdd from './active/ActiveAdd';
 import NotFound from './NotFound';
 // 统计页面
 import StatisticsList from './statistics/StatisticsList';
+// 用户管理
+import UserList from './user/UserList';
+
 
 interface Iprop {
   breadcrumbName?: string,
@@ -93,6 +96,11 @@ export const routes = [{
   breadcrumbName:'页面统计',
   component: StatisticsList,
   path:'/statistics',
+  sideIcon: 'anticon anticon-file-word',
+}, {
+  breadcrumbName:'用户管理',
+  component: UserList,
+  path:'/user',
   sideIcon: 'anticon anticon-file-word',
 }, {
   component:NotFound,

@@ -1,13 +1,10 @@
 import * as React from 'react';
-import * as moment from 'moment';
 import ContentHeader from "../components/ContentHeader";
-import StatisticsFilter from "./components/StatisticsFilter";
-import StatisticsDetail from "./components/StatisticsDetail";
 import FormField from "../components/FormField";
 import { Table } from 'antd';
 import { fetchData } from "../util/request";
 import { PAGE, APISERVER } from '../util/const';
-import './StatisticsList.less';
+import './UserList.less';
 
 enum FixedTpye {
   right = 'right',
@@ -15,7 +12,7 @@ enum FixedTpye {
   center = 'center'
 }
 
-class StatisticsList extends React.Component<any, any> {
+class UserList extends React.Component<any, any> {
   public page = {
     pageSize: PAGE.defaultPageSize,
     currentPage: PAGE.defaultCurrentPage,
@@ -25,19 +22,14 @@ class StatisticsList extends React.Component<any, any> {
   public extraData = {};
   public state = {
     column: [
-      {title: '序号', dataIndex: 'index', width: 90, align: FixedTpye.center, render:(text: any, record: any, index: any)=> {
+      {title: '序号', dataIndex: 'index', align: FixedTpye.center, render:(text: any, record: any, index: any)=> {
         const { currentPage, pageSize } = this.page;
         return <div className="item-index">{ (currentPage - 1) * pageSize + index + 1 }</div>
       }},
-      {title: '当前页面', dataIndex: 'currentHtml', width: 635, render:(text: any,record: any, index: any)=> {
-        return  <div title={text} className="item-html">{text}</div>
-      }},
-      {title: 'ID', dataIndex: 'configId', width: 220},
-      {title: '访问次数', dataIndex: 'visitCount', width: 120, align: FixedTpye.center},
-      {title: '访问时间', dataIndex: 'createTime',width: 180, render:(text: any,record: any, index: any)=> {
-        return  <div>{moment(+record.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
-      }},
-      {dataIndex: 'operation', width: 100, render:(text: number | string | boolean, record: object, index: number)=> {
+      {title: 'ID', dataIndex: '_id'},
+      {title: '姓名', dataIndex: 'name'},
+      {title: '手机', dataIndex: 'mobile'},
+      {dataIndex: 'operation', render:(text: number | string | boolean, record: object, index: number)=> {
         return <div>
           操作
         </div>
@@ -56,22 +48,6 @@ class StatisticsList extends React.Component<any, any> {
   public componentDidMount() {
     const { pageSize, currentPage } = this.page;
     this.loadList(pageSize, currentPage);
-    // 加载城市信息
-    this.loadCityInfo();
-  }
-  public async loadCityInfo() {
-    const res = await fetchData({}, `${APISERVER}/api2/city/list`, {
-      method: 'GET'
-    });
-    if (res.code === 200) {
-      let tempList: any[] = [];
-      for (const iterator of res.result) {
-        tempList = [...tempList, ...iterator.districts]
-      }
-      this.setState({
-        cityList: tempList
-      });
-    }
   }
   public async loadList(pageSize: number | string, currentPage: number | string) {
     this.setState({
@@ -81,7 +57,7 @@ class StatisticsList extends React.Component<any, any> {
       pageSize,
       currentPage,
       extraData: JSON.stringify(this.extraData)
-    }, `${APISERVER}/api2/statistics/list`, {
+    }, `${APISERVER}/api2/user/list`, {
       method: 'GET'
     });
     this.setState({
@@ -138,7 +114,7 @@ class StatisticsList extends React.Component<any, any> {
   }
 
   public render(): JSX.Element {
-    const { column, loading, list, cityList } = this.state;
+    const { column, loading, list } = this.state;
     const { pageSize, currentPage, total } = this.page;
     const tableProps = {
       bordered  : true,
@@ -154,24 +130,22 @@ class StatisticsList extends React.Component<any, any> {
         onShowSizeChange: this.onPageChange,
         pageSizeOptions: PAGE.defaultPageSizeOptions,
         pageSize,
-        showTotal: () => `第${currentPage}页, 共有${Math.ceil(Math.ceil(total / pageSize))}页`
-      },
-      expandedRowRender: (record: any, index: number) => {
-        return <StatisticsDetail cityInfo={record.cityInfo} source={record.source} ip={record.ip} deviseInfo={record.deviseInfo}/>;
+        showTotal: () => `第${currentPage}页, 共${Math.ceil(total / pageSize)}页, 有${total}条`
       },
       rowKey    : (record: any, index: number) => {
         return (index + '')
       },
     };
-    return <div className="page statistics-list">
-      <ContentHeader title="页面统计" />
+    return <div className="page user-list">
+      <ContentHeader title="用户管理" />
       <FormField>
-        <StatisticsFilter cityList={cityList} onSubmit={this.onSubmit} onReset={this.onReset}/>
+        2
       </FormField>
       <FormField>
-        <Table scroll={{x:1420}} {...tableProps} />
+        {/* scroll={{x:1300}} */}
+        <Table {...tableProps} />
       </FormField>
     </div>;
   }
 }
-export default StatisticsList;
+export default UserList;

@@ -3,6 +3,11 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 const ConfigHtmlSchema = new Schema({
+  userInfo: {
+    name: String,
+    id: String,
+    leve: String,
+  },
   metaInfo: {
     createtime: {
       type: Number,
@@ -82,9 +87,6 @@ const ConfigHtmlSchema = new Schema({
 ConfigHtmlSchema.pre('save', function(next) {
   if (this.isNew) {
     this.metaInfo.createtime = this.metaInfo.updatetime = +Date.now()
-  }
-  else {
-    this.metaInfo.updatetime = +Date.now()
   }
   next()
 })

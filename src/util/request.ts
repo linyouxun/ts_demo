@@ -22,20 +22,28 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
   }
   if (!(new RegExp('http')).test(url)) {
     url = preUrl + url;
-    params.credentials = 'include';
   }
-  return fetch(url , params).then(resp => {
-    return resp.json()
-  }).catch(error => {
-    return {
-      code: 500,
-      message: `JSON解析错误：${error.message}`,
-      msg: `JSON解析错误：${error.message}`,
-    };
-  }).then(json => {
-    return Object.assign(json, {
-      message: json.message || json.msg || '请求错误',
-      msg: json.message || json.msg || '请求错误',
-    })
-  });
+  params.credentials = 'include';
+  try {
+    return fetch(url , params).then(resp => {
+      console.log(resp);
+      return resp.json()
+    }).catch(error => {
+      return {
+        code: 500,
+        message: `JSON解析错误：${error.message}`,
+        msg: `JSON解析错误：${error.message}`,
+      };
+    }).then(json => {
+      return Object.assign(json, {
+        message: json.message || json.msg || '请求错误',
+        msg: json.message || json.msg || '请求错误',
+      })
+    }).catch(error => {
+      console.log(error);
+    });
+  } catch (error) {
+    console.log(error)
+  }
+  return {code: 401}
 }

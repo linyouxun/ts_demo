@@ -5,13 +5,13 @@ const { ActiveComponentType } = require('../utils/const');
 const util = require('../utils/tools');
 
 
-function renderHtml(htmlData) {
+function renderHtml(htmlData, id) {
   const { configBase, configList } = htmlData;
   let strHtml = htmlhead(configBase.title, configBase.bgColor, configBase.modelColor);
   for(const item of configList) {
     strHtml += renderSection(item, configBase);
   }
-  strHtml += htmlModel() + htmlFooter();
+  strHtml += htmlModel() + htmlFooter(id);
   return strHtml;
 }
 
@@ -42,7 +42,7 @@ function saveHtml(id, htmlData) {
   util.checkDirExist(htmlJsPath);
   util.checkDirExist(htmlCssPath);
   util.checkDirExist(htmlImgPath);
-  fs.writeFileSync(htmlRootPath + '/index.html', renderHtml(htmlData));
+  fs.writeFileSync(htmlRootPath + '/index.html', renderHtml(htmlData, id));
   fs.writeFileSync(htmlJsPath + '/index.js', renderJs(htmlData));
   fs.writeFileSync(htmlJsPath + '/layer.js', jsLayerRender());
   fs.writeFileSync(htmlCssPath + '/layer.css', cssLayerRender());
@@ -56,9 +56,7 @@ function saveHtml(id, htmlData) {
       }
     }
   }
-  console.log(htmlRootPath);
   util.tarDir(id, htmlRootPath);
-
   return {
     code: 200,
     result: {

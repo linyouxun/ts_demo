@@ -28,7 +28,8 @@ exports.listStatisticsItem = async (currentPage, pageSize, params) => {
     findParams['currentHtml'] =  RegExp(params.html);
   }
   if(!!params.id) {
-    findParams['_id'] = mongoose.Types.ObjectId(params.id);
+    // findParams['_id'] = mongoose.Types.ObjectId(params.id);
+    findParams['configId'] = RegExp(params.id);
   }
   if(!!params.time && params.time.length > 0) {
     findParams['timestamp'] = {

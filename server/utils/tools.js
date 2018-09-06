@@ -55,16 +55,11 @@ function checkFileExist(p) {
 function copyFile(src, descSrc) {
   if (checkFileExist(src)) {
     fs.writeFileSync(descSrc, fs.readFileSync(src));
-    // fs.copyFile(src, descPath, fs.constants.COPYFILE_EXCL, (err) => {
-    //   console.log('1----------', err)
-    // });
   }
 }
 
 function tarDir(id, path) {
   var cmdStr = `cd ./static/html/${id} && tar cvf ${id}.tar * --exclude=${id}.tar `;
-  // tar -czf ${id}.tar ./static/html/${id} ./static/html/${id}/
-  console.log(cmdStr);
   exec(cmdStr, function(err){
     if(err) {
       console.log('get weather api error:' + err);

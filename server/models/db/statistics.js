@@ -32,6 +32,8 @@ const StatisticsSchema = new Schema({
     adcode: String,
   },
   // 拓展属性
+  configId: String,
+  visitCount: Number,
   // userId: String,(通过cookie, 浏览器, 设备)
 })
 

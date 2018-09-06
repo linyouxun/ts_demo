@@ -8,7 +8,13 @@ const { saveHtml } = require('../utils/html');
 
 
 exports.addConfigHtml = async (ctx, next) => {
+  const userInfo = {
+    name: ctx.session.name,
+    leve: ctx.session.leve,
+    id: ctx.session.id,
+  };
   const res = await configHtmlHelper.addConfigHtmlItem({
+    userInfo: userInfo,
     configList: JSON.parse(ctx.request.body.configList),
     configBase: JSON.parse(ctx.request.body.configBase),
   });
@@ -22,7 +28,9 @@ exports.updateConfigHtml = async (ctx, next) => {
   if ( (id + '').trim().length !== 24 ) {
     falied(ctx, next, `id(${id})不能为空或者id不存在`);
   }
+  const userInfo = ctx.session;
   const config = {
+    userInfo: userInfo,
     configList: JSON.parse(ctx.request.body.configList),
     configBase: JSON.parse(ctx.request.body.configBase),
   };

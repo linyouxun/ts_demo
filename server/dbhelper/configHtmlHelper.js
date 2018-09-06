@@ -25,10 +25,10 @@ exports.getConfigHtmlItem = async(objectId = '000000000000000000000000') => {
  */
 exports.updateConfigHtmlItem = async(objectId = '000000000000000000000000', config) => {
   const res = await ConfigHtml.findOne({'_id': mongoose.Types.ObjectId(objectId)}).exec();
-  const {metaInfo} = res;
+  const {metaInfo, userInfo} = res;
   metaInfo.updatetime = +new Date();
   if (!!res._id) {
-    const res2 = await ConfigHtml.update({'_id': mongoose.Types.ObjectId(objectId)}, Object.assign(config, {metaInfo})).exec();
+    const res2 = await ConfigHtml.update({'_id': mongoose.Types.ObjectId(objectId)}, Object.assign(config, {metaInfo, userInfo})).exec();
     if (res2.ok > 0) {
       return res;
     }

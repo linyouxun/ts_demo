@@ -2,6 +2,7 @@ var parser = require('ua-parser-js');
 const { fetchData } = require('../utils/request');
 const { GAODE_KEY } = require('../utils/const');
 const { strToObj, setShortNum, filterSpecialChar } = require('../utils/tools');
+const { jsStatistics } = require('../utils/htmltool');
 const { ihdr, idat } = require('../utils/png');
 const { success, falied } = require('./base');
 const { addConfigStatisticsItem, listStatisticsItem } = require('../dbhelper/configStatistics');
@@ -10,7 +11,7 @@ exports.statistics = async function(ctx, next) {
   // const r = await fetchData({key: 'f1f341fd8aa165eda6c0f29db0f5ef5d', ip: '113.65.13.91'}, 'https://restapi.amap.com/v3/ip', {
   //   method: 'GET'
   // });
-
+  const { id } = ctx.params;
   ctx.response.type = 'png';
   ctx.body = Buffer.concat([
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
@@ -54,10 +55,24 @@ exports.statistics = async function(ctx, next) {
     source: ctx.query.referrer,
     sourceParams: strToObj(!!ctx.query.referrer ? (!!ctx.query.referrer.split('?')[1] ? ctx.query.referrer.split('?')[1] : '') : '') || [],
     deviseInfo,
-    cityInfo
+    cityInfo,
+    configId: id,
+    visitCount: +ctx.cookies.get('visitcount') || 0,
   }
-
   await addConfigStatisticsItem(configItem);
+}
+
+exports.statisticsjs = async function(ctx, next) {
+  const { id } = ctx.params;
+  // 设置cookie
+  if (!!ctx.cookies.get('visitcount')) {
+    const count = +ctx.cookies.get('visitcount') || 0
+    ctx.cookies.set('visitcount', count + 1);
+  } else {
+    ctx.cookies.set('visitcount', 1);
+  }
+  ctx.response.type = 'text/javascript';
+  ctx.body = jsStatistics(id);
 }
 
 exports.statisticsList = async function(ctx, next) {
@@ -71,9 +86,10 @@ exports.statisticsList = async function(ctx, next) {
   try {
     params = JSON.parse(extraData);
     if(!!params.id) {
-      if (params.id.length == 24 && /^[0-9a-f]*$/.test(params.id)) {} else {
-        params.id = setShortNum('1', 24);
-      }
+      // if (params.id.length == 24 && /^[0-9a-f]*$/.test(params.id)) {} else {
+      //   params.id = setShortNum('1', 24);
+      // }
+      params.id = filterSpecialChar(params.id);
     }
     if(!!params.html) {
       params.html = filterSpecialChar(params.html);
