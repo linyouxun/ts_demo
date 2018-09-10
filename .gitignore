@@ -12,6 +12,7 @@
 #!/static/statistics
 !/static/test.html
 !/static/test2.html
+!/static/login.html
 # misc
 .DS_Store
 .env.local
