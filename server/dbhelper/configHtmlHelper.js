@@ -51,11 +51,15 @@ exports.deleteConfigHtmlItem = async(objectId = '000000000000000000000000') => {
 /**
  * 查找配置列表信息
  */
-exports.listConfigHtml = async(pageSize = 10, currentPage = 1, objectId = '000000000000000000000000') => {
-  let query = ConfigHtml.find({});
+exports.listConfigHtml = async(pageSize = 10, currentPage = 1, params) => {
+  let findParams = {};
+  if(!!params.userId) {
+    findParams['userInfo.id'] =  params.userId;
+  }
+  let query = ConfigHtml.find(findParams);
   // 总数
   const total = await query.countDocuments();
-  query = ConfigHtml.find().skip((currentPage - 1) * pageSize).limit(+pageSize);
+  query = ConfigHtml.find(findParams).skip((currentPage - 1) * pageSize).limit(+pageSize);
   let list = await query.exec();
   list = list.map(item => {
     return {

@@ -450,13 +450,17 @@ function jsStatistics(id) {
   }
   return `
   (function s(d,w) {
+    var div = d.createElement('div');
+    div.style='width:0;height:0;';
+    div.style.cssText='width:0;height:0;';
     var img = d.createElement('img');
     img.src = 'http://${host}/statistics${!!id ? '/' + id : ''}/count.png?screen=' + w.screen.width + '×' + w.screen.height + '&width=' + w.screen.width + '&height=' + w.screen.height + '&referrer=' + encodeURIComponent(d.referrer);
     img.width='0';
     img.height='0';
     img.style='width:0;height:0;';
     img.style.cssText='width:0;height:0;';
-    d.body.appendChild(img);
+    div.appendChild(img);
+    d.body.appendChild(div);
   })(document, window);
   `;
 }

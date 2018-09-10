@@ -34,7 +34,16 @@ const StatisticsSchema = new Schema({
   // 拓展属性
   configId: String,
   visitCount: Number,
+  visitCountTotal: Number,
+  visitor: String,
   // userId: String,(通过cookie, 浏览器, 设备)
+  // 页面
+  // 归属信息
+  affiliation: {
+    name: String,
+    id: String,
+    leve: String,
+  }
 })
 
 StatisticsSchema.pre('save', function(next) {

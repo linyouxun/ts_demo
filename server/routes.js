@@ -67,9 +67,7 @@ module.exports = function() {
 
   // 登录
   router.get('/login', loginHTML);
-  router.post('/api2/login', login);
-  router.post('/api2/logout', logout);
-  router.get('/api/login', login);
+  router.post('/api/login', login);
   router.get('/api/logout', logout);
 
   // 用户信息

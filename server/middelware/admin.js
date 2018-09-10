@@ -1,7 +1,9 @@
 
 const path = require('path');
 const fs = require('fs');
+const cheerio = require("cheerio");
 const util = require('../utils/tools');
+const { ERRORCODE } = require('../utils/const');
 
 exports.adminHtml = async (ctx, next) => {
   // 目录管理
@@ -13,7 +15,6 @@ exports.adminHtml = async (ctx, next) => {
       break;
     }
   }
-  console.log('log');
   const file = path.join(__dirname,'../../build/index.html');
   if (flat && util.checkFileExist(file)) {
     // 判断是否登录
@@ -22,9 +23,11 @@ exports.adminHtml = async (ctx, next) => {
     }
     const html = fs.readFileSync(file);
     ctx.response.type = 'html';
-    ctx.body = html;
+    const $ = cheerio.load(html,{ decodeEntities: false});
+    $('head').append(`<script>var userLeve = ${ctx.session.leve}</script>`);
+    ctx.body = $.html();
   } else {
-    ctx.status = 400;
+    ctx.status = ERRORCODE.failed;
     ctx.body = 'Error...';
   }
 }

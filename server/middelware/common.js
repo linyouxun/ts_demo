@@ -1,4 +1,5 @@
-const { falied } = require('../controller/base');
+const { needUserLogin, falied } = require('../controller/base');
+const { ERRORCODE } = require('../utils/const');
 
 exports.ipconfig = async (ctx, next) => {
   ctx.ipv4 = ctx.req.headers['x-real-ip'] || '127.0.0.1';
@@ -10,7 +11,7 @@ exports.sessionCheck = async (ctx, next) => {
   for (const iterator of dirs) {
     if(RegExp('/' + iterator).test(ctx.url)) {
       if(!ctx.session.name) {
-        return falied(ctx, next, {}, '用户未登录', 200, 400);
+        return needUserLogin(ctx, next);
       } else {
       }
     }
@@ -30,9 +31,9 @@ exports.commonError = async (ctx, next) => {
   try {
     await next();
   } catch (error) {
-    ctx.status = 400;
+    ctx.status = ERRORCODE.failed;
     ctx.body = {
-      code: 400,
+      code: ERRORCODE.failed,
       message: error.message,
     };
   }

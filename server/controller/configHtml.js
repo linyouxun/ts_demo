@@ -65,7 +65,12 @@ exports.listConfigHtml = async(ctx, next) => {
   if (+currentPage < 0) {
     pageSize = 1;
   }
-  const res = await configHtmlHelper.listConfigHtml(+pageSize, +currentPage, setShortNum(id, 24));
+  let params = {};
+  // 用户
+  if (ctx.session.leve > 0) {
+    params.userId = ctx.session.id;
+  }
+  const res = await configHtmlHelper.listConfigHtml(+pageSize, +currentPage, params);
   success(ctx, next, res);
 }
 

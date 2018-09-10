@@ -26,7 +26,6 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
   params.credentials = 'include';
   try {
     return fetch(url , params).then(resp => {
-      console.log(resp);
       return resp.json()
     }).catch(error => {
       return {

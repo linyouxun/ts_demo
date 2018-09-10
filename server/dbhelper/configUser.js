@@ -11,12 +11,20 @@ exports.addConfigUserInfo = async (config) => {
   config = await UserInfo(config).save();
 	return config;
 }
+
+/**
+ * 查找用户信息
+ * @param {查找用户信息} params
+ */
+exports.getConfigUserInfo = async (params) => {
+  const res = await UserInfo.find(params).exec();
+	return res;
+}
 /**
  * 查找配置列表信息
  */
 exports.listConfigUserInfo = async(pageSize = 10, currentPage = 1, userInfo) => {
   const params = {'parentId': mongoose.Types.ObjectId(userInfo.id)};
-  console.log(params);
   let query = UserInfo.find(params);
   // 总数
   const total = await query.countDocuments();

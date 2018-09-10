@@ -6,7 +6,7 @@ import SiteSide from './components/SiteSide';
 import SiteFooter from './components/SiteFooter';
 import SiteBreadcrumb from './components/SiteBreadcrumb';
 import './App.less';
-import {routes, routesList, routesObject} from './routes';
+import {routes2, routesList, routesObject} from './routes';
 
 class App extends React.Component<any, any> {
   public render() {
@@ -14,7 +14,7 @@ class App extends React.Component<any, any> {
       <div className="app">
         <SiteHeader />
         <div className="wrapper">
-          <SiteSide routes={routes}/>
+          <SiteSide routes={routes2}/>
           <div className="container" key="container">
             <SiteBreadcrumb routes={routesObject}/>
             <Switch>

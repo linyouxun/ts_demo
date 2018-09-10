@@ -1,18 +1,20 @@
 const { addConfigUserInfo, listConfigUserInfo } = require('../dbhelper/configUser');
-const { success } = require('./base');
+const { success, noAllow } = require('./base');
 const moment = require('moment');
 
 
 exports.createUser = async(ctx, next) => {
-  console.log(ctx.request.body);
+  if (ctx.session.leve !== '0') {
+    return noAllow(ctx, next);
+  }
   const res = await addConfigUserInfo({
     parentId: '5b8cc9c0b0331c051477275b',
     name: 'admin',
     age: 18,
     mobile: '',
     birthDate: +new Date(),
-    pwd: 'admin',
-    leve: '0',
+    pwd: '123456',
+    leve: '1',
   });
   success(ctx, next, {
     metaInfo: res.metaInfo,

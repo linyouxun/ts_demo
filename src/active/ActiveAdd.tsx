@@ -2,7 +2,7 @@ import * as React from 'react';
 import ContentHeader from "../components/ContentHeader";
 // import FormField from "../components/FormField";
 import PickerButton from '../components/PickerButton';
-import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin, Slider } from 'antd';
+import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin, Slider, message } from 'antd';
 const ButtonGroup = Button.Group;
 import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem, marksWidth, marksRadius } from '../util/const';
 import { fetchData } from "../util/request";
@@ -105,11 +105,11 @@ class ActiveAdd extends React.Component<any, any> {
       method: 'POST'
     });
     if(res.code === 200) {
-      console.log('保存成功');
+      message.success('保存成功');
+      return this.props.history.goBack();
     } else {
-      console.log('保存失败');
+      message.error('保存，更新出错了 ^_^!');
     }
-    console.log(res);
   }
   // 添加组件弹框
   public addComponent() {

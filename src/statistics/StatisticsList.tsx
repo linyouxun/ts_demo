@@ -33,7 +33,7 @@ class StatisticsList extends React.Component<any, any> {
         return  <div title={text} className="item-html">{text}</div>
       }},
       {title: 'ID', dataIndex: 'configId', width: 220},
-      {title: '访问次数', dataIndex: 'visitCount', width: 120, align: FixedTpye.center},
+      {title: '第n次访问', dataIndex: 'visitCount', width: 120, align: FixedTpye.center},
       {title: '访问时间', dataIndex: 'createTime',width: 180, render:(text: any,record: any, index: any)=> {
         return  <div>{moment(+record.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
       }},

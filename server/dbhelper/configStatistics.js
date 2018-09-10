@@ -18,6 +18,9 @@ exports.addConfigStatisticsItem = async (config) => {
 exports.listStatisticsItem = async (currentPage, pageSize, params) => {
 
   let findParams = {};
+  if(!!params.userId) {
+    findParams['affiliation.id'] =  params.userId;
+  }
   if(!!params.channel_city && params.channel_city.length > 0) {
     findParams['channel_city'] =  params.channel_city;
   }
@@ -38,7 +41,21 @@ exports.listStatisticsItem = async (currentPage, pageSize, params) => {
     };
   }
   const total = await Statistics.find(findParams).countDocuments();
-  const list = await Statistics.find(findParams).sort({'_id': -1}).skip((currentPage - 1) * pageSize).limit(+pageSize).exec();
+  let list = await Statistics.find(findParams).sort({'_id': -1}).skip((currentPage - 1) * pageSize).limit(+pageSize).exec();
+  list = list.map(item => {
+    return {
+      affiliation:item.affiliation,
+      cityInfo:item.cityInfo,
+      configId:item.configId,
+      deviseInfo:item.deviseInfo,
+      currentHtml:item.currentHtml,
+      ip:item.ip,
+      source:item.source,
+      timestamp:item.timestamp,
+      visitCount:item.visitCount,
+      visitor:item.visitor,
+    };
+  })
   return {
     list,
     pageSize: +pageSize,

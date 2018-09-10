@@ -6,6 +6,8 @@ const { jsStatistics } = require('../utils/htmltool');
 const { ihdr, idat } = require('../utils/png');
 const { success, falied } = require('./base');
 const { addConfigStatisticsItem, listStatisticsItem } = require('../dbhelper/configStatistics');
+const { getConfigHtmlItem } = require('../dbhelper/configHtmlHelper');
+
 
 exports.statistics = async function(ctx, next) {
   // const r = await fetchData({key: 'f1f341fd8aa165eda6c0f29db0f5ef5d', ip: '113.65.13.91'}, 'https://restapi.amap.com/v3/ip', {
@@ -20,56 +22,73 @@ exports.statistics = async function(ctx, next) {
     Buffer.from('IEND'),
   ]);
 
-
-  // 设置城市信息
-  const res = await fetchData({key: GAODE_KEY, ip: ctx.ipv4 }, 'https://restapi.amap.com/v3/ip', {
-    method: 'GET'
-  });
-  const cityInfo = {
-    province: '',
-    city: '',
-    adcode: ''
-  }
-  if (res.status == 1) {
-    if(!!res.adcode.toString()) {
-      cityInfo.province = res.province;
-      cityInfo.city = res.city;
-      cityInfo.adcode = res.adcode;
+  // 先返回在延迟处理
+  setTimeout(async () => {
+    let affiliation = {};
+    if(!!id) {
+      // 查找页面所属用户
+      const configHtmlInfo = await getConfigHtmlItem(setShortNum(id, 24));
+      if(!!configHtmlInfo) {
+        affiliation = configHtmlInfo.userInfo;
+      }
     }
-  }
-  const ua = parser(ctx.req.headers['user-agent']);
-  const deviseInfo = {
-    screen: ctx.query.screen || '未知',
-    platform: '未知',
-    browser: '未知',
-  }
-  if (ua.browser.name) {
-    deviseInfo['platform'] = ua.os.name + ' ' + ua.os.version;
-    deviseInfo['browser'] = ua.browser.name + ' ' + ua.browser.version;
-  }
-  const configItem = {
-    ip: ctx.ipv4,
-    deviseStr: ctx.req.headers['user-agent'],
-    currentHtml: ctx.req.headers['referer'],
-    currentHtmlParams: strToObj(!!ctx.req.headers['referer'] ? (!!ctx.req.headers['referer'].split('?')[1] ? ctx.req.headers['referer'].split('?')[1] : '') : '') || [],
-    source: ctx.query.referrer,
-    sourceParams: strToObj(!!ctx.query.referrer ? (!!ctx.query.referrer.split('?')[1] ? ctx.query.referrer.split('?')[1] : '') : '') || [],
-    deviseInfo,
-    cityInfo,
-    configId: id,
-    visitCount: +ctx.cookies.get('visitcount') || 0,
-  }
-  await addConfigStatisticsItem(configItem);
+    // 设置城市信息
+    const res = await fetchData({key: GAODE_KEY, ip: ctx.ipv4 }, 'https://restapi.amap.com/v3/ip', {
+      method: 'GET'
+    });
+    const cityInfo = {
+      province: '',
+      city: '',
+      adcode: ''
+    }
+    if (res.status == 1) {
+      if(!!res.adcode.toString()) {
+        cityInfo.province = res.province;
+        cityInfo.city = res.city;
+        cityInfo.adcode = res.adcode;
+      }
+    }
+    const ua = parser(ctx.req.headers['user-agent']);
+    const deviseInfo = {
+      screen: ctx.query.screen || '未知',
+      platform: '未知',
+      browser: '未知',
+    }
+    if (ua.browser.name) {
+      deviseInfo['platform'] = ua.os.name + ' ' + ua.os.version;
+      deviseInfo['browser'] = ua.browser.name + ' ' + ua.browser.version;
+    }
+    const configItem = {
+      ip: ctx.ipv4,
+      deviseStr: ctx.req.headers['user-agent'],
+      currentHtml: ctx.req.headers['referer'],
+      currentHtmlParams: strToObj(!!ctx.req.headers['referer'] ? (!!ctx.req.headers['referer'].split('?')[1] ? ctx.req.headers['referer'].split('?')[1] : '') : '') || [],
+      source: ctx.query.referrer,
+      sourceParams: strToObj(!!ctx.query.referrer ? (!!ctx.query.referrer.split('?')[1] ? ctx.query.referrer.split('?')[1] : '') : '') || [],
+      deviseInfo,
+      cityInfo,
+      configId: id,
+      visitCount: +ctx.cookies.get(`visitcount${!!id ? '-' + id: ''}`) || 1,
+      visitCountTotal: +ctx.cookies.get('visitcount') || 1,
+      visitor: +ctx.cookies.get('visitor') || '未知',
+      affiliation
+    }
+    await addConfigStatisticsItem(configItem);
+  }, 0);
 }
 
 exports.statisticsjs = async function(ctx, next) {
   const { id } = ctx.params;
-  // 设置cookie
-  if (!!ctx.cookies.get('visitcount')) {
-    const count = +ctx.cookies.get('visitcount') || 0
+  // 设置cookie 现在统计的是单用户访问的所有页面都添加
+  if (!!ctx.cookies.get('visitor')) {
+    let count = +ctx.cookies.get('visitcount') || 0;
     ctx.cookies.set('visitcount', count + 1);
+    count = +ctx.cookies.get(`visitcount-${!!id ? id: ''}`) || 0;
+    ctx.cookies.set(`visitcount-${!!id ? id: ''}`, count + 1);
   } else {
+    ctx.cookies.set('visitor', +new Date() + '');
     ctx.cookies.set('visitcount', 1);
+    ctx.cookies.set(`visitcount-${!!id ? id: ''}`, 1);
   }
   ctx.response.type = 'text/javascript';
   ctx.body = jsStatistics(id);
@@ -86,9 +105,6 @@ exports.statisticsList = async function(ctx, next) {
   try {
     params = JSON.parse(extraData);
     if(!!params.id) {
-      // if (params.id.length == 24 && /^[0-9a-f]*$/.test(params.id)) {} else {
-      //   params.id = setShortNum('1', 24);
-      // }
       params.id = filterSpecialChar(params.id);
     }
     if(!!params.html) {
@@ -96,6 +112,11 @@ exports.statisticsList = async function(ctx, next) {
     }
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
+  }
+
+  // 用户
+  if (ctx.session.leve > 0) {
+    params.userId = ctx.session.id;
   }
 
   const res = await listStatisticsItem(+currentPage, +pageSize, params);

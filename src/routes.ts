@@ -12,7 +12,14 @@ import NotFound from './NotFound';
 import StatisticsList from './statistics/StatisticsList';
 // 用户管理
 import UserList from './user/UserList';
+declare var window: {
+  userLeve?: number;
+};
 
+let userLeve = 0;
+if (!!window && window.userLeve !== undefined) {
+  userLeve = window.userLeve;
+}
 
 interface Iprop {
   breadcrumbName?: string,
@@ -23,6 +30,7 @@ interface Iprop {
   children?: Iprop[],
   isNotMenu?: boolean, // 默认是菜单里面
   isFull?: boolean, // 默认是不全屏 是否全屏
+  userLeve?: number,
 }
 
 export const routes = [{
@@ -33,6 +41,7 @@ export const routes = [{
   sideIcon: 'anticon anticon-picture',
 }, {
   breadcrumbName:'banner图管理',
+  userLeve: 0,
   children: [{
     breadcrumbName:'banner管理',
     children: [{
@@ -50,6 +59,7 @@ export const routes = [{
   sideIcon: 'anticon anticon-file-word',
 }, {
   breadcrumbName:'案例管理',
+  userLeve: 0,
   children: [{
     breadcrumbName:'案例列表',
     children: [{
@@ -99,6 +109,7 @@ export const routes = [{
   sideIcon: 'anticon anticon-file-word',
 }, {
   breadcrumbName:'用户管理',
+  userLeve: 0,
   component: UserList,
   path:'/user',
   sideIcon: 'anticon anticon-file-word',
@@ -112,6 +123,9 @@ export const routes = [{
 export const routesList: Iprop[] = [];
 export const routesObject: any = {};
 for (const iterator of routes) {
+  if(iterator.userLeve !== undefined && iterator.userLeve < userLeve) {
+    continue;
+  }
   if(!!iterator.children && iterator.children.length > 0) {
     for (const iterator2 of iterator.children) {
       iterator2.path = iterator.path + iterator2.path;
@@ -140,9 +154,15 @@ for (const iterator of routes) {
   });
   routesObject[i.path] = i.breadcrumbName;
 }
-
+export const routes2 = routes.filter(item => {
+  if(item.userLeve !== undefined && item.userLeve < userLeve) {
+    return false;
+  }
+  return true;
+})
 export default {
   routes,
+  routes2,
   routesList,
   routesObject
 };
