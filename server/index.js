@@ -51,7 +51,6 @@ var walk = function(modelPath) {
 };
 walk(models_path);
 
-
 app.use(koaStatic(__dirname + '/../build'));
 app.use(koaStatic(__dirname + '/../static'));
 app.use(koaStatic(__dirname + '/../doc'));

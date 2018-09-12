@@ -17,7 +17,11 @@
   var form = {
     post: function(name, pwd) {
       $.post('/api/login',{name, pwd}, function(res) {
-        console.log(res);
+        if(res.stutasCode === 200) {
+          window.location.href = '/';
+        } else {
+          alert(res.message)
+        }
       });
     }
   }

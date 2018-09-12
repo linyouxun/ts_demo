@@ -59,8 +59,33 @@ export function setShortNum(num: string, minLen: number) {
 	return str.substr(0, minLen - munLen) + num;
 }
 
+export function setCookie(name: any, value: any, exdays: any) {
+  if (value) {
+      if ((/^\d+(\.\d+)?$/).test(exdays)) {
+          const Days = !!exdays ? exdays : 30;
+          const exp = new Date();
+          exp.setTime(exp.getTime() + Days * 60 * 60 * 1000);
+          document.cookie = name + "=" + escape(value) + ";expires=" + exp.toUTCString() + ";path=/";
+      } else {
+          document.cookie = name + "=" + escape(value) + ";expires=Session;path=/";
+      }
+  }
+}
+
+export function getCookie(name: any) {
+  const reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+  const arr = document.cookie.match(reg);
+  if (!!arr) {
+      return decodeURIComponent(arr[2]);
+  } else {
+      return null;
+  }
+}
+
 export default {
   objToUrlString,
   urlStringToObj,
   setShortNum,
+  setCookie,
+  getCookie,
 }

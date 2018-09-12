@@ -7,15 +7,16 @@ const { ERRORCODE } = require('../utils/const');
 
 exports.adminHtml = async (ctx, next) => {
   // 目录管理
-  const dirs = ['manage', 'case', 'active', 'statistics', 'user'];
+  const dirs = ['/', '/manage', '/case', '/active', '/statistics', '/user'];
   let flat = false;
   for (const iterator of dirs) {
-    if(RegExp('/' + iterator).test(ctx.url)) {
+    if(RegExp(iterator).test(ctx.url)) {
       flat = true;
       break;
     }
   }
-  const file = path.join(__dirname,'../../build/index.html');
+  const file = path.join(__dirname,'../../build/index_temp.html');
+  console.log(file, flat, util.checkFileExist(file));
   if (flat && util.checkFileExist(file)) {
     // 判断是否登录
     if (!ctx.session.name) {

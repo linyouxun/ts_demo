@@ -14,7 +14,6 @@ exports.login = async( ctx, next) => {
     return falied(ctx, next, {}, 'pwd不能为空');
   }
   const res = await getConfigUserInfo(params);
-  ctx.response.type = 'text/html';
   if(res.length === 0) {
     return falied(ctx, next, {}, '用户不存在或者密码错误');
   } else {
@@ -23,6 +22,9 @@ exports.login = async( ctx, next) => {
       leve: res[0].leve + '',
       id: res[0]._id,
     };
+    ctx.cookies.set('name', res[0].name);
+    ctx.cookies.set('leve', res[0].leve);
+
     return success(ctx, next, {
       name: res[0].name,
       leve: res[0].leve + '',
@@ -45,8 +47,9 @@ exports.loginHTML = async( ctx, next) => {
 }
 
 exports.logout = async( ctx, next) => {
-  ctx.response.type = 'text/html';
   const params = {};
+  ctx.cookies.set('name', ctx.session.name, {expires: new Date(0)});
+  ctx.cookies.set('leve', ctx.session.leve, {expires: new Date(0)});
   ctx.session = params;
   success(ctx, next, params, '登出成功');
 }

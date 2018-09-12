@@ -1,5 +1,8 @@
 import * as React from 'react';
-import {Modal, Icon} from 'antd';
+import {Modal, Icon, message } from 'antd';
+import { fetchData } from "../util/request";
+import { APISERVER } from '../util/const';
+import { getCookie } from '../util/tools';
 import "./SiteHeader.less";
 
 export class SiteHeader extends React.Component<any, any> {
@@ -30,8 +33,16 @@ export class SiteHeader extends React.Component<any, any> {
       },
     })
   }
+
   public async outLogin() {
-    window.location.href = '/user/login';
+    const res = await fetchData( {}, `${APISERVER}/api2/logout`, {
+      method: 'GET'
+    });
+    if(res.stutasCode === 200) {
+      window.location.href = '/login';
+    } else {
+      message.error(res.message);
+    }
   }
   public changePWD() {
     this.setState({
@@ -48,14 +59,13 @@ export class SiteHeader extends React.Component<any, any> {
     console.log('log');
   }
   public render(){
-    const {account} = this.state;
     return (
       <header className="component site-header">
         <a className="header-logo" href="/" title="首页"/>
         <div className="header-action">
           <nav>
             <span className="action-shop-name"> ※ 优居小程序后台管理系统 </span>
-            <span className="action-user-name"><Icon type="user"/><span>{account}</span></span>
+            <span className="action-user-name"><Icon type="user"/><span>{getCookie('name') || ''}</span></span>
             <span className="action-log-out" onClick={this.onClickLogout}><Icon type="logout"/><span>退出系统</span></span>
           </nav>
         </div>

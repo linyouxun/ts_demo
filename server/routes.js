@@ -68,7 +68,7 @@ module.exports = function() {
   // 登录
   router.get('/login', loginHTML);
   router.post('/api/login', login);
-  router.get('/api/logout', logout);
+  router.get('/api2/logout', logout);
 
   // 用户信息
   router.post('/api2/user/create', createUser);
@@ -78,6 +78,20 @@ module.exports = function() {
   router.get('/api2/user/create', createUser);
   router.get('/api2/user/update', updateUser);
   router.get('/api2/user/delete', deleteUser);
+
+  router.get('/api2/user/delete',  async (ctx, next) => {
+    ctx.cookies
+    try {
+      await next();
+    } catch (error) {
+      ctx.status = ERRORCODE.failed;
+      ctx.body = {
+        code: ERRORCODE.failed,
+        message: error.message,
+      };
+    }
+  });
+
 
   return router;
 }
