@@ -4,7 +4,7 @@ import ContentHeader from "../components/ContentHeader";
 import PickerButton from '../components/PickerButton';
 import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin, Slider, message } from 'antd';
 const ButtonGroup = Button.Group;
-import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem, marksWidth, marksRadius } from '../util/const';
+import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem, marksWidth, marksRadius, marksTop } from '../util/const';
 import { fetchData } from "../util/request";
 import ActiveView, { IConfigObj } from './components/ActiveView';
 import './ActiveAdd.less';
@@ -27,6 +27,7 @@ class ActiveAdd extends React.Component<any, any> {
     this.handleImgPreview = this.handleImgPreview.bind(this);
     this.handleImgChange = this.handleImgChange.bind(this);
     this.submitConfig = this.submitConfig.bind(this);
+    this.beforeUpload = this.beforeUpload.bind(this);
 
     this.state = {
       // configList: [],
@@ -34,9 +35,7 @@ class ActiveAdd extends React.Component<any, any> {
       configBase: {
         title: '',
         bgColor: 'rgb(239, 239, 239)',
-        modelColor: 'rgb(158, 158, 158)',
-        formRadius: 0,
-        formWidth: [10, 90],
+        modelColor: 'rgb(158, 158, 158)'
       },
       modalVisible: false,
       previewImage: '',
@@ -79,12 +78,6 @@ class ActiveAdd extends React.Component<any, any> {
     }
     if (key === 'modelColor') {
       configBase.modelColor = `rgba(${e.rgb.r},${e.rgb.g},${e.rgb.b},${e.rgb.a})`;
-    }
-    if (key === 'formWidth') {
-      configBase.formWidth = e;
-    }
-    if (key === 'formRadius') {
-      configBase.formRadius = e;
     }
     this.setState({
       configBase
@@ -146,6 +139,7 @@ class ActiveAdd extends React.Component<any, any> {
       count,
       config: {}
     }
+
     switch(type.key) {
       case ActiveAdd.componentType.pic.key: {
         configObj.config = {
@@ -153,8 +147,18 @@ class ActiveAdd extends React.Component<any, any> {
         }
         break;
       }
+      case ActiveAdd.componentType.swiper.key: {
+        configObj.config = {
+          fileList: []
+        }
+        break;
+      }
       case ActiveAdd.componentType.form.key: {
         configObj.config = {
+          formRadius: 0,
+          formTop: 0,
+          formWidth: [ 10, 90],
+          fileList: [],
           checkList: ['mobile', 'name'],
           mobile: {
             tip: ActiveAdd.formItem.mobile.tip,
@@ -197,6 +201,20 @@ class ActiveAdd extends React.Component<any, any> {
     });
   }
 
+  // 图片大小设置
+  public beforeUpload(file: any) {
+    if (!/image/.test(file.type)) {
+      message.error('文件格式不支持，请大佬重新上传(png,jpg,git等)图片文件');
+      return false;
+    }
+    const kb = file.size / 1024 ;
+    if (kb >= 500) {
+      message.error('图片超过500kB，请大佬压缩后上传');
+      return false;
+    }
+    return true;
+  }
+
   // 预览图片
   public handleImgPreview(file: any){
     this.setState({
@@ -232,10 +250,14 @@ class ActiveAdd extends React.Component<any, any> {
       }
       case FILETYPE.uploading:
       case FILETYPE.removed:
-      case FILETYPE.error:
-      default: {
+      case FILETYPE.error: {
         configObj.config.fileList = item.fileList;
         configList[index] = configObj;
+        break;
+      }
+      default: {
+        // configObj.config.fileList = item.fileList;
+        // configList[index] = configObj;
       }
     }
     this.setState({ configList });
@@ -296,6 +318,25 @@ class ActiveAdd extends React.Component<any, any> {
   public handleInputBgChange(inputItem: any, key: string) {
     const { configList } = this.state;
     console.log(configList);
+  }
+  // 表单基本信息
+  public handleFormChange(key: string, inputKey: string, e: any) {
+    const { configList } = this.state;
+    const index = key.split('-')[0];
+    const configObj = configList[index];
+    if (inputKey === 'formWidth') {
+      configObj.config.formWidth = e;
+    }
+    if (inputKey === 'formRadius') {
+      configObj.config.formRadius = e;
+    }
+    if (inputKey === 'formTop') {
+      configObj.config.formTop = e;
+    }
+    configList[index] = configObj;
+    this.setState({
+      configList
+    });
   }
   public moveConfigList(key: string, arrwoType: number) {
     const { configList } = this.state;
@@ -396,18 +437,6 @@ class ActiveAdd extends React.Component<any, any> {
             <PickerButton pos={'bottom'} handleChange={this.handleChange.bind(this, 'modelColor')} size="large" color={configBase.modelColor}/>
           </Col>
         </Row>
-        <Row style={{paddingBottom: '.5rem'}}>
-          <Col className="ant-form-item-label" span={4}>表单宽度:</Col>
-          <Col span={20}>
-            <Slider range={true} marks={ marksWidth } step={1} value={configBase.formWidth} onChange={this.handleChange.bind(this, 'formWidth')}/>
-          </Col>
-        </Row>
-        <Row style={{paddingBottom: '.5rem'}}>
-          <Col className="ant-form-item-label" span={4}>表单圆角:</Col>
-          <Col span={20}>
-            <Slider max={25} min={0} marks={ marksRadius } step={1} value={configBase.formRadius} onChange={this.handleChange.bind(this, 'formRadius')}/>
-          </Col>
-        </Row>
       </div>
     </div>);
   }
@@ -441,6 +470,7 @@ class ActiveAdd extends React.Component<any, any> {
           listType="picture-card"
           fileList={config.fileList}
           onPreview={this.handleImgPreview}
+          beforeUpload={this.beforeUpload}
           onChange={this.handleImgChange.bind(this, key)}
         >
           {config.fileList.length >= 5 ? null : uploadButton}
@@ -451,8 +481,10 @@ class ActiveAdd extends React.Component<any, any> {
       </div>
     </div>);
   }
+
   // 表单组件
   public renderFormComponent(configObj: IConfigObj, key: string) {
+    const { previewVisible, previewImage } = this.state;
     const { name, config, show } = configObj;
     const checkListDom = [];
     for (const itemName in ActiveAdd.formItem) {
@@ -473,9 +505,51 @@ class ActiveAdd extends React.Component<any, any> {
     if (show) {
       style = {}
     }
+    const uploadButton = (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
     return (<div key={key} className="active-view">
       {this.renderHeaderComponent(name, key, show)}
       <div className="active-view-content" style={style}>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>表单宽度:</Col>
+          <Col span={20}>
+            <Slider range={true} marks={ marksWidth } step={1} value={config.formWidth || [10, 90]} onChange={this.handleFormChange.bind(this, key, 'formWidth')}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>表单圆角:</Col>
+          <Col span={20}>
+            <Slider max={25} min={0} marks={ marksRadius } step={1} value={config.formRadius || 0} onChange={this.handleFormChange.bind(this, key, 'formRadius')}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>背景图片:</Col>
+          <Col span={20}>
+            <Upload
+              action={`${APISERVER}/upload`}
+              listType="picture-card"
+              fileList={config.fileList || []}
+              onPreview={this.handleImgPreview}
+              beforeUpload={this.beforeUpload}
+              onChange={this.handleImgChange.bind(this, key)}
+            >
+              {config.fileList.length >= 1 ? null : uploadButton}
+            </Upload>
+            <Modal visible={previewVisible} footer={null} onCancel={this.handleImgCancel}>
+              <img alt="example" style={{ width: '100%' }} src={previewImage} />
+            </Modal>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>上下微调:</Col>
+          <Col span={20}>
+            <Slider disabled={config.fileList.length < 1} max={100} min={0} marks={ marksTop } step={.01} value={config.formTop || 0} onChange={this.handleFormChange.bind(this, key, 'formTop')}/>
+          </Col>
+        </Row>
         <Checkbox.Group style={{ width: '100%' }} defaultValue={config.checkList} onChange={this.onCheckBoxChange.bind(this, key)}>
           <Row>
             {checkListDom}
@@ -550,6 +624,9 @@ class ActiveAdd extends React.Component<any, any> {
     const domList = configList.map((item: IConfigObj, index: number) => {
       switch(item.key) {
         case ActiveAdd.componentType.pic.key: {
+          return this.renderImgComponent(item, `${index}-${item.key}-${item.name}.${item.count}`);
+        }
+        case ActiveAdd.componentType.swiper.key: {
           return this.renderImgComponent(item, `${index}-${item.key}-${item.name}.${item.count}`);
         }
         case ActiveAdd.componentType.form.key: {

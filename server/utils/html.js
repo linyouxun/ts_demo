@@ -1,27 +1,30 @@
 const path = require('path');
 const fs = require('fs');
-const {htmlhead, htmlImgList, htmlForm, htmlModel, htmlFooter, jsLoction, jsFormPost, jsExtra, jsLayerRender, cssLayerRender} = require('../utils/htmltool');
+const {htmlhead, htmlImgList, htmlForm, htmlModel, htmlFooter, jsLoction, jsFormPost, jsExtra, htmlSwiperImgList} = require('../utils/htmltool');
 const { ActiveComponentType } = require('../utils/const');
 const util = require('../utils/tools');
 
 
 function renderHtml(htmlData, id) {
   const { configBase, configList } = htmlData;
-  let strHtml = htmlhead(configBase.title, configBase.bgColor, configBase.modelColor);
+  let strHtml = htmlhead(configBase.title, configBase.bgColor, configBase.modelColor, configList);
   for(const item of configList) {
-    strHtml += renderSection(item, configBase);
+    strHtml += renderSection(item);
   }
-  strHtml += htmlModel() + htmlFooter(id);
+  strHtml += htmlModel() + htmlFooter(id, configList);
   return strHtml;
 }
 
-function renderSection(configObj, configBase) {
+function renderSection(configObj) {
   switch (configObj.key) {
     case ActiveComponentType.pic.key:{
       return htmlImgList(configObj.config);
     }
     case ActiveComponentType.form.key:{
-      return htmlForm(configObj.config, configObj.count, configBase);
+      return htmlForm(configObj.config, configObj.count);
+    }
+    case ActiveComponentType.swiper.key:{
+      return htmlSwiperImgList(configObj.config, configObj.count);
     }
     default:
       break;
@@ -29,7 +32,7 @@ function renderSection(configObj, configBase) {
   return '';
 }
 function renderJs(htmlData) {
-  return jsLoction() + jsFormPost(htmlData) + jsExtra(htmlData);
+  return jsLoction(htmlData) + jsFormPost(htmlData) + jsExtra(htmlData);
 }
 
 function saveHtml(id, htmlData) {
@@ -44,11 +47,13 @@ function saveHtml(id, htmlData) {
   util.checkDirExist(htmlImgPath);
   fs.writeFileSync(htmlRootPath + '/index.html', renderHtml(htmlData, id));
   fs.writeFileSync(htmlJsPath + '/index.js', renderJs(htmlData));
-  fs.writeFileSync(htmlJsPath + '/layer.js', jsLayerRender());
-  fs.writeFileSync(htmlCssPath + '/layer.css', cssLayerRender());
+  fs.writeFileSync(htmlJsPath + '/layer.js', fs.readFileSync(path.resolve(__dirname, './html.layer.js')));
+  fs.writeFileSync(htmlJsPath + '/swiper.min.js', fs.readFileSync(path.resolve(__dirname, './html.swiper.min.js')));
+  fs.writeFileSync(htmlCssPath + '/layer.css', fs.readFileSync(path.resolve(__dirname, './html.layer.css')));
+  fs.writeFileSync(htmlCssPath + '/swiper.min.css', fs.readFileSync(path.resolve(__dirname, './html.swiper.min.css')));
   // 拷贝文件
   for (const iterator of htmlData.configList) {
-    if (iterator.key === ActiveComponentType.pic.key) {
+    if (iterator.key === ActiveComponentType.pic.key || iterator.key === ActiveComponentType.swiper.key) {
       for (const iterator2 of iterator.config.fileList) {
         const src = path.resolve(__dirname, '../../static/images/', './' + iterator2.url.split('images').pop());
         const descSrc = path.resolve(htmlImgPath , './' + iterator2.url.split('/').pop());

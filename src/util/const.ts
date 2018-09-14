@@ -77,6 +77,20 @@ export const marksRadius = {
   25: '25px',
 };
 
+export const marksTop = {
+  0: '0',
+  10: '10vw',
+  20: '20vw',
+  30: '30vw',
+  40: '40vw',
+  50: '50vw',
+  60: '60vw',
+  70: '70vw',
+  80: '80vw',
+  90: '90vw',
+  100: '100vw'
+};
+
 // 活动报名配置选项
 export const ActiveComponentType = {
   pic: {
@@ -86,6 +100,10 @@ export const ActiveComponentType = {
   form: {
     key: '2',
     name: '报名框'
+  },
+  swiper: {
+    key: '3',
+    name: '轮播图'
   },
 }
 // 活动报名表单配置选项

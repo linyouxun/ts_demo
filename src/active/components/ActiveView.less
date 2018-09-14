@@ -35,15 +35,29 @@
     &::-webkit-scrollbar-track {
       background-color: transparent;
     }
+    .absolute {
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+    &-form-release {
+      position: relative;
+      .active-component-view-form {
+        .input {
+          margin-bottom: 15px;
+          margin-top: 0;
+        }
+      }
+    }
     &-form {
       // text-align: center;
       padding-bottom: 20px;
       .input {
         outline: none;
         width: 400px;
-        height: 50px;
-        line-height: 50px;
-        font-size: 20px;
+        height: 55px;
+        line-height: 55px;
+        font-size: 17.5px;
         margin-top: 20px;
         border: 0;
         padding-left: 10px;
@@ -52,8 +66,8 @@
       .submit {
         display: block;
         width: 400px;
-        height: 60px;
-        line-height: 60px;
+        height: 55px;
+        line-height: 55px;
         font-size: 20px;
         border: 0;
         background-color: #fff;
@@ -61,6 +75,7 @@
         text-align: center;
         margin: 30px auto 0;
         border-radius: 5px;
+        font-weight: bold;
         cursor: pointer;
       }
       .submit:hover {

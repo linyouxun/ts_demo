@@ -22,8 +22,6 @@ const ConfigHtmlSchema = new Schema({
     bgColor: String,
     title: String,
     modelColor: String,
-    formRadius: Number,
-    formWidth: [Number],
   },
   configList:[{
     config: {
@@ -33,6 +31,9 @@ const ConfigHtmlSchema = new Schema({
         height: Number,
         url: String,
       }],
+      formWidth: [Number],
+      formRadius: Number,
+      formTop: Number,
       checkList: [String],
       mobile: {
         bgColor: String,

@@ -13,6 +13,7 @@ exports.login = async( ctx, next) => {
   if (!params.pwd) {
     return falied(ctx, next, {}, 'pwd不能为空');
   }
+
   const res = await getConfigUserInfo(params);
   if(res.length === 0) {
     return falied(ctx, next, {}, '用户不存在或者密码错误');

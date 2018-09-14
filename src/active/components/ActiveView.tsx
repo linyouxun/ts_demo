@@ -103,18 +103,42 @@ function AvtiveViewImg(props: any, key: string) {
   return null;
 }
 function AvtiveViewForm(props: any, configBase: any, submit: any, key: string) {
-  const { checkList } = props;
-  if (!configBase.formWidth || configBase.formWidth.length < 1) {
-    configBase.formWidth = [10, 90];
+  const { checkList, fileList } = props;
+  let { formRadius, formWidth, formTop } = props;
+  if (!formWidth || formWidth.length < 1) {
+    formWidth = [10, 90];
   }
-  if (!configBase.formRadius) {
-    configBase.formRadius = 0;
+  if (!formRadius) {
+    formRadius = 0;
+  }
+  if (!formTop) {
+    formTop = 0;
   }
   const formStyle = {
-    marginLeft: (configBase.formWidth[0] * 5) + 'px',
-    width: ((configBase.formWidth[1] - configBase.formWidth[0]) * 5) + 'px',
-    borderRadius: configBase.formRadius + 'px',
+    marginLeft: (formWidth[0] * 5) + 'px',
+    width: ((formWidth[1] - formWidth[0]) * 5) + 'px',
+    borderRadius: formRadius + 'px',
   };
+  if (fileList.length > 0) {
+    const image = fileList[0];
+    const imageStyle = {
+      width: '500px',
+      height: (image.height * 500 / image.width) + 'px',
+    };
+    return <div key={key} className="active-component-view-form-release">
+      <img src={image.url} alt="" style={imageStyle}/>
+      <div key={key} className="active-component-view-form absolute" style={{top: (5 * formTop) + 'px'}}>
+        {checkList.map((item: any, index: string) => {
+          const inputStyle = {
+            color: props[item].color,
+            backgroundColor: props[item].bgColor
+          }
+          return (<input style={Object.assign({}, formStyle, inputStyle)} key={index} className="input" type="text" placeholder={props[item].tip}/>);
+        })}
+        <span onClick={submit} style={Object.assign({}, formStyle, {color: props.button.color, backgroundColor: props.button.bgColor})} className="submit">{props.button.tip}</span>
+      </div>
+    </div>
+  }
   return (<div key={key} className="active-component-view-form">
     {checkList.map((item: any, index: string) => {
       const inputStyle = {

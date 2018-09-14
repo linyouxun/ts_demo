@@ -1,4 +1,12 @@
-function htmlhead(title, bgColor, modelColor) {
+const { ActiveComponentType } = require('../utils/const');
+function htmlhead(title, bgColor, modelColor, configList) {
+  var flat = false;
+  for(var i = 0; i < configList.length; i++) {
+    if(configList[i].key === ActiveComponentType.swiper.key) {
+      flat = true;
+      break;
+    }
+  }
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -7,6 +15,7 @@ function htmlhead(title, bgColor, modelColor) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
       <title>${title}</title>
+      ${flat ? '<link rel="stylesheet" href="./css/swiper.min.css">' : ''}
       <style>
           * {
               margin: 0;
@@ -24,7 +33,6 @@ function htmlhead(title, bgColor, modelColor) {
               position: relative;
           }
           .relative .form {
-              left: 1.5vw;
               right: 0;
               top: 4vw;
               margin: 4vw 0;
@@ -38,7 +46,7 @@ function htmlhead(title, bgColor, modelColor) {
               border: 1px solid #ddd;
               padding: 0 10px;
               border-radius: 5px;
-              margin-bottom: 2vw;
+              margin-bottom: 3vw;
               margin-left: 0.5vw;
           }
           #area {
@@ -76,7 +84,7 @@ function htmlhead(title, bgColor, modelColor) {
               font-size: 4vw;
               border-radius: 5px;
               display: inline-block;
-              margin-top: 2vw;
+              margin-top: 3vw;
               margin-left: 0.5vw;
               font-weight: bold;
               text-align: center;
@@ -172,33 +180,66 @@ function htmlImg(src) {
   </div>`;
 }
 
-function htmlForm(formData, count, configBase) {
-  const { checkList } = formData;
+function htmlSwiperImgList({fileList}, key) {
+  return `
+  <div class="swiper-container${key}">
+    <div class="swiper-wrapper">
+      ${
+        ['', ...fileList].reduce((imgDoms, item) => {
+          return imgDoms + htmlSwiperImg(item.url);
+        })
+      }
+    </div>
+  </div>
+  `;
+}
+
+function htmlSwiperImg(src) {
+  return `<div class="swiper-slide">
+        <img src="./img/${src.split('/').pop()}" class="swiper-lazy">
+        <div class="swiper-lazy-preloader"></div>
+      </div>`;
+}
+
+function htmlForm(formData, count) {
+  const { checkList, fileList } = formData;
   let inputs = '';
-  if (!configBase.formWidth || configBase.formWidth.length < 1) {
-    configBase.formWidth = [10, 90];
+  if (!formData.formWidth || formData.formWidth.length < 1) {
+    formData.formWidth = [10, 90];
   }
-  if (!configBase.formRadius) {
-    configBase.formRadius = 0;
+  if (!formData.formRadius) {
+    formData.formRadius = 0;
   }
   for(const item of checkList) {
-    inputs += htmlInput(item, formData[item], configBase)
+    inputs += htmlInput(item, formData[item], formData)
+  }
+  let relative = false;
+  if (!!fileList && fileList.length > 0) {
+    relative = true;
   }
   return `
   <style>
     .form-item {
-      margin-left:${configBase.formWidth[0]}vw;
-      width:${configBase.formWidth[1] - configBase.formWidth[0]}vw;
-      border-radius: ${configBase.formRadius / 50 * 11}vw;
+      margin-left:${formData.formWidth[0]}vw;
+      width:${formData.formWidth[1] - formData.formWidth[0]}vw;
+      border-radius: ${formData.formRadius / 50 * 11}vw;
+    }
+    .relative .abs {
+      position: absolute;
+      top: ${formData.formTop}vw;
+      margin: 0;
     }
   </style>
   <div class="relative">
-    <div class="form">
+    ${ relative ? '<img src="' + fileList[0].url + '" style="width=100vw;height=' + fileList[0].height * 100 / fileList[0].width + 'vw;">' : ''}
+    <div class="form ${relative ? 'abs' : ''}">
         ${inputs}
         <div style="color:${formData.button.color};background-color:${formData.button.bgColor}" id="submit" class="submit-btn form-item" onclick="send${count}('${checkList.join("','")}')">${formData.button.tip}</div>
     </div>
   </div>`;
 }
+
+
 function htmlInput(id, inputItem) {
   return `
     <style>
@@ -242,12 +283,20 @@ function htmlModel() {
   </div>`;
 }
 
-function htmlFooter(id) {
+function htmlFooter(id, configList) {
   let host = '47.106.174.88';
   if ('development' === process.env.NODE_ENV) {
     host = '127.0.0.1:3100';
   }
+  var flat = false;
+  for(var i = 0; i < configList.length; i++) {
+    if(configList[i].key === ActiveComponentType.swiper.key) {
+      flat = true;
+      break;
+    }
+  }
   return `
+  ${flat ? '<script src="./js/swiper.min.js"></script>' : ''}
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
   <script src="http://${host}/statistics${!!id ? '/' + id : ''}/s.js"></script>
   <script src="./js/layer.js"></script>
@@ -256,38 +305,21 @@ function htmlFooter(id) {
   </html>`;
 }
 
-function jsLoction() {
+function jsLoction({configList}) {
+
   return `
-  function getLoction() {
-      $.ajax({
-          url: 'http://www.yoju360.com/api/location',
-          type:'GET',
-          dataType:'json',
-          success:function(response){
-          if(response.code == 200) {
-              city_id = response.result.cityData.city_id;
-              city_name = response.result.cityData.city_name;
-          } else {
-              return layer.open({
-              content: '定位信息出错了'
-              ,skin: 'msg'
-              ,time: 2 //2秒后自动关闭
-              });
-          }
-          },
-          error:function() {
-          return layer.open({
-              content: '定位信息出错了'
-              ,skin: 'msg'
-              ,time: 2 //2秒后自动关闭
-          });
-          }
-      });
-  }
-  getLoction();
   var city_id = '316';
   var city_name = '广州';
-  var isSend = false;`;
+  var serverPath = 'http://www.yoju360.com';
+  var isSend = false;
+  $(function() {
+    getLoction();
+    var option = {lazy: {loadPrevNext: true,},autoplay: {stopOnLastSlide: true}};
+    ${configList.filter(item => item.key === ActiveComponentType.swiper.key).map(item => {
+      return `new Swiper('.swiper-container${item.count}', option);`
+    }).join(`
+    `)}
+  });`;
 }
 
 function jsFormPost(htmlData) {
@@ -296,68 +328,72 @@ function jsFormPost(htmlData) {
     if(item.key == 2) {
       str += `
     function send${item.count}(${item.config.checkList.join(',')}) {
-        if (isSend) return;
-        ${item.config.checkList.map(item2 => {
-          return `
-        ${item2} = document.getElementById('${item2}').value || '';
-        if (!${item2}Check(${item2}, '${item.config[item2].errorTip}' || '')) return;`
-        }).join('')}
-        disableBtn${item.count}();
-        var url = 'http://m.yoju360.com/api/';
-        $.ajax({
-            url: url,
-            type:"POST",
-            dataType:"json",
-            data:{
-                apiURL: 'decorate/decoration/apply',
-                cityId: city_id,
-                cityName: city_name,
-                ${item.config.checkList.map(item2 => {
-                  if (item2 === 'name') {
-                    return `nickName: name,
-                cName: name,`
-                  }
-                  if (item2 === 'mobile') {
-                    return `
-                mobile: mobile,`
-                  }
-                }).join('')}
-                phoneMsg: 1,
-                smsMsg: 1,
-                utmSource: getUrlParam('utm_source'),
-                channelCity: getUrlParam('channel_city'),
-            },
-            success:function(response){
-                ableBtn${item.count}();
-                if (response.code == 200) {
-                    submit();
-                } else {
-                    layer.open({
-                        content: '网络出现问题，请重新提交'
-                        ,skin: 'msg'
-                        ,time: 2 //2秒后自动关闭
-                    });
-                }
-            },
-            error:function() {
-                ableBtn${item.count}();
-                layer.open({
-                    content: '网络出现问题，请重新提交'
-                    ,skin: 'msg'
-                    ,time: 2 //2秒后自动关闭
-                });
+      if (isSend) return;
+      ${item.config.checkList.map(item2 => {
+        return `
+      ${item2} = $(${item2}).val() || '';
+      if (!${item2}Check(${item2}, '${item.config[item2].errorTip}' || '')) return;`
+      }).join('')}
+      disableBtn${item.count}();
+      $.ajax({
+          url: serverPath + '/api/',
+          type:"POST",
+          dataType:"json",
+          data:{
+            apiURL: 'decorate/decoration/apply',
+            cityId: city_id,
+            cityName: city_name,
+            ${item.config.checkList.map(item2 => {
+              if (item2 === 'name') {
+                return `
+            nickName: name,
+            cName: name,`
+              }
+              if (item2 === 'mobile') {
+                return `mobile: mobile,`
+              }
+            }).join('')}
+            phoneMsg: 1,
+            smsMsg: 1,
+            utmSource: getUrlParam('utm_source'),
+            channelCity: getUrlParam('channel_city'),
+          },
+          success:function(response){
+            ableBtn${item.count}();
+            if (response.code == 200) {
+              submit();
+            } else {
+              layer.open({
+                content: '网络出现问题，请重新提交'
+                ,skin: 'msg'
+                ,time: 2 //2秒后自动关闭
+              });
             }
-        });
+          },
+          error:function() {
+            ableBtn${item.count}();
+            layer.open({
+              content: '网络出现问题，请重新提交'
+              ,skin: 'msg'
+              ,time: 2 //2秒后自动关闭
+            });
+          }
+      });
     }
     function ableBtn${item.count}() {
       isSend = false;
-      document.getElementById('submit').style = 'color:${item.config.button.color};background-color:${item.config.button.bgColor}';
-      document.getElementById('submit').innerText = '${item.config.button.tip}';
+      $('#submit').css({
+        background: '${item.config.button.bgColor}',
+        color: '${item.config.button.color}'
+      });
+      $('#submit').innerText = '${item.config.button.tip}';
     }
     function disableBtn${item.count}() {
       isSend = true;
-      document.getElementById('submit').style = 'background: lightgray;color:#000';
-      document.getElementById('submit').innerText = '${!!item.config.button.errorTip ? item.config.button.errorTip : '预约提交中...'}';
+      $('#submit').css({
+        background: lightgray,
+        color: '#000'
+      });
     }
     `;
     }
@@ -370,17 +406,17 @@ function jsExtra(htmlData) {
   function mobileCheck(phone, tip) {
     if (phone.trim().length == 0) {
       layer.open({
-          content: tip || '手机号码不能为空'
-          ,skin: 'msg'
-          ,time: 2 //2秒后自动关闭
+        content: tip || '手机号码不能为空'
+        ,skin: 'msg'
+        ,time: 2 //2秒后自动关闭
       });
       return false;
     }
     if (!isPoneAvailable(phone)) {
       layer.open({
-          content: '手机号码格式错误'
-          ,skin: 'msg'
-          ,time: 2 //2秒后自动关闭
+        content: '手机号码格式错误'
+        ,skin: 'msg'
+        ,time: 2 //2秒后自动关闭
       });
       return false;
     }
@@ -389,49 +425,74 @@ function jsExtra(htmlData) {
   function nameCheck(name, tip) {
     if (name.trim().length == 0) {
       layer.open({
-          content: tip || '姓名不能为空'
-          ,skin: 'msg'
-          ,time: 2 //2秒后自动关闭
+        content: tip || '姓名不能为空'
+        ,skin: 'msg'
+        ,time: 2 //2秒后自动关闭
       });
       return false;
     }
     return true;
   }
   function isPoneAvailable(phone) {
-      var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
-      if (!myreg.test(phone)) {
-          return false;
-      } else {
-          return true;
-      }
+    var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
+    if (!myreg.test(phone)) {
+      return false;
+    } else {
+      return true;
+    }
   }
-
   function submit() {
-      document.getElementById('modal').style = "display:";
-      document.getElementById('modal').style.cssText = "";
+    $('#modal').css({
+      display: ''
+    });
   }
-
   function closeModal(e) {
-      document.getElementById('modal').style = "display:none";
-      document.getElementById('modal').style.cssText = "display:none";
+    $('#modal').css({
+      display: 'none'
+    });
   }
-
   function stopPro(e) {
-      e.stopPropagation()
+    e.stopPropagation()
+  }
+  function getLoction() {
+    $.ajax({
+      url: serverPath + '/api/location',
+      type:'GET',
+      dataType:'json',
+      success:function(response){
+        if(response.code == 200) {
+          city_id = response.result.cityData.city_id;
+          city_name = response.result.cityData.city_name;
+        } else {
+          return layer.open({
+            content: '定位信息出错了'
+            ,skin: 'msg'
+            ,time: 2 //2秒后自动关闭
+          });
+        }
+      },
+      error:function() {
+        return layer.open({
+          content: '定位信息出错了'
+          ,skin: 'msg'
+          ,time: 2 //2秒后自动关闭
+        });
+      }
+    });
   }
 
   function getUrlParam(name) {
-      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-      var r = window.location.search.substr(1).match(reg);
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null)
+      return decodeURIComponent(r[2]);
+    else { // 尝试匹配伪静态的地址参数, 如getinfo-productId-29.html
+      reg = new RegExp(name + "-([^-\.]*)");
+      r = window.location.href.match(reg);
       if (r != null)
-          return decodeURIComponent(r[2]);
-      else { // 尝试匹配伪静态的地址参数, 如getinfo-productId-29.html
-          reg = new RegExp(name + "-([^-\.]*)");
-          r = window.location.href.match(reg);
-          if (r != null)
-              return decodeURIComponent(r[1])
-      }
-      return null;
+        return decodeURIComponent(r[1])
+    }
+    return null;
   }`;
 }
 
@@ -442,6 +503,8 @@ function jsLayerRender() {
 function cssLayerRender() {
   return `.layui-m-layer{position:relative;z-index:19891014}.layui-m-layer *{-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box}.layui-m-layermain,.layui-m-layershade{position:fixed;left:0;top:0;width:100%;height:100%}.layui-m-layershade{background-color:rgba(0,0,0,.7);pointer-events:auto}.layui-m-layermain{display:table;font-family:Helvetica,arial,sans-serif;pointer-events:none}.layui-m-layermain .layui-m-layersection{display:table-cell;vertical-align:middle;text-align:center}.layui-m-layerchild{position:relative;display:inline-block;text-align:left;background-color:#fff;font-size:14px;border-radius:5px;box-shadow:0 0 8px rgba(0,0,0,.1);pointer-events:auto;-webkit-overflow-scrolling:touch;-webkit-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-duration:.2s;animation-duration:.2s}@-webkit-keyframes layui-m-anim-scale{0%{opacity:0;-webkit-transform:scale(.5);transform:scale(.5)}100%{opacity:1;-webkit-transform:scale(1);transform:scale(1)}}@keyframes layui-m-anim-scale{0%{opacity:0;-webkit-transform:scale(.5);transform:scale(.5)}100%{opacity:1;-webkit-transform:scale(1);transform:scale(1)}}.layui-m-anim-scale{animation-name:layui-m-anim-scale;-webkit-animation-name:layui-m-anim-scale}@-webkit-keyframes layui-m-anim-up{0%{opacity:0;-webkit-transform:translateY(800px);transform:translateY(800px)}100%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes layui-m-anim-up{0%{opacity:0;-webkit-transform:translateY(800px);transform:translateY(800px)}100%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}}.layui-m-anim-up{-webkit-animation-name:layui-m-anim-up;animation-name:layui-m-anim-up}.layui-m-layer0 .layui-m-layerchild{width:90%;max-width:640px}.layui-m-layer1 .layui-m-layerchild{border:none;border-radius:0}.layui-m-layer2 .layui-m-layerchild{width:auto;max-width:260px;min-width:40px;border:none;background:0 0;box-shadow:none;color:#fff}.layui-m-layerchild h3{padding:0 10px;height:60px;line-height:60px;font-size:16px;font-weight:400;border-radius:5px 5px 0 0;text-align:center}.layui-m-layerbtn span,.layui-m-layerchild h3{text-overflow:ellipsis;overflow:hidden;white-space:nowrap}.layui-m-layercont{padding:50px 30px;line-height:22px;text-align:center}.layui-m-layer1 .layui-m-layercont{padding:0;text-align:left}.layui-m-layer2 .layui-m-layercont{text-align:center;padding:0;line-height:0}.layui-m-layer2 .layui-m-layercont i{width:25px;height:25px;margin-left:8px;display:inline-block;background-color:#fff;border-radius:100%;-webkit-animation:layui-m-anim-loading 1.4s infinite ease-in-out;animation:layui-m-anim-loading 1.4s infinite ease-in-out;-webkit-animation-fill-mode:both;animation-fill-mode:both}.layui-m-layerbtn,.layui-m-layerbtn span{position:relative;text-align:center;border-radius:0 0 5px 5px}.layui-m-layer2 .layui-m-layercont p{margin-top:20px}@-webkit-keyframes layui-m-anim-loading{0%,100%,80%{transform:scale(0);-webkit-transform:scale(0)}40%{transform:scale(1);-webkit-transform:scale(1)}}@keyframes layui-m-anim-loading{0%,100%,80%{transform:scale(0);-webkit-transform:scale(0)}40%{transform:scale(1);-webkit-transform:scale(1)}}.layui-m-layer2 .layui-m-layercont i:first-child{margin-left:0;-webkit-animation-delay:-.32s;animation-delay:-.32s}.layui-m-layer2 .layui-m-layercont i.layui-m-layerload{-webkit-animation-delay:-.16s;animation-delay:-.16s}.layui-m-layer2 .layui-m-layercont>div{line-height:22px;padding-top:7px;margin-bottom:20px;font-size:14px}.layui-m-layerbtn{display:box;display:-moz-box;display:-webkit-box;width:100%;height:50px;line-height:50px;font-size:0;border-top:1px solid #D0D0D0;background-color:#F2F2F2}.layui-m-layerbtn span{display:block;-moz-box-flex:1;box-flex:1;-webkit-box-flex:1;font-size:14px;cursor:pointer}.layui-m-layerbtn span[yes]{color:#40AFFE}.layui-m-layerbtn span[no]{border-right:1px solid #D0D0D0;border-radius:0 0 0 5px}.layui-m-layerbtn span:active{background-color:#F6F6F6}.layui-m-layerend{position:absolute;right:7px;top:10px;width:30px;height:30px;border:0;font-weight:400;background:0 0;cursor:pointer;-webkit-appearance:none;font-size:30px}.layui-m-layerend::after,.layui-m-layerend::before{position:absolute;left:5px;top:15px;content:'';width:18px;height:1px;background-color:#999;transform:rotate(45deg);-webkit-transform:rotate(45deg);border-radius:3px}.layui-m-layerend::after{transform:rotate(-45deg);-webkit-transform:rotate(-45deg)}body .layui-m-layer .layui-m-layer-footer{position:fixed;width:95%;max-width:100%;margin:0 auto;left:0;right:0;bottom:10px;background:0 0}.layui-m-layer-footer .layui-m-layercont{padding:20px;border-radius:5px 5px 0 0;background-color:rgba(255,255,255,.8)}.layui-m-layer-footer .layui-m-layerbtn{display:block;height:auto;background:0 0;border-top:none}.layui-m-layer-footer .layui-m-layerbtn span{background-color:rgba(255,255,255,.8)}.layui-m-layer-footer .layui-m-layerbtn span[no]{color:#FD482C;border-top:1px solid #c2c2c2;border-radius:0 0 5px 5px}.layui-m-layer-footer .layui-m-layerbtn span[yes]{margin-top:10px;border-radius:5px}body .layui-m-layer .layui-m-layer-msg{width:auto;max-width:90%;margin:0 auto;bottom:-150px;background-color:rgba(0,0,0,.7);color:#fff}.layui-m-layer-msg .layui-m-layercont{padding:10px 20px}`;
 }
+
+
 
 function jsStatistics(id) {
   let host = '47.106.174.88';
@@ -472,6 +535,7 @@ module.exports = {
   htmlModel,
   htmlFooter,
   htmlImgList,
+  htmlSwiperImgList,
   jsLoction,
   jsFormPost,
   jsExtra,

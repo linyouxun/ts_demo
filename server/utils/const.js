@@ -12,6 +12,10 @@ const ActiveComponentType = {
     key: '2',
     name: '报名框'
   },
+  swiper: {
+    key: '3',
+    name: '轮播图'
+  }
 }
 /**
  * 100
