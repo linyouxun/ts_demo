@@ -27,9 +27,13 @@ exports.statistics = async function(ctx, next) {
     let affiliation = {};
     if(!!id) {
       // 查找页面所属用户
-      const configHtmlInfo = await getConfigHtmlItem(setShortNum(id, 24));
-      if(!!configHtmlInfo) {
-        affiliation = configHtmlInfo.userInfo;
+      try {
+        const configHtmlInfo = await getConfigHtmlItem(setShortNum(id, 24));
+        if(!!configHtmlInfo) {
+          affiliation = configHtmlInfo.userInfo;
+        }
+      } catch (error) {
+        console.log('no find user');
       }
     }
     // 设置城市信息
