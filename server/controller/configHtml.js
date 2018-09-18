@@ -70,7 +70,16 @@ exports.listConfigHtml = async(ctx, next) => {
   if (ctx.session.leve > 0) {
     params.userId = ctx.session.id;
   }
-  const res = await configHtmlHelper.listConfigHtml(+pageSize, +currentPage, params);
+  let res = await configHtmlHelper.listConfigHtml(+pageSize, +currentPage, params);
+  if (ctx.session.leve > 0 ) {
+    res.list = res.list.map(item => {
+      return {
+        _id: item._id,
+        meta: item.meta,
+        title: item.title,
+      }
+    });
+  }
   success(ctx, next, res);
 }
 

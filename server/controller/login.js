@@ -23,8 +23,8 @@ exports.login = async( ctx, next) => {
       leve: res[0].leve + '',
       id: res[0]._id,
     };
-    ctx.cookies.set('name', res[0].name);
-    ctx.cookies.set('leve', res[0].leve);
+    ctx.cookies.set('name', res[0].name + '', {httpOnly: false});
+    ctx.cookies.set('leve', res[0].leve + '', {httpOnly: false});
 
     return success(ctx, next, {
       name: res[0].name,

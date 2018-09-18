@@ -7,6 +7,7 @@ import FormField from "../components/FormField";
 import { Table } from 'antd';
 import { fetchData } from "../util/request";
 import { PAGE, APISERVER } from '../util/const';
+import userInfo from '../util/power';
 import './StatisticsList.less';
 
 enum FixedTpye {
@@ -29,8 +30,8 @@ class StatisticsList extends React.Component<any, any> {
         const { currentPage, pageSize } = this.page;
         return <div className="item-index">{ (currentPage - 1) * pageSize + index + 1 }</div>
       }},
-      {title: '当前页面', dataIndex: 'currentHtml', width: 635, render:(text: any,record: any, index: any)=> {
-        return  <div title={text} className="item-html">{text}</div>
+      {title: `${userInfo.userLeve < 1 ? '(所属者)当前页面' : '当前页面'}`, dataIndex: 'currentHtml', width: 635, render:(text: any,record: any, index: any)=> {
+        return  <div title={text} className="item-html">{userInfo.userLeve < 1 ? `(${record.affiliation.name || '无'})` : ''}{text}</div>
       }},
       {title: 'ID', dataIndex: 'configId', width: 220},
       {title: '第n次访问', dataIndex: 'visitCount', width: 120, align: FixedTpye.center},

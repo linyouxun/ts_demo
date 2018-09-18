@@ -21,7 +21,7 @@ exports.success = ( ctx, next, data, message = 'success', code = ERRORCODE.succe
   exports.returnData(ctx, next, data, message, code, stutasCode);
 }
 
-exports.falied = ( ctx, next, data, message = 'falied', code = ERRORCODE.success, stutasCode = ERRORCODE.falied) => {
+exports.falied = ( ctx, next, data, message = 'falied', code = ERRORCODE.success, stutasCode = ERRORCODE.failed) => {
   exports.returnData(ctx, next, data, message, code, stutasCode);
 }
 

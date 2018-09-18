@@ -65,6 +65,7 @@ exports.listConfigHtml = async(pageSize = 10, currentPage = 1, params) => {
     return {
       _id: item._id,
       meta: item.metaInfo,
+      user: item.userInfo,
       title: item.configBase.title,
     }
   })

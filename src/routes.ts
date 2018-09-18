@@ -12,14 +12,10 @@ import NotFound from './NotFound';
 import StatisticsList from './statistics/StatisticsList';
 // 用户管理
 import UserList from './user/UserList';
-declare var window: {
-  userLeve?: number;
-};
 
-let userLeve = 0;
-if (!!window && window.userLeve !== undefined) {
-  userLeve = window.userLeve;
-}
+// 用户信息
+import userInfo from './util/power';
+
 
 interface Iprop {
   breadcrumbName?: string,
@@ -123,7 +119,7 @@ export const routes = [{
 export const routesList: Iprop[] = [];
 export const routesObject: any = {};
 for (const iterator of routes) {
-  if(iterator.userLeve !== undefined && iterator.userLeve < userLeve) {
+  if(iterator.userLeve !== undefined && iterator.userLeve < userInfo.userLeve) {
     continue;
   }
   if(!!iterator.children && iterator.children.length > 0) {
@@ -155,7 +151,7 @@ for (const iterator of routes) {
   routesObject[i.path] = i.breadcrumbName;
 }
 export const routes2 = routes.filter(item => {
-  if(item.userLeve !== undefined && item.userLeve < userLeve) {
+  if(item.userLeve !== undefined && item.userLeve < userInfo.userLeve) {
     return false;
   }
   return true;

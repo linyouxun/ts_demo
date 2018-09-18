@@ -94,8 +94,14 @@ class ActiveAdd extends React.Component<any, any> {
       url = `${APISERVER}/api2/active/list/update`;
       data.id = id;
     }
+    this.setState({
+      loading: true
+    });
     const res = await fetchData( data, url, {
       method: 'POST'
+    });
+    this.setState({
+      loading: false
     });
     if(res.code === 200) {
       message.success('保存成功');

@@ -306,7 +306,6 @@ function htmlFooter(id, configList) {
 }
 
 function jsLoction({configList}) {
-
   return `
   var city_id = '316';
   var city_name = '广州';

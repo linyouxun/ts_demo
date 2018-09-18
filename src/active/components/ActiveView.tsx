@@ -9,6 +9,7 @@ export interface IConfigObj {
   count: string | number;
   show?: boolean | undefined;
 }
+
 export interface IConfigBase {
   title: string;
   bgColor: string;
@@ -31,6 +32,7 @@ interface IProps {
 class ActiveView extends React.Component<IProps, any> {
   public static componentType = ActiveComponentType;
   public static formItem = ActiveFormItem;
+  public myswiper: any = null;
   public state = {
     show: false
   }
@@ -38,6 +40,22 @@ class ActiveView extends React.Component<IProps, any> {
     this.setState({
       show
     });
+  }
+
+  public componentDidUpdate(){
+    const { configList } = this.props;
+    configList.map((item: IConfigObj) => {
+      switch(item.key) {
+        case ActiveView.componentType.swiper.key: {
+          // const option = {lazy: {loadPrevNext: true,},autoplay: {stopOnLastSlide: true}};
+          const option = {observer:true};
+          this.myswiper = new Swiper(`.swiper-container${item.key}-${item.name}-${item.count}`, option);
+        }
+        default: {
+          break;
+        }
+      }
+    })
   }
 
   public renderComponent() {
@@ -48,10 +66,15 @@ class ActiveView extends React.Component<IProps, any> {
           case ActiveView.componentType.pic.key: {
             return AvtiveViewImg({
               fileList: item.config.fileList
-            }, `${item.key}-${item.name}.${item.count}`);
+            }, `${item.key}-${item.name}-${item.count}`);
+          }
+          case ActiveView.componentType.swiper.key: {
+            return AvtiveViewSwpier({
+              fileList: item.config.fileList
+            }, `${item.key}-${item.name}-${item.count}`);
           }
           case ActiveView.componentType.form.key: {
-            return AvtiveViewForm(item.config, configBase, this.clickBtn.bind(this, true), `${item.key}-${item.name}.${item.count}`);
+            return AvtiveViewForm(item.config, configBase, this.clickBtn.bind(this, true), `${item.key}-${item.name}-${item.count}`);
           }
           default: {
             break;
@@ -102,6 +125,27 @@ function AvtiveViewImg(props: any, key: string) {
   }
   return null;
 }
+
+function AvtiveViewSwpier(props: any, key: string) {
+  const { fileList } = props;
+  if(!!fileList && fileList.length > 0) {
+    return (<div key={key} className={`swiper-container${key}`}>
+      <div className="swiper-wrapper">
+        {fileList.map((item: any, index: string) => {
+          const height = item.height * 500 / item.width;
+          return (<div className="swiper-slide" key={index}>
+            <img className="" src={item.url} style={{
+              width: `500px`,
+              height: `${height}px`,
+            }}/>
+          </div>)
+        })}
+      </div>
+    </div>);
+  }
+  return null;
+}
+
 function AvtiveViewForm(props: any, configBase: any, submit: any, key: string) {
   const { checkList, fileList } = props;
   let { formRadius, formWidth, formTop } = props;

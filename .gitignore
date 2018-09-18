@@ -13,6 +13,8 @@
 !/static/test.html
 !/static/test2.html
 !/static/login.html
+!/static/swiper.min.css
+!/static/swiper.min.js
 # misc
 .DS_Store
 .env.local

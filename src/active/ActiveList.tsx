@@ -6,6 +6,7 @@ import FormField from "../components/FormField";
 import { Table, Popconfirm } from 'antd';
 import { fetchData } from "../util/request";
 import { PAGE, APISERVER } from '../util/const';
+import userInfo from '../util/power';
 
 class ActiveList extends React.Component<any, any> {
   public page = {
@@ -19,7 +20,9 @@ class ActiveList extends React.Component<any, any> {
         const { currentPage, pageSize } = this.page;
         return <div>{ (currentPage - 1) * pageSize + index + 1 }</div>
       }},
-      {title: 'ID', dataIndex: '_id'},
+      {title: `${userInfo.userLeve < 1 ? 'ID (所属者)' : 'ID'}`, dataIndex: '_id', render:(text: any,record: any, index: any)=> {
+        return  <div>{text}{userInfo.userLeve < 1 ? ' (' + record.user.name + ')' : ''}</div>
+      }},
       {title: '标题', dataIndex: 'title'},
       {title: '创建时间', dataIndex: 'createTime', render:(text: any,record: any, index: any)=> {
         return  <div>{moment(record.meta.createtime).format('YYYY-MM-DD hh:mm:ss')}</div>

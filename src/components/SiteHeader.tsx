@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Modal, Icon, message } from 'antd';
 import { fetchData } from "../util/request";
 import { APISERVER } from '../util/const';
-import { getCookie } from '../util/tools';
+import userInfo from '../util/power';
 import "./SiteHeader.less";
 
 export class SiteHeader extends React.Component<any, any> {
@@ -65,7 +65,7 @@ export class SiteHeader extends React.Component<any, any> {
         <div className="header-action">
           <nav>
             <span className="action-shop-name"> ※ 优居小程序后台管理系统 </span>
-            <span className="action-user-name"><Icon type="user"/><span>{getCookie('name') || ''}</span></span>
+            <span className="action-user-name"><Icon type="user"/><span>{ userInfo.userName }</span></span>
             <span className="action-log-out" onClick={this.onClickLogout}><Icon type="logout"/><span>退出系统</span></span>
           </nav>
         </div>
