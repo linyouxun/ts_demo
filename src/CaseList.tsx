@@ -63,7 +63,7 @@ class CaseList extends React.Component<any, any> {
 
   public async deleteItem(record: any) {
     this.setState({loading: true})
-    const res = await fetchData( {id: record.id, operate: 2}, 'case/updateCase', {
+    const res = await fetchData( {id: record.id, operate: 2}, '/xcx/api/case/updateCase', {
       method: 'POST'
     });
     this.setState({loading: false});
@@ -80,7 +80,7 @@ class CaseList extends React.Component<any, any> {
   }
   public async loadData(data = {category: '-1'}) {
     this.setState({loading: true})
-    const res = await fetchData( data, 'case/listCase', {
+    const res = await fetchData( data, '/xcx/api/case/listCase', {
       method: 'GET'
     });
     this.setState({loading: false})
@@ -92,7 +92,7 @@ class CaseList extends React.Component<any, any> {
       Modal.error({
         content: '登陆已失效，请重新登陆',
         onOk: () => {
-          window.location.href = '/user/login';
+          window.location.href = '/login';
         },
         title: '',
       });

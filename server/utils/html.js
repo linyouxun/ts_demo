@@ -4,7 +4,6 @@ const {htmlhead, htmlImgList, htmlForm, htmlModel, htmlFooter, jsLoction, jsForm
 const { ActiveComponentType } = require('../utils/const');
 const util = require('../utils/tools');
 
-
 function renderHtml(htmlData, id) {
   const { configBase, configList } = htmlData;
   let strHtml = htmlhead(configBase.title, configBase.bgColor, configBase.modelColor, configList);

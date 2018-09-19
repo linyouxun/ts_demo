@@ -57,7 +57,7 @@ class CaseAdd extends React.Component<any, any> {
   }
   public async updateItem(data: any) {
     this.setState({loading: true})
-    const res = await fetchData( data, 'case/updateCase', {
+    const res = await fetchData( data, '/xcx/api/case/updateCase', {
       method: 'POST'
     });
     this.setState({loading: false});
@@ -70,7 +70,7 @@ class CaseAdd extends React.Component<any, any> {
   }
   public async addItem(data: any) {
     this.setState({loading: true})
-    const res = await fetchData( data, 'case/addCase', {
+    const res = await fetchData( data, '/xcx/api/case/addCase', {
       method: 'POST'
     });
     this.setState({loading: false});

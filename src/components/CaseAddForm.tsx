@@ -78,6 +78,7 @@ export class CaseAddForm extends React.Component<IProps & FormComponentProps, an
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleEditorChange = this.handleEditorChange.bind(this);
     this.goback = this.goback.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
   public handleSubmit(e: any) {
     e.preventDefault();
@@ -325,7 +326,7 @@ export class CaseAddForm extends React.Component<IProps & FormComponentProps, an
           rules: [{ required: true, validator: this.checkImg.bind(this) }],
         })(
           <Upload
-            action={`${IMGSERVER}/upload`}
+            action={`/xcx/upload`}
             listType="picture-card"
             fileList={fileList}
             onPreview={this.handlePreview}

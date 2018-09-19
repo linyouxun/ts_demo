@@ -8,7 +8,6 @@ import './BannerAdd.less';
 import Tools from "./util/tools";
 import { fetchData } from "./util/request";
 
-
 class BannerAdd extends React.Component<any, any> {
   constructor(props: any){
     super(props);
@@ -25,7 +24,7 @@ class BannerAdd extends React.Component<any, any> {
   }
 
   public async componentDidMount(){
-    const res = await fetchData( {}, 'resource/getHomepageBanner', {
+    const res = await fetchData( {}, '/xcx/api/resource/getHomepageBanner', {
       method: 'GET'
     });
     if (res.code === 200) {
@@ -63,7 +62,7 @@ class BannerAdd extends React.Component<any, any> {
 
   public async setItem(params: object) {
     this.setState({loading: true})
-    const res = await fetchData( params, 'resource/setHomepageBanner', {
+    const res = await fetchData( params, '/xcx/api/resource/setHomepageBanner', {
       method: 'POST'
     });
     this.setState({loading: false});

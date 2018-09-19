@@ -2,7 +2,6 @@ import * as React from 'react';
 import {Button, Modal, Form, Icon, Upload} from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
-import { IMGSERVER } from '../util/const';
 const FormItem = Form.Item;
 import './BannerForm.less';
 
@@ -63,25 +62,28 @@ export class BannerForm extends React.Component<IProps & FormComponentProps, any
       callback('banner图片不能为空，请重新上传');
     }
   }
-  public handlePreview() {
+  public handlePreview(file: any) {
     this.setState({
+      previewImage: file.url || file.thumbUrl,
       previewVisible: true
     });
   }
   public handleChange(info: UploadChangeParam) {
     const { fileList, file } = info;
-    this.setState({
-      fileList,
-    })
     if (file.status === 'done') {
       if (file.response.code === 200) {
         fileList[fileList.length-1] = Object.assign(fileList[fileList.length-1],{
-          url: file.response.data.imageUrl
+          url: file.response.data.imageUrl,
+          thumbUrl: file.response.data.imageUrl
         })
         this.setState({
           fileList
         })
       }
+    } else {
+      this.setState({
+        fileList,
+      });
     }
   }
   public handleCancel() {
@@ -117,7 +119,7 @@ export class BannerForm extends React.Component<IProps & FormComponentProps, any
             rules: [{ required: true, validator: this.checkImg }],
           })(
             <Upload
-              action={`${IMGSERVER}/upload`}
+              action={`/xcx/upload`}
               listType="picture-card"
               fileList={fileList}
               onPreview={this.handlePreview}

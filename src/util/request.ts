@@ -1,4 +1,3 @@
-const preUrl = '/api/';
 import {objToUrlString} from './tools';
 export function fetchData(data: object, url: string, opts: RequestInit = {}) {
   // 清除空参数
@@ -19,9 +18,6 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
     url += ('?' + objToUrlString(data));
   } else {
     params.body = objToUrlString(data);
-  }
-  if (!(new RegExp('http')).test(url)) {
-    url = preUrl + url;
   }
   params.credentials = 'include';
   try {

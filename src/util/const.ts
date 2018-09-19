@@ -11,6 +11,9 @@ export const APISERVER = (function s() {
   }
   return 'http://47.106.174.88';
 })();
+// 小程序图片前缀
+export const miniImgPath = 'http://xcx.yoju360.com';
+
 // 初始化分页
 export const PAGE = {
   defaultPageSize: 10,
@@ -162,4 +165,5 @@ export default {
   ARROW,
   ActiveComponentType,
   ActiveFormItem,
+  miniImgPath,
 }
