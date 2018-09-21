@@ -28,7 +28,7 @@ class ActiveList extends React.Component<any, any> {
         return  <div>{moment(record.meta.createtime).format('YYYY-MM-DD hh:mm:ss')}</div>
       }},
       {title: '修改时间', dataIndex: 'updateTime', render:(text: any,record: any, index: any)=> {
-        return  <div>{moment(record.meta.updateime).format('YYYY-MM-DD hh:mm:ss')}</div>
+        return  <div>{moment(record.meta.updatetime).format('YYYY-MM-DD hh:mm:ss')}</div>
       }},
       {dataIndex: 'operation', render:(text: number | string | boolean, record: object, index: number)=> {
         return <div>
@@ -74,7 +74,7 @@ class ActiveList extends React.Component<any, any> {
     this.setState({
       loading: false
     });
-    if (res.code === 200) {
+    if (res.stutasCode === 200) {
       this.page = {
         pageSize: res.result.pageSize,
         currentPage: res.result.currentPage,
@@ -107,7 +107,7 @@ class ActiveList extends React.Component<any, any> {
     this.setState({
       loading: false
     });
-    if (res.code === 200) {
+    if (res.stutasCode === 200) {
       const { pageSize, currentPage } = this.page;
       this.loadList(pageSize, currentPage);
     }
@@ -131,7 +131,7 @@ class ActiveList extends React.Component<any, any> {
         onShowSizeChange: this.onPageChange,
         pageSizeOptions: PAGE.defaultPageSizeOptions,
         pageSize,
-        showTotal: () => `第${currentPage}页, 共有${Math.ceil(Math.ceil(total / pageSize))}页`
+        showTotal: () => `第${currentPage}页, 共有${Math.ceil(Math.ceil(total / pageSize))}页，有${total}条`
       },
       rowKey    : (record: any, index: number) => {
         return (index + '')

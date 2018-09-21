@@ -63,7 +63,7 @@ class UserList extends React.Component<any, any> {
     this.setState({
       loading: false
     });
-    if (res.code === 200) {
+    if (res.stutasCode === 200) {
       this.page = {
         pageSize: res.result.pageSize,
         currentPage: res.result.currentPage,

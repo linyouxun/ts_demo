@@ -12,7 +12,6 @@ const { createUser, updateUser, deleteUser, listUser } = require('./controller/u
 
 
 
-
 module.exports = function() {
 	// var router = new Router({
   //   prefix: '/api'
@@ -80,7 +79,6 @@ module.exports = function() {
   router.get('/api2/user/delete', deleteUser);
 
   router.get('/api2/user/delete',  async (ctx, next) => {
-    ctx.cookies
     try {
       await next();
     } catch (error) {

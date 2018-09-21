@@ -52,7 +52,8 @@ exports.listStatisticsItem = async (currentPage, pageSize, params) => {
       ip:item.ip,
       source:item.source,
       timestamp:item.timestamp,
-      visitCount:item.visitCount,
+      visitCount:item.visitHtmlCount,
+      isOlder:item.isOlder,
       visitor:item.visitor,
     };
   })

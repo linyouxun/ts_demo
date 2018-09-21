@@ -8,9 +8,9 @@ const session = require('koa-session');
 const {adminHtml} = require('./middelware/admin');
 const {ipconfig, sessionCheck, commonError, commonHeaders} = require('./middelware/common');
 const app = new Koa();
-app.keys = ['youju-lyx'];
+app.keys = ['test-lyx'];
 const CONFIG = {
-  key: 'koa:youju',
+  key: 'test:mmp',
   maxAge: 86400000,
   autoCommit: true,
   overwrite: true,
@@ -50,7 +50,6 @@ var walk = function(modelPath) {
     })
 };
 walk(models_path);
-
 app.use(koaStatic(__dirname + '/../build'));
 app.use(koaStatic(__dirname + '/../static'));
 app.use(koaStatic(__dirname + '/../doc'));

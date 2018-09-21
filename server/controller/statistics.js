@@ -4,6 +4,8 @@ const { GAODE_KEY } = require('../utils/const');
 const { strToObj, setShortNum, filterSpecialChar } = require('../utils/tools');
 const { jsStatistics } = require('../utils/htmltool');
 const { ihdr, idat } = require('../utils/png');
+const { encrypt, decrypt } = require('../utils/encrypt');
+
 const { success, falied } = require('./base');
 const { addConfigStatisticsItem, listStatisticsItem } = require('../dbhelper/configStatistics');
 const { getConfigHtmlItem } = require('../dbhelper/configHtmlHelper');
@@ -71,10 +73,12 @@ exports.statistics = async function(ctx, next) {
       sourceParams: strToObj(!!ctx.query.referrer ? (!!ctx.query.referrer.split('?')[1] ? ctx.query.referrer.split('?')[1] : '') : '') || [],
       deviseInfo,
       cityInfo,
-      configId: id,
-      visitCount: +ctx.cookies.get(`visitcount${!!id ? '-' + id: ''}`) || 1,
-      visitCountTotal: +ctx.cookies.get('visitcount') || 1,
-      visitor: +ctx.cookies.get('visitor') || '未知',
+      configId: id || ctx.query.id,
+      visitHtmlCount: ctx.query.vh || 1,
+      visitCount: ctx.query.vc || 1,
+      visitCountTotal: ctx.query.vt || 1,
+      visitor: ctx.query.userId || '未知',
+      isOlder: ctx.query.vt > 1 ? true: false,
       affiliation
     }
     await addConfigStatisticsItem(configItem);
@@ -84,16 +88,25 @@ exports.statistics = async function(ctx, next) {
 exports.statisticsjs = async function(ctx, next) {
   const { id } = ctx.params;
   // 设置cookie 现在统计的是单用户访问的所有页面都添加
-  if (!!ctx.cookies.get('visitor')) {
-    let count = +ctx.cookies.get('visitcount') || 0;
-    ctx.cookies.set('visitcount', count + 1);
-    count = +ctx.cookies.get(`visitcount-${!!id ? id: ''}`) || 0;
-    ctx.cookies.set(`visitcount-${!!id ? id: ''}`, count + 1);
-  } else {
-    ctx.cookies.set('visitor', +new Date() + '');
-    ctx.cookies.set('visitcount', 1);
-    ctx.cookies.set(`visitcount-${!!id ? id: ''}`, 1);
-  }
+  // let paths = ctx.path.split('/');
+  // paths.pop();
+  // const pathStr = paths.join('/');
+  // if (!ctx.cookies.get('visitor')) {
+  //   const day = new Date();
+  //   day.setHours(23);
+  //   day.setMinutes(59);
+  //   day.setSeconds(59);
+  //   day.setMilliseconds(999);
+  //   day.setHours(day.getHours() + 8);
+  //   ctx.cookies.set('visitor', encrypt(!!id ? id: 'none') + '_' + (+new Date()), {
+  //       // domain: ctx.host, // 写cookie所在的域名
+  //       // path: pathStr,       // 写cookie所在的路径
+  //       // maxAge: 2*60*60*1000,   // cookie有效时长
+  //       expires:new Date('2100-01-01'), // cookie失效时间
+  //       httpOnly:false,  // 是否只用于http请求中获取
+  //       // overwrite:false  // 是否允许重写
+  //   });
+  // }
   ctx.response.type = 'text/javascript';
   ctx.body = jsStatistics(id);
 }

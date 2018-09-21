@@ -31,7 +31,7 @@ class StatisticsList extends React.Component<any, any> {
         return <div className="item-index">{ (currentPage - 1) * pageSize + index + 1 }</div>
       }},
       {title: `${userInfo.userLeve < 1 ? '(所属者)当前页面' : '当前页面'}`, dataIndex: 'currentHtml', width: 635, render:(text: any,record: any, index: any)=> {
-        return  <div title={text} className="item-html">{userInfo.userLeve < 1 ? `(${record.affiliation.name || '无'})` : ''}{text}</div>
+        return  <div title={text} className="item-html">{userInfo.userLeve < 1 ? `(${record.affiliation.name || '无'})` : ''}<a target='_blank' className='link-color' href={text}>{text}</a></div>
       }},
       {title: 'ID', dataIndex: 'configId', width: 220},
       {title: '第n次访问', dataIndex: 'visitCount', width: 120, align: FixedTpye.center},
@@ -64,7 +64,7 @@ class StatisticsList extends React.Component<any, any> {
     const res = await fetchData({}, `${APISERVER}/api2/city/list`, {
       method: 'GET'
     });
-    if (res.code === 200) {
+    if (res.stutasCode === 200) {
       let tempList: any[] = [];
       for (const iterator of res.result) {
         tempList = [...tempList, ...iterator.districts]
@@ -88,7 +88,7 @@ class StatisticsList extends React.Component<any, any> {
     this.setState({
       loading: false
     });
-    if (res.code === 200) {
+    if (res.stutasCode === 200) {
       this.page = {
         pageSize: res.result.pageSize,
         currentPage: res.result.currentPage,
@@ -155,7 +155,7 @@ class StatisticsList extends React.Component<any, any> {
         onShowSizeChange: this.onPageChange,
         pageSizeOptions: PAGE.defaultPageSizeOptions,
         pageSize,
-        showTotal: () => `第${currentPage}页, 共有${Math.ceil(Math.ceil(total / pageSize))}页`
+        showTotal: () => `第${currentPage}页, 共有${Math.ceil(Math.ceil(total / pageSize))}页，有${total}条`
       },
       expandedRowRender: (record: any, index: number) => {
         return <StatisticsDetail cityInfo={record.cityInfo} source={record.source} ip={record.ip} deviseInfo={record.deviseInfo}/>;

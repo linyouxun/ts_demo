@@ -33,9 +33,11 @@ const StatisticsSchema = new Schema({
   },
   // 拓展属性
   configId: String,
+  visitHtmlCount: Number,
   visitCount: Number,
   visitCountTotal: Number,
   visitor: String,
+  isOlder: Boolean,
   // userId: String,(通过cookie, 浏览器, 设备)
   // 页面
   // 归属信息

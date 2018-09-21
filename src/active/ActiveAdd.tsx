@@ -58,7 +58,7 @@ class ActiveAdd extends React.Component<any, any> {
       this.setState({
         loading: false
       });
-      if (res.code === 200) {
+      if (res.stutasCode === 200) {
         this.setState({
           id: res.result._id,
           configList: res.result.configList,
@@ -103,7 +103,7 @@ class ActiveAdd extends React.Component<any, any> {
     this.setState({
       loading: false
     });
-    if(res.code === 200) {
+    if(res.stutasCode === 200) {
       message.success('保存成功');
       return this.props.history.goBack();
     } else {
