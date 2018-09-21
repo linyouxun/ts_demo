@@ -1,4 +1,5 @@
 import {objToUrlString} from './tools';
+import { Modal, message } from 'antd';
 export function fetchData(data: object, url: string, opts: RequestInit = {}) {
   // 清除空参数
   for (const key in data) {
@@ -30,6 +31,17 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
         msg: `JSON解析错误：${error.message}`,
       };
     }).then(json => {
+      if(json.stutasCode === 401) {
+        Modal.error({
+          title: '登陆已失效',
+          okText: '返回登陆',
+          onOk: () => {
+            window.location.href = '/login';
+          }
+        });
+      } else if (!!json.stutasCode && json.stutasCode !== 200) {
+        message.error(json.result);
+      }
       return Object.assign(json, {
         message: json.message || json.msg || '请求错误',
         msg: json.message || json.msg || '请求错误',

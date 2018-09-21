@@ -26,7 +26,7 @@ exports.addConfigHtml = async (ctx, next) => {
 exports.updateConfigHtml = async (ctx, next) => {
   const { id = '0' } = ctx.request.body;
   if ( (id + '').trim().length !== 24 ) {
-    falied(ctx, next, `id(${id})不能为空或者id不存在`);
+    return falied(ctx, next, `id(${id})不能为空或者id不存在`);
   }
   const userInfo = ctx.session;
   const config = {
@@ -47,7 +47,7 @@ exports.updateConfigHtml = async (ctx, next) => {
 exports.deleteConfigHtml = async (ctx, next) => {
   const { id = '0' } = ctx.request.body;
   if ( (id + '').trim().length !== 24 ) {
-    falied(ctx, next, `id(${id})不能为空或者id不存在`);
+    return falied(ctx, next, `id(${id})不能为空或者id不存在`);
   }
   const res = await configHtmlHelper.deleteConfigHtmlItem(setShortNum(id, 24));
   if (!!(!!res && res.ok)) {
@@ -86,7 +86,7 @@ exports.listConfigHtml = async(ctx, next) => {
 exports.getConfigHtmlItem = async(ctx, next) => {
   const { id = '0' } = ctx.request.query;
   if ( (id + '').trim().length !== 24 ) {
-    falied(ctx, next, `id(${id})不能为空或者id不存在`);
+    return falied(ctx, next, `id(${id})不能为空或者id不存在`);
   }
   const res = await configHtmlHelper.getConfigHtmlItem(setShortNum(id, 24));
   if (!!(!!res && res._id)) {

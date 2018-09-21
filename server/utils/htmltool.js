@@ -211,7 +211,7 @@ function htmlForm(formData, count) {
     formData.formRadius = 0;
   }
   for(const item of checkList) {
-    inputs += htmlInput(item, formData[item], formData)
+    inputs += htmlInput(item, formData[item], formData, count)
   }
   let relative = false;
   if (!!fileList && fileList.length > 0) {
@@ -234,38 +234,38 @@ function htmlForm(formData, count) {
     ${ relative ? '<img src="' + fileList[0].url + '" style="width=100vw;height=' + fileList[0].height * 100 / fileList[0].width + 'vw;">' : ''}
     <div class="form ${relative ? 'abs' : ''}">
         ${inputs}
-        <div style="color:${formData.button.color};background-color:${formData.button.bgColor}" id="submit" class="submit-btn form-item" onclick="send${count}('#${checkList.join("','#")}')">${formData.button.tip}</div>
+        <div style="color:${formData.button.color};background-color:${formData.button.bgColor}" id="submit${count}" class="submit-btn form-item" onclick="send${count}('${checkList.map(item => '#'+item+count).join("','")}')">${formData.button.tip}</div>
     </div>
   </div>`;
 }
 
 
-function htmlInput(id, inputItem) {
+function htmlInput(id, inputItem, input, count) {
   return `
     <style>
-      #${id} {
+      #${id}${count} {
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
         border: 1px solid ${inputItem.bgColor};
       }
-      #${id}::-webkit-input-placeholder { /* WebKit browsers */
+      #${id}${count}::-webkit-input-placeholder { /* WebKit browsers */
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
       }
-      #${id}::-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      #${id}${count}::-moz-placeholder { /* Mozilla Firefox 4 to 18 */
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
       }
-      #${id}::-moz-placeholder { /* Mozilla Firefox 19+ */
+      #${id}${count}::-moz-placeholder { /* Mozilla Firefox 19+ */
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
       }
-      #${id}::-ms-input-placeholder { /* Internet Explorer 10+ */
+      #${id}${count}::-ms-input-placeholder { /* Internet Explorer 10+ */
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
       }
     </style>
-    <input id="${id}" class="form-item" placeholder="${inputItem.tip}">
+    <input id="${id}${count}" class="form-item" placeholder="${inputItem.tip}">
   `;
 }
 
@@ -381,18 +381,19 @@ function jsFormPost(htmlData) {
     }
     function ableBtn${item.count}() {
       isSend = false;
-      $('#submit').css({
+      $('#submit${item.count}').css({
         background: '${item.config.button.bgColor}',
         color: '${item.config.button.color}'
       });
-      $('#submit').innerText = '${item.config.button.tip}';
+      $('#submit${item.count}')[0].innerText = '${item.config.button.tip}';
     }
     function disableBtn${item.count}() {
       isSend = true;
-      $('#submit').css({
+      $('#submit${item.count}').css({
         background: 'lightgray',
         color: '#000'
       });
+      $('#submit${item.count}')[0].innerText = '${item.config.button.errorTip}';
     }
     `;
     }
