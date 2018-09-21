@@ -34,7 +34,9 @@ class StatisticsList extends React.Component<any, any> {
         return  <div title={text} className="item-html">{userInfo.userLeve < 1 ? `(${record.affiliation.name || '无'})` : ''}<a target='_blank' className='link-color' href={text}>{text}</a></div>
       }},
       {title: 'ID', dataIndex: 'configId', width: 220},
-      {title: '第n次访问', dataIndex: 'visitCount', width: 120, align: FixedTpye.center},
+      {title: '访问次数统计', dataIndex: 'visitCount', width: 120, align: FixedTpye.center, render:(text: any,record: any, index: any)=> {
+        return  <div title={`该用户单前页面访问${record.visitHtmlCount}次，单天访问${record.visitCount}次，总共访问${record.visitCountTotal}次`}>{record.visitHtmlCount}/{record.visitCount}/{record.visitCountTotal}</div>
+      }},
       {title: '访问时间', dataIndex: 'createTime',width: 180, render:(text: any,record: any, index: any)=> {
         return  <div>{moment(+record.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
       }},

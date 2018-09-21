@@ -633,8 +633,8 @@ function jsStatistics(id) {
    * 访问页面
    */
   function visitPage() {
-    var vh = getCookie('visitor-' + w.location.href) || 0;
-    setCurrentDayCookie('visitor-' + w.location.href, +vh + 1)
+    var vh = getCookie('visitor-' + location.origin + location.pathname) || 0;
+    setCurrentDayCookie('visitor-' + location.origin + location.pathname, +vh + 1)
     var vc = getCookie('visitorCount') || 0;
     setCurrentDayCookie('visitorCount', +vc + 1)
     var vt = getCookie('visitorCountTotal') || 0;
