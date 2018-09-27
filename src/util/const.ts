@@ -155,6 +155,16 @@ export const ActiveFormItem = {
   // },
 }
 
+// 权限
+// 1最高权限
+// 2普通用户
+// 4查看用户
+export const power = {
+  admin: Math.pow(2, 0),
+  general: Math.pow(2, 1),
+  abserver: Math.pow(2, 2),
+}
+
 
 
 export default {
@@ -166,4 +176,5 @@ export default {
   ActiveComponentType,
   ActiveFormItem,
   miniImgPath,
+  power
 }

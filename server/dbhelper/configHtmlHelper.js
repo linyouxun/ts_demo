@@ -17,6 +17,9 @@ exports.addConfigHtmlItem = async (config) => {
  */
 exports.getConfigHtmlItem = async(objectId = '000000000000000000000000') => {
   const res = await ConfigHtml.findOne({'_id': mongoose.Types.ObjectId(objectId)}).exec();
+  if(!res || (!!res.isDelete || !res.isUpdate)) {
+    return {};
+  }
   return res;
 }
 
@@ -26,6 +29,9 @@ exports.getConfigHtmlItem = async(objectId = '000000000000000000000000') => {
 exports.updateConfigHtmlItem = async(objectId = '000000000000000000000000', config) => {
   const res = await ConfigHtml.findOne({'_id': mongoose.Types.ObjectId(objectId)}).exec();
   const {metaInfo, userInfo} = res;
+  if(!!res && (!!res.isDelete || !res.isUpdate)) {
+    return {};
+  }
   metaInfo.updatetime = +new Date();
   if (!!res._id) {
     const res2 = await ConfigHtml.update({'_id': mongoose.Types.ObjectId(objectId)}, Object.assign(config, {metaInfo, userInfo})).exec();
@@ -39,11 +45,31 @@ exports.updateConfigHtmlItem = async(objectId = '000000000000000000000000', conf
 }
 
 /**
+ * 修改单条记录
+ */
+exports.updateConfigHtmlItem2 = async(objectId = '000000000000000000000000', config) => {
+  const res = await ConfigHtml.findOne({'_id': mongoose.Types.ObjectId(objectId)}).exec();
+  const {metaInfo, userInfo, configBase, configList} = res;
+  if(res.isDelete || !res.isUpdate || res.isRelease) {
+    return {};
+  }
+  if (!!res._id) {
+    const res2 = await ConfigHtml.update({'_id': mongoose.Types.ObjectId(objectId)}, Object.assign(config, {metaInfo, userInfo, configBase, configList})).exec();
+    if (res2.ok > 0) {
+      return res;
+    }
+    return res2;
+  } else {
+    return {};
+  }
+}
+
+/**
  * 删除单条记录
  */
 exports.deleteConfigHtmlItem = async(objectId = '000000000000000000000000') => {
-  const res = await ConfigHtml.remove({'_id': mongoose.Types.ObjectId(objectId)}).exec();
-  console.log(res);
+  const res = await ConfigHtml.update({'_id': mongoose.Types.ObjectId(objectId)}, { isDelete: true }).exec();
+  // const res = await ConfigHtml.remove({'_id': mongoose.Types.ObjectId(objectId)}).exec();
   return res;
 }
 
@@ -52,7 +78,9 @@ exports.deleteConfigHtmlItem = async(objectId = '000000000000000000000000') => {
  * 查找配置列表信息
  */
 exports.listConfigHtml = async(pageSize = 10, currentPage = 1, params) => {
-  let findParams = {};
+  let findParams = {
+    isDelete: {'$ne': true}
+  };
   if(!!params.userId) {
     findParams['userInfo.id'] =  params.userId;
   }
@@ -66,6 +94,8 @@ exports.listConfigHtml = async(pageSize = 10, currentPage = 1, params) => {
       _id: item._id,
       meta: item.metaInfo,
       user: item.userInfo,
+      isRelease: item.isRelease,
+      isUpdate: item.isUpdate,
       title: item.configBase.title,
     }
   })

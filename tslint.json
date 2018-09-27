@@ -7,6 +7,7 @@
     ]
   },
   "rules": {
+    "no-bitwise": false,
     "ordered-imports": false,
     "no-console": false,
     "no-reference": false,

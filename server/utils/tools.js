@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 var exec = require('child_process').exec;
 
 // 解析url后缀参数
@@ -13,7 +14,6 @@ function strToObj(str) {
     }
   })
 }
-
 // 过滤js中的特殊字符
 function filterSpecialChar(s) {
   var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]")
@@ -58,16 +58,30 @@ function copyFile(src, descSrc) {
   }
 }
 
-function tarDir(id, path) {
-  var cmdStr = `cd ./static/html/${id} && tar cvf ${id}.tar * --exclude=${id}.tar `;
-  exec(cmdStr, function(err){
+function tarDir(id) {
+  var cmdStr = `cd ./static/html/${id} && tar cvf ${id}.tar * --exclude=${id}.tar`;
+  exec(cmdStr, function(err, out){
     if(err) {
-      console.log('get weather api error:' + err);
+      console.log('failed' + err);
     } else {
       console.log('success');
     }
   });
 }
+
+async function curlPostTar(id) {
+  var cmdStr = `cd ./static/html/${id} && curl -F "tar=@${id}.tar"  http://m.youju360.com/upload/staticTar`;
+  return new Promise(function(resolve, reject) {
+    exec(cmdStr, function(err, stdout){
+      if(err) {
+        resolve(stdout);
+      } else {
+        resolve(stdout);
+      }
+    })
+  });
+}
+// 发布
 
 function setShortNum(num, minLen) {
 	let str = '';
@@ -101,5 +115,6 @@ module.exports = {
   copyObj,
   filterSpecialChar,
   copyFile,
-  tarDir
+  tarDir,
+  curlPostTar
 };

@@ -1,10 +1,11 @@
 const { addConfigUserInfo, listConfigUserInfo } = require('../dbhelper/configUser');
 const { success, noAllow } = require('./base');
+const { power } = require('../utils/const');
 const moment = require('moment');
 
 
 exports.createUser = async(ctx, next) => {
-  if (ctx.session.leve !== '0') {
+  if (!(ctx.session.leve & power.admin)) {
     return noAllow(ctx, next);
   }
   const res = await addConfigUserInfo({
@@ -14,7 +15,7 @@ exports.createUser = async(ctx, next) => {
     mobile: '',
     birthDate: +new Date(),
     pwd: '123456',
-    leve: '1',
+    leve: power.general,
   });
   success(ctx, next, {
     metaInfo: res.metaInfo,
@@ -26,7 +27,6 @@ exports.createUser = async(ctx, next) => {
     birthDate: res.birthDate,
     birthDay: moment(res.birthDay).format('YYYY-MM-DD hh:mm:ss'),
     leve: res.leve,
-
   });
 }
 exports.listUser = async(ctx, next) => {

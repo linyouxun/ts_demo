@@ -27,6 +27,7 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
     }).catch(error => {
       return {
         code: 500,
+        stutasCode: 500,
         message: `JSON解析错误：${error.message}`,
         msg: `JSON解析错误：${error.message}`,
       };

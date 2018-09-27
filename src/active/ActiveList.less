@@ -1,0 +1,43 @@
+.t-id {
+  color: #656565;
+  &:hover {
+    color: #656565;
+    text-decoration: underline;
+  }
+}
+.qr {
+  position: relative;
+  display: inline-block;
+  &:hover .pre {
+    opacity: 1;
+    width: 150px;
+    height: 150px;
+    overflow: visible;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: lightgrey;
+    &::before {
+      content: '';
+      background: lightgrey;
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      left: 50%;
+      top: -2px;
+      transform: translateX(-50%) rotate(45deg);
+      z-index: -1;
+    }
+  }
+  .pre {
+    opacity: 0;
+    width: 150px;
+    height: 0;
+    overflow: hidden;
+    transition: all .5s;
+    position: absolute;
+    transform: translateX(-50%);
+    left: 50%;
+    z-index: 9;
+    top: 1.5rem;
+  }
+}

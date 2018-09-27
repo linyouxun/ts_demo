@@ -16,7 +16,6 @@ exports.return204 = async( ctx, next, code = ERRORCODE.noChangeEmpty) => {
   ctx.body = code;
 }
 
-
 exports.success = ( ctx, next, data, message = 'success', code = ERRORCODE.success, stutasCode = ERRORCODE.success) => {
   exports.returnData(ctx, next, data, message, code, stutasCode);
 }

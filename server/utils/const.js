@@ -1,6 +1,15 @@
 // 高德地图appkey
 const GAODE_KEY = 'f1f341fd8aa165eda6c0f29db0f5ef5d';
 
+// 权限
+// 1最高权限
+// 2普通用户
+// 4查看用户
+const power = {
+  admin: Math.pow(2, 0),
+  general: Math.pow(2, 1),
+  abserver: Math.pow(2, 2),
+}
 
 // 活动报名配置选项
 const ActiveComponentType = {
@@ -92,5 +101,6 @@ const ERRORCODE = {
 module.exports = {
   ActiveComponentType,
   GAODE_KEY,
-  ERRORCODE
+  ERRORCODE,
+  power
 }

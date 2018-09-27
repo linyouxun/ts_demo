@@ -15,6 +15,7 @@ import UserList from './user/UserList';
 
 // 用户信息
 import userInfo from './util/power';
+import { power } from './util/const';
 
 
 interface Iprop {
@@ -37,7 +38,7 @@ export const routes = [{
   sideIcon: 'anticon anticon-picture',
 }, {
   breadcrumbName:'banner图管理',
-  userLeve: 0,
+  userLeve: power.admin,
   children: [{
     breadcrumbName:'banner管理',
     children: [{
@@ -55,7 +56,7 @@ export const routes = [{
   sideIcon: 'anticon anticon-file-word',
 }, {
   breadcrumbName:'案例管理',
-  userLeve: 0,
+  userLeve: power.admin,
   children: [{
     breadcrumbName:'案例列表',
     children: [{
@@ -105,7 +106,7 @@ export const routes = [{
   sideIcon: 'anticon anticon-file-word',
 }, {
   breadcrumbName:'用户管理',
-  userLeve: 0,
+  userLeve: power.admin,
   component: UserList,
   path:'/user',
   sideIcon: 'anticon anticon-file-word',
@@ -119,7 +120,7 @@ export const routes = [{
 export const routesList: Iprop[] = [];
 export const routesObject: any = {};
 for (const iterator of routes) {
-  if(iterator.userLeve !== undefined && iterator.userLeve < userInfo.userLeve) {
+  if(iterator.userLeve !== undefined && !(iterator.userLeve & userInfo.userLeve)) {
     continue;
   }
   if(!!iterator.children && iterator.children.length > 0) {

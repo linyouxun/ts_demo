@@ -60,7 +60,7 @@ function saveHtml(id, htmlData) {
       }
     }
   }
-  util.tarDir(id, htmlRootPath);
+  util.tarDir(id);
   return {
     code: 200,
     result: {

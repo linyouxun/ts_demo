@@ -8,6 +8,9 @@ const ConfigHtmlSchema = new Schema({
     id: String,
     leve: String,
   },
+  isUpdate: Boolean,
+  isDelete: Boolean,
+  isRelease: Boolean,
   metaInfo: {
     createtime: {
       type: Number,
@@ -87,6 +90,9 @@ const ConfigHtmlSchema = new Schema({
 
 ConfigHtmlSchema.pre('save', function(next) {
   if (this.isNew) {
+    this.isRelease = false;
+    this.isDelete = false;
+    this.isUpdate = true;
     this.metaInfo.createtime = this.metaInfo.updatetime = +Date.now()
   }
   next()

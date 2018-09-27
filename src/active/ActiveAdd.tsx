@@ -64,6 +64,14 @@ class ActiveAdd extends React.Component<any, any> {
           configList: res.result.configList,
           configBase: res.result.configBase,
         })
+      } else {
+        Modal.error({
+          title: `${this.props.history.location.search.split('=')[1]}已失效`,
+          okText: '返回列表',
+          onOk: () => {
+            this.props.history.push('/active/list');
+          }
+        });
       }
     }
   }
@@ -106,8 +114,6 @@ class ActiveAdd extends React.Component<any, any> {
     if(res.stutasCode === 200) {
       message.success('保存成功');
       return this.props.history.goBack();
-    } else {
-      message.error('保存，更新出错了 ^_^!');
     }
   }
   // 添加组件弹框
