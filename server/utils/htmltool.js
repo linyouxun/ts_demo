@@ -350,6 +350,7 @@ function jsFormPost(htmlData) {
                 return `phone: mobile,`
               }
             }).join('')}
+            area: 0,
             source: getUrlParam('utm_source'),
             info: getUrlParam('channel_city'),
             company: getUrlParam('company') || '优居',
