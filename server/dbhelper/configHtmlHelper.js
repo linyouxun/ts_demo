@@ -87,7 +87,7 @@ exports.listConfigHtml = async(pageSize = 10, currentPage = 1, params) => {
   let query = ConfigHtml.find(findParams);
   // 总数
   const total = await query.countDocuments();
-  query = ConfigHtml.find(findParams).skip((currentPage - 1) * pageSize).limit(+pageSize);
+  query = ConfigHtml.find(findParams).sort({'metaInfo.updatetime': -1}).skip((currentPage - 1) * pageSize).limit(+pageSize);
   let list = await query.exec();
   list = list.map(item => {
     return {
