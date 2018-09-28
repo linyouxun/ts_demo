@@ -339,23 +339,20 @@ function jsFormPost(htmlData) {
           type:"POST",
           dataType:"json",
           data:{
-            apiURL: 'decorate/decoration/apply',
-            cityId: city_id,
-            cityName: city_name,
+            apiURL: 'api4/extraDecoration/decorate',
+            city: city_name,
             ${item.config.checkList.map(item2 => {
               if (item2 === 'name') {
                 return `
-            nickName: name,
-            cName: name,`
+            name: name,`
               }
               if (item2 === 'mobile') {
-                return `mobile: mobile,`
+                return `phone: mobile,`
               }
             }).join('')}
-            phoneMsg: 1,
-            smsMsg: 1,
-            utmSource: getUrlParam('utm_source'),
-            channelCity: getUrlParam('channel_city'),
+            source: getUrlParam('utm_source'),
+            info: getUrlParam('channel_city'),
+            company: getUrlParam('company'),
           },
           success:function(response){
             ableBtn${item.count}();
