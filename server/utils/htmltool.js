@@ -352,7 +352,7 @@ function jsFormPost(htmlData) {
             }).join('')}
             source: getUrlParam('utm_source'),
             info: getUrlParam('channel_city'),
-            company: getUrlParam('company'),
+            company: getUrlParam('company') || '优居',
           },
           success:function(response){
             ableBtn${item.count}();
