@@ -393,7 +393,7 @@ function jsFormPost(htmlData) {
         background: 'lightgray',
         color: '#000'
       });
-      $('#submit${item.count}')[0].innerText = '${item.config.button.errorTip}';
+      $('#submit${item.count}')[0].innerText = '${item.config.button.errorTip || "提交中。。。"}';
     }
     `;
     }

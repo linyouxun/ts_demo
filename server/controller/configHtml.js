@@ -9,7 +9,7 @@ const { saveHtml } = require('../utils/html');
 async function checkID(userInfo, id) {
   const res = await configHtmlHelper.getConfigHtmlItem(setShortNum(id, 24));
   if (!!(!!res && res._id)) {
-    if(res.userInfo.id === userInfo.id || userInfo.leve == power.admin) {
+    if(res.userInfo.id === userInfo.id || !!(userInfo.leve & power.admin)) {
       return true;
     }
   }

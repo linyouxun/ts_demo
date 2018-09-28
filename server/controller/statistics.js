@@ -4,7 +4,8 @@ const { GAODE_KEY } = require('../utils/const');
 const { strToObj, setShortNum, filterSpecialChar } = require('../utils/tools');
 const { jsStatistics } = require('../utils/htmltool');
 const { ihdr, idat } = require('../utils/png');
-const { encrypt, decrypt } = require('../utils/encrypt');
+// const { encrypt, decrypt } = require('../utils/encrypt');
+const { power } = require('../utils/const');
 
 const { success, falied } = require('./base');
 const { addConfigStatisticsItem, listStatisticsItem } = require('../dbhelper/configStatistics');
@@ -132,7 +133,7 @@ exports.statisticsList = async function(ctx, next) {
   }
 
   // 用户
-  if (ctx.session.leve > 0) {
+  if (!(ctx.session.leve & power.admin)) {
     params.userId = ctx.session.id;
   }
 

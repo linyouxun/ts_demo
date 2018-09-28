@@ -6,7 +6,7 @@ import FormField from "../components/FormField";
 import * as QRCode  from 'qrcode.react';
 import { Table, Popconfirm } from 'antd';
 import { fetchData } from "../util/request";
-import { PAGE, APISERVER } from '../util/const';
+import { PAGE, APISERVER, power } from '../util/const';
 import userInfo from '../util/power';
 import './ActiveList.less';
 
@@ -25,9 +25,9 @@ class ActiveList extends React.Component<any, any> {
       }},
       {title: `${userInfo.userLeve < 1 ? 'ID (所属者)' : 'ID'}`, dataIndex: '_id', render:(text: any,record: any, index: any)=> {
         if (!!record.isUpdate && record.isRelease) {
-          return <a className='t-id' target='_black' href={`http://m.youju360.com/static/${record._id}/index.html`}>{text}{userInfo.userLeve < 1 ? ' (' + record.user.name + ')' : ''}</a>
+          return <a className='t-id' target='_black' href={`http://m.youju360.com/static/${record._id}/index.html`}>{text}{!!(userInfo.userLeve & power.admin) ? ' (' + (record.user.name || '无') + ')' : ''}</a>
         }
-        return <div>{text}{userInfo.userLeve < 1 ? ' (' + record.user.name + ')' : ''}</div>
+        return <div>{text}{ !!(userInfo.userLeve & power.admin) ? ' (' + record.user.name + ')' : ''}</div>
       }},
       {title: '标题', dataIndex: 'title'},
       {title: '创建时间', dataIndex: 'createTime', render:(text: any,record: any, index: any)=> {
