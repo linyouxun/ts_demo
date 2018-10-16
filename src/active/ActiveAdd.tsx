@@ -35,7 +35,9 @@ class ActiveAdd extends React.Component<any, any> {
       configBase: {
         title: '',
         bgColor: 'rgb(239, 239, 239)',
-        modelColor: 'rgb(158, 158, 158)'
+        modelColor: 'rgb(158, 158, 158)',
+        modelTip: '您填写的信息已提交成功',
+        modelSubTip: '感谢您的参与'
       },
       modalVisible: false,
       previewImage: '',
@@ -80,6 +82,15 @@ class ActiveAdd extends React.Component<any, any> {
     const {configBase} = this.state;
     if (key === 'title') {
       configBase.title = e.target.value;
+    }
+    if (key === 'modelTip') {
+      configBase.modelTip = e.target.value;
+    }
+    if (key === 'remark') {
+      configBase.remark = e.target.value;
+    }
+    if (key === 'modelSubTip') {
+      configBase.modelSubTip = e.target.value;
     }
     if (key === 'color') {
       configBase.bgColor = `rgba(${e.rgb.r},${e.rgb.g},${e.rgb.b},${e.rgb.a})`;
@@ -355,6 +366,19 @@ class ActiveAdd extends React.Component<any, any> {
     const configTmpList = [...configList];
     const index = key.split('-')[0];
     const len = configTmpList.length;
+    // 基本信息
+    if (key === 'baseConfig') {
+      const { configBase } = this.state;
+      if (arrwoType === ARROW.SHOW) {
+        configBase.show = true;
+      } else {
+        configBase.show = false;
+      }
+      this.setState({
+        configBase
+      })
+      return ;
+    }
     switch (arrwoType) {
       case ARROW.UP: {
         // 最上面不能往上面移动
@@ -428,14 +452,39 @@ class ActiveAdd extends React.Component<any, any> {
   // 基本信息
   public renderBaseComponent() {
     const {configBase} = this.state;
+    let style: {
+      height?: string;
+      overflow?: string;
+      padding?: string;
+    } = {
+      height: '0',
+      overflow: 'hidden',
+      padding: '0'
+    };
+    if (!!configBase.show) {
+      style = {}
+    }
     return (<div className="active-view">
       <div className="active-view-name">
         基本信息
+        <div className="close">
+          {
+            !configBase.show ? <Button title="展开" ghost={true} size="small" type="primary" onClick={this.moveConfigList.bind(this, 'baseConfig', ARROW.SHOW)}>
+              <Icon type="plus" />
+            </Button> : <Button title="缩小" ghost={true} size="small" type="primary" onClick={this.moveConfigList.bind(this, 'baseConfig', ARROW.HIDE)}>
+              <Icon type="minus" />
+            </Button>
+          }
+        </div>
       </div>
-      <div className="active-view-content">
+      <div className="active-view-content" style={style}>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>备注:</Col>
+          <Col span={20}><Input size="large" placeholder="备注信息，不在投放页面显示" value={configBase.remark} onChange={this.handleChange.bind(this, 'remark')}/></Col>
+        </Row>
         <Row style={{paddingBottom: '.5rem'}}>
           <Col className="ant-form-item-label" span={4}>标题:</Col>
-          <Col span={20}><Input size="large" value={configBase.title} onChange={this.handleChange.bind(this, 'title')}/></Col>
+          <Col span={20}><Input size="large" placeholder="投放页面标题" value={configBase.title} onChange={this.handleChange.bind(this, 'title')}/></Col>
         </Row>
         <Row style={{paddingBottom: '.5rem'}}>
           <Col className="ant-form-item-label" span={4}>背景颜色:</Col>
@@ -447,6 +496,18 @@ class ActiveAdd extends React.Component<any, any> {
           <Col className="ant-form-item-label" span={4}>弹框颜色:</Col>
           <Col span={20}>
             <PickerButton pos={'bottom'} handleChange={this.handleChange.bind(this, 'modelColor')} size="large" color={configBase.modelColor}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>弹框提示1:</Col>
+          <Col span={20}>
+            <Col span={20}><Input size="large" value={configBase.modelTip} onChange={this.handleChange.bind(this, 'modelTip')}/></Col>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>弹框提示2:</Col>
+          <Col span={20}>
+            <Col span={20}><Input size="large" value={configBase.modelSubTip} onChange={this.handleChange.bind(this, 'modelSubTip')}/></Col>
           </Col>
         </Row>
       </div>

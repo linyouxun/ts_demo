@@ -97,6 +97,7 @@ exports.listConfigHtml = async(pageSize = 10, currentPage = 1, params) => {
       isRelease: item.isRelease,
       isUpdate: item.isUpdate,
       title: item.configBase.title,
+      remark: item.configBase.remark,
     }
   })
   return {

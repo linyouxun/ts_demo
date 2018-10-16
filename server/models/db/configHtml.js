@@ -1,5 +1,6 @@
 'use strict'
 
+
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 const ConfigHtmlSchema = new Schema({
@@ -24,7 +25,12 @@ const ConfigHtmlSchema = new Schema({
   configBase: {
     bgColor: String,
     title: String,
+    remark: String,
     modelColor: String,
+    modelTip: String,
+    modelSubTip: String,
+    isGoLink: Boolean,
+    goLinkUrl: String
   },
   configList:[{
     config: {

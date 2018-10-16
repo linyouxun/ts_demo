@@ -11,6 +11,7 @@
 /static/*
 #!/static/statistics
 !/static/test.html
+!/static/update.html
 !/static/test2.html
 !/static/login.html
 !/static/swiper.min.css

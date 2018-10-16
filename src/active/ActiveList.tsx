@@ -19,24 +19,36 @@ class ActiveList extends React.Component<any, any> {
   }
   public state = {
     activeColumn: [
-      {title: '序号', dataIndex: 'index', render:(text: any, record: any, index: any)=> {
+      {title: '序号', width: 50, dataIndex: 'index', render:(text: any, record: any, index: any)=> {
         const { currentPage, pageSize } = this.page;
         return <div>{ (currentPage - 1) * pageSize + index + 1 }</div>
       }},
-      {title: `${userInfo.userLeve < 1 ? 'ID (所属者)' : 'ID'}`, dataIndex: '_id', render:(text: any,record: any, index: any)=> {
+      {title: `${userInfo.userLeve < 1 ? 'ID (所属者)' : 'ID'}`, width: 520, dataIndex: '_id', render:(text: any,record: any, index: any)=> {
         if (!!record.isUpdate && record.isRelease) {
-          return <a className='t-id' target='_black' href={`http://m.youju360.com/static/${record._id}/index.html`}>{text}{!!(userInfo.userLeve & power.admin) ? ' (' + (record.user.name || '无') + ')' : ''}</a>
+          return <div className='remark'>
+            <a className='t-id' target='_black' href={`http://m.youju360.com/static/${record._id}/index.html`}>
+              {text}{!!(userInfo.userLeve & power.admin) ? ' (' + (record.user.name || '无') + ')' : ''}
+            </a>
+            {!!record.remark ? <div>{record.remark}</div> : ''}
+            {/* <div className='remark-btn' title='添加备注信息' onClick={this.addRemark.bind(this, record)}/> */}
+          </div>
         }
-        return <div>{text}{ !!(userInfo.userLeve & power.admin) ? ' (' + record.user.name + ')' : ''}</div>
+        return <div className='remark'>
+          {text}{ !!(userInfo.userLeve & power.admin) ? ' (' + record.user.name + ')' : ''}
+          {!!record.remark ? <div>{record.remark}</div> : ''}
+          {/* <div className='remark-btn' title='添加备注信息' onClick={this.addRemark.bind(this, record)}/> */}
+        </div>
       }},
-      {title: '标题', dataIndex: 'title'},
-      {title: '创建时间', dataIndex: 'createTime', render:(text: any,record: any, index: any)=> {
-        return  <div>{moment(record.meta.createtime).format('YYYY-MM-DD HH:mm:ss')}</div>
+      {title: '标题', width: 300, dataIndex: 'title'},
+      {title: '更新时间', width: 180, dataIndex: 'updateTime', render:(text: any,record: any, index: any)=> {
+        return <div>
+          <span title={'更新时间'}>{moment(record.meta.updatetime).format('YYYY-MM-DD HH:mm:ss')}</span>
+        </div>
       }},
-      {title: '修改时间', dataIndex: 'updateTime', render:(text: any,record: any, index: any)=> {
-        return  <div>{moment(record.meta.updatetime).format('YYYY-MM-DD HH:mm:ss')}</div>
-      }},
-      {dataIndex: 'operation', render:(text: number | string | boolean, record: any, index: number)=> {
+      // {title: '创建时间', dataIndex: 'createTime', render:(text: any,record: any, index: any)=> {
+      // {moment(record.meta.createtime).format('YYYY-MM-DD HH:mm:ss')}
+      // }},
+      {dataIndex: 'operation', width: 250, render:(text: number | string | boolean, record: any, index: number)=> {
         return <div style={{textAlign: 'right'}}>
           {record.isUpdate === true ? <a className='primary-tips' onClick={this.handleModify.bind(this, record)}>修改</a> : ''}
           {record.isUpdate === true ? <div className="ant-divider ant-divider-vertical"/> : ''}
@@ -76,6 +88,10 @@ class ActiveList extends React.Component<any, any> {
   public componentDidMount() {
     const { pageSize, currentPage } = this.page;
     this.loadList(pageSize, currentPage);
+  }
+
+  public addRemark(record: any) {
+    console.log(record)
   }
 
   public async loadList(pageSize: number | string, currentPage: number | string) {
@@ -178,7 +194,7 @@ class ActiveList extends React.Component<any, any> {
         <ActiveFilter onSubmit={this.onSubmit} onAdd={this.onAdd}/>
       </FormField>
       <FormField>
-        <Table {...tableProps} />
+        <Table scroll={{x:1200}} {...tableProps} />
       </FormField>
     </div>);
   }

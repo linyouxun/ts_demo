@@ -16,6 +16,8 @@ export interface IConfigBase {
   modelColor: string;
   formRadius: number,
   formWidth: [number],
+  modelTip: string,
+  modelSubTip: string
 }
 
 interface IProps {
@@ -92,7 +94,7 @@ class ActiveView extends React.Component<IProps, any> {
       <section className='active-component-view' style={{backgroundColor: this.props.configBase.bgColor}}>
         {this.renderComponent()}
         {
-          this.state.show ? <AvtiveViewModel bgColor={this.props.configBase.modelColor} onClick={this.clickBtn.bind(this, false)}/> : null
+          this.state.show ? <AvtiveViewModel bgColor={this.props.configBase.modelColor} modelTip={this.props.configBase.modelTip} modelSubTip={this.props.configBase.modelSubTip} onClick={this.clickBtn.bind(this, false)}/> : null
         }
       </section>
     </div>);
@@ -103,8 +105,8 @@ function AvtiveViewModel(props: any) {
   return <div className="active-component-model" onClick={props.onClick}>
     <div className="active-component-model-content">
       <div className="active-component-model-content-title" style={{backgroundColor: props.bgColor}}>提示</div>
-      <div className="active-component-model-content-tip">您填写的信息已提交成功</div>
-      <div className="active-component-model-content-tip2">感谢您的参与</div>
+      <div className="active-component-model-content-tip">{props.modelTip || '您填写的信息已提交成功'}</div>
+      <div className="active-component-model-content-tip2">{props.modelSubTip || '感谢您的参与'}</div>
       <div className="active-component-model-content-btn" style={{color: props.bgColor}}>确定</div>
     </div>
   </div>

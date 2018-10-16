@@ -10,7 +10,7 @@ function renderHtml(htmlData, id) {
   for(const item of configList) {
     strHtml += renderSection(item);
   }
-  strHtml += htmlModel() + htmlFooter(id, configList);
+  strHtml += htmlModel(configBase.modelTip, configBase.modelSubTip) + htmlFooter(id, configList);
   return strHtml;
 }
 

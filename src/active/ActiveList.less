@@ -1,3 +1,21 @@
+.remark {
+  position: relative;
+  .remark-btn::before {
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    width: max-content;
+  }
+  .remark-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  &:hover .remark-btn::before {
+    content: '\E630';
+  }
+}
 .t-id {
   color: #656565;
   &:hover {
