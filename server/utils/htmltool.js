@@ -43,7 +43,7 @@ function htmlhead(title, bgColor, modelColor, configList) {
               height: 11vw;
               line-height: 11vw;
               font-size: 3.5vw;
-              border: 1px solid #ddd;
+              border: 0;
               padding: 0 10px;
               border-radius: 5px;
               margin-bottom: 3vw;
@@ -231,7 +231,7 @@ function htmlForm(formData, count) {
     }
   </style>
   <div class="relative">
-    ${ relative ? '<img src="' + fileList[0].url + '" style="width=100vw;height=' + fileList[0].height * 100 / fileList[0].width + 'vw;">' : ''}
+    ${ relative ? '<img src="' + fileList[0].url + '" style="width:100vw;height:' + fileList[0].height * 100 / fileList[0].width + 'vw;">' : ''}
     <div class="form ${relative ? 'abs' : ''}">
         ${inputs}
         <div style="color:${formData.button.color};background-color:${formData.button.bgColor}" id="submit${count}" class="submit-btn form-item" onclick="send${count}('${checkList.map(item => '#'+item+count).join("','")}')">${formData.button.tip}</div>
@@ -246,24 +246,24 @@ function htmlInput(id, inputItem, input, count) {
       #${id}${count} {
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
-        border: 1px solid ${inputItem.bgColor};
+        /*border: 1px solid ${inputItem.bgColor};*/
       }
-      #${id}${count}::-webkit-input-placeholder { /* WebKit browsers */
+      /* #${id}${count}::-webkit-input-placeholder { WebKit browsers
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
       }
-      #${id}${count}::-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      #${id}${count}::-moz-placeholder { Mozilla Firefox 4 to 18
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
       }
-      #${id}${count}::-moz-placeholder { /* Mozilla Firefox 19+ */
+      #${id}${count}::-moz-placeholder { Mozilla Firefox 19+
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
       }
-      #${id}${count}::-ms-input-placeholder { /* Internet Explorer 10+ */
+      #${id}${count}::-ms-input-placeholder { Internet Explorer 10+
         color:${inputItem.color};
         background-color:${inputItem.bgColor};
-      }
+      }*/
     </style>
     <input id="${id}${count}" class="form-item" placeholder="${inputItem.tip}">
   `;
@@ -297,7 +297,7 @@ function htmlFooter(id, configList) {
   }
   return `
   ${flat ? '<script src="./js/swiper.min.js"></script>' : ''}
-  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="./js/jquery.min.js"></script>
   <script src="http://${host}/statistics${!!id ? '/' + id : ''}/s.js"></script>
   <script src="./js/layer.js"></script>
   <script src="./js/index.js"></script>
@@ -359,6 +359,12 @@ function jsFormPost(htmlData) {
             ableBtn${item.count}();
             if (response.code == 200) {
               submit();
+              // 统计报名信息
+              sTool.sendForm({
+                ${item.config.checkList.map(item2 => {
+                  return item2 + ':' +item2
+                }).join(',')}
+              });
             } else {
               layer.open({
                 content: '网络出现问题，请重新提交'
@@ -530,19 +536,15 @@ function jsStatistics(id) {
     var timeout = params.timeout || 20000;
     var contentType = params.contentType || 'application/x-www-form-urlencoded';
     var responseType = (params.responseType || 'text').toLowerCase();
-
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, async);
-    xhr.timeout = timeout;
+    if (async) {
+      xhr.timeout = timeout;
+    }
     if (responseType === 'json') {
       xhr.responseType = 'text';
     }
-
-    var contentTypes = contentType.split(';');
-    for (var i = 0; i < contentTypes.length; i++) {
-      xhr.setRequestHeader('content-type', contentTypes[i]);
-    }
-
+    xhr.setRequestHeader('content-type', contentType);
     xhr.onload = function(result) {
       var responseText = this.responseText;
       if (responseType === 'json') {
@@ -575,7 +577,17 @@ function jsStatistics(id) {
         console.log(this.responseText);
       }
     }
-    xhr.send(JSON.stringify(data));
+    if (contentType == 'application/x-www-form-urlencoded') {
+      var strData = [];
+      for (var key in data) {
+        if (data.hasOwnProperty(key)) {
+          strData.push(key + '=' + encodeURIComponent(data[key]));
+        }
+      }
+      xhr.send(strData.join('&'));
+    } else {
+      xhr.send(JSON.stringify(data));
+    }
   }
 
   function setCookie(name, value, exdays) {
@@ -666,6 +678,39 @@ function jsStatistics(id) {
   }
 
   /**
+   * 报名信息
+   */
+  function sendForm(formData) {
+    var params = {
+      url: w.location.href,
+      id: id,
+      userId: userInfo.visitor,
+      name: formData.name || '--',
+      age: formData.age || 0,
+      mobile: formData.mobile || '--',
+      birthDate: formData.birthDate || +new Date(),
+      version: formData.version || 'v1',
+      extraInfo: JSON.stringify(formData)
+    };
+    console.log(params);
+    request({
+      url: 'http://${host}/custom${!!id ? '/' + id : ''}/add',
+      method: 'POST',
+      data: params,
+      contentType: 'application/json',
+      success: function(data) {
+        console.log('');
+      },
+      onerror: function() {
+        console.log('onerror');
+      },
+      ontimeout: function() {
+        console.log('ontimeout');
+      },
+    })
+  }
+
+  /**
    * 设置访问信息
    */
   function setInfo() {
@@ -694,6 +739,7 @@ function jsStatistics(id) {
     setCurrentDayCookie: setCurrentDayCookie,
     getCookie: getCookie,
     visitPage: visitPage,
+    sendForm: sendForm,
   }
 })(window, document)
   `;

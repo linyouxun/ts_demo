@@ -47,6 +47,7 @@ function saveHtml(id, htmlData) {
   fs.writeFileSync(htmlRootPath + '/index.html', renderHtml(htmlData, id));
   fs.writeFileSync(htmlJsPath + '/index.js', renderJs(htmlData));
   fs.writeFileSync(htmlJsPath + '/layer.js', fs.readFileSync(path.resolve(__dirname, './html.layer.js')));
+  fs.writeFileSync(htmlJsPath + '/jquery.min.js', fs.readFileSync(path.resolve(__dirname, './html.jquery.min.js')));
   fs.writeFileSync(htmlJsPath + '/swiper.min.js', fs.readFileSync(path.resolve(__dirname, './html.swiper.min.js')));
   fs.writeFileSync(htmlCssPath + '/layer.css', fs.readFileSync(path.resolve(__dirname, './html.layer.css')));
   fs.writeFileSync(htmlCssPath + '/swiper.min.css', fs.readFileSync(path.resolve(__dirname, './html.swiper.min.css')));

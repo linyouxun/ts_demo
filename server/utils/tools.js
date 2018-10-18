@@ -105,6 +105,20 @@ function copyObj(obj) {
   return newObj;
 }
 
+function isCurrentDay(d, d2) {
+  var d = new Date();
+  d.setSeconds(0);
+  d.setMilliseconds(0)
+  d.setMinutes(0)
+  d.setHours(0);
+  var d2 = new Date();
+  d2.setSeconds(0);
+  d2.setMilliseconds(0)
+  d2.setMinutes(0)
+  d2.setHours(0);
+  return +d === +d2
+}
+
 module.exports = {
   getUploadFileExt,
   checkDirExist,
@@ -116,5 +130,6 @@ module.exports = {
   filterSpecialChar,
   copyFile,
   tarDir,
-  curlPostTar
+  curlPostTar,
+  isCurrentDay
 };

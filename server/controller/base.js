@@ -10,7 +10,6 @@ exports.returnData = async( ctx, next, result, message, code, stutasCode) => {
     message
   }
 }
-
 exports.return204 = async( ctx, next, code = ERRORCODE.noChangeEmpty) => {
   ctx.status = code;
   ctx.body = code;

@@ -4,6 +4,7 @@ const path = require('path');
 const util = require('./utils/tools');
 const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml, updateConfigHtml, downloadData, curlHtmlItem } = require('./controller/configHtml');
 const { statistics, statisticsjs, statisticsList } = require('./controller/statistics');
+const { customAdd, customList } = require('./controller/custom');
 const { cityLocation, cityList, cityListFull, citySetList } = require('./controller/city');
 const { addImg } = require('./controller/configFile');
 const { return204, checkUserInfo } = require('./controller/base');
@@ -58,6 +59,10 @@ module.exports = function() {
   router.get('/statistics/s.js', statisticsjs);
   router.get('/statistics/:id/s.js', statisticsjs);
   router.get('/api2/statistics/list', statisticsList);
+  router.post('/custom/:id/add', customAdd);
+  router.options('/custom/:id/add', return204);
+  router.get('/api2/custom/list', customList);
+  // router.get('/custom/:id/add.png', customAdd);
 
   // 城市
   router.get('/api2/city/location', cityLocation);

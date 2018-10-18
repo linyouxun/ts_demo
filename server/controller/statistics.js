@@ -9,6 +9,7 @@ const { power } = require('../utils/const');
 
 const { success, falied } = require('./base');
 const { addConfigStatisticsItem, listStatisticsItem } = require('../dbhelper/configStatistics');
+
 const { getConfigHtmlItem } = require('../dbhelper/configHtmlHelper');
 
 
@@ -65,11 +66,12 @@ exports.statistics = async function(ctx, next) {
       deviseInfo['platform'] = ua.os.name + ' ' + ua.os.version;
       deviseInfo['browser'] = ua.browser.name + ' ' + ua.browser.version;
     }
+    const currentHtml = ctx.query.url || ctx.req.headers['referer'];
     const configItem = {
       ip: ctx.ipv4,
       deviseStr: ctx.req.headers['user-agent'],
-      currentHtml: ctx.req.headers['referer'],
-      currentHtmlParams: strToObj(!!ctx.req.headers['referer'] ? (!!ctx.req.headers['referer'].split('?')[1] ? ctx.req.headers['referer'].split('?')[1] : '') : '') || [],
+      currentHtml,
+      currentHtmlParams: strToObj(!!currentHtml ? (!!currentHtml.split('?')[1] ? currentHtml.split('?')[1] : '') : '') || [],
       source: ctx.query.referrer,
       sourceParams: strToObj(!!ctx.query.referrer ? (!!ctx.query.referrer.split('?')[1] ? ctx.query.referrer.split('?')[1] : '') : '') || [],
       deviseInfo,
@@ -82,6 +84,7 @@ exports.statistics = async function(ctx, next) {
       isOlder: ctx.query.vt > 1 ? true: false,
       affiliation
     }
+    console.log(configItem);
     await addConfigStatisticsItem(configItem);
   }, 0);
 }
@@ -140,3 +143,4 @@ exports.statisticsList = async function(ctx, next) {
   const res = await listStatisticsItem(+currentPage, +pageSize, params);
   success(ctx, next, res);
 }
+
