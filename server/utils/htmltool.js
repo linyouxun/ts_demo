@@ -20,7 +20,7 @@ function htmlhead(title, bgColor, modelColor, configList) {
           * {
               margin: 0;
               padding: 0;
-              vertical-align: bottom;
+              vertical-align: middle;
               box-sizing: border-box;
           }
           html, body {
