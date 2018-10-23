@@ -54,7 +54,6 @@ StatisticsSchema.pre('save', function(next) {
   }
   next()
 })
-
 var Statistics = mongoose.model('Statistics', StatisticsSchema);
 module.exports = {
   Statistics,

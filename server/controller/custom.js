@@ -28,8 +28,7 @@ exports.customList = async function(ctx, next) {
 exports.customAdd = async function(ctx, next) {
 
   const { id } = ctx.params;
-  ctx.body = {}
-
+  success(ctx, next, {});
   // 先返回在延迟处理
   setTimeout(async () => {
     let affiliation = {};
@@ -44,7 +43,13 @@ exports.customAdd = async function(ctx, next) {
       try {
         const configHtmlInfo = await getConfigHtmlItem(setShortNum(id, 24));
         if(!!configHtmlInfo) {
-          affiliation = configHtmlInfo.userInfo;
+          affiliation = {
+            name: configHtmlInfo.userInfo.name,
+            id: configHtmlInfo.userInfo.id,
+            leve: configHtmlInfo.userInfo.leve,
+            pageId: configHtmlInfo._id + '',
+            pageTitle: configHtmlInfo.configBase.title + ''
+          };
         }
       } catch (error) {
         console.log('no find user');
@@ -52,9 +57,13 @@ exports.customAdd = async function(ctx, next) {
     }
 
     if (!!formData.mobile) {
-      const record = await findConfigCustomItem({
+      let findParams = {
         mobile: formData.mobile + ''
-      });
+      }
+      if (!!affiliation.pageId) {
+        findParams['affiliation.pageId'] = affiliation.pageId;
+      }
+      const record = await findConfigCustomItem(findParams);
       if (!!record._id) {
         let newItems = {
           ip: record.ip,

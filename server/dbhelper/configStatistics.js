@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 const Statistics = mongoose.model('Statistics');
+const Custom = mongoose.model('Custom');
 
 /**
  * 保存配置信息

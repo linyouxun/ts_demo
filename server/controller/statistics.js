@@ -8,7 +8,7 @@ const { ihdr, idat } = require('../utils/png');
 const { power } = require('../utils/const');
 
 const { success, falied } = require('./base');
-const { addConfigStatisticsItem, listStatisticsItem } = require('../dbhelper/configStatistics');
+const { addConfigStatisticsItem, listStatisticsItem, userStatisticsItem } = require('../dbhelper/configStatistics');
 
 const { getConfigHtmlItem } = require('../dbhelper/configHtmlHelper');
 

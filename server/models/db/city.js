@@ -15,7 +15,6 @@ const CitySchema = new Schema({
   center: String,
   level: String,
 });
-
 var City = mongoose.model('City', CitySchema);
 module.exports = {
   City,

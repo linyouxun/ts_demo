@@ -81,8 +81,8 @@ async function curlPostTar(id) {
     })
   });
 }
-// 发布
 
+// 发布
 function setShortNum(num, minLen) {
 	let str = '';
 	const munLen = num.length;

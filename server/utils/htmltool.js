@@ -275,7 +275,7 @@ function htmlModel(modelTip, modelSubTip) {
     <div class="layui-m-layersection">
         <div class="modal-content" onclick="stopPro(event)">
             <span class="title">提示</span>
-            <div class="msg">${!!modelTip ? modelTip : '您填写的信息已'}<span class="red">提交成功</span></div>
+            <div class="msg">${!!modelTip ? modelTip : '您填写的信息已提交成功'}</div>
             <div class="msg2">${!!modelSubTip ? modelSubTip : '感谢您的参与'}</div>
             <div class="submit-btn2" onclick="closeModal(event)">确定</div>
         </div>

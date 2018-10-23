@@ -130,7 +130,7 @@ class StatisticsFilter extends React.Component<IProps & FormComponentProps, any>
                   <RangePicker
                     showTime={{
                       hideDisabledOptions: true,
-                      defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                      defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
                     }}
                     format="YYYY-MM-DD HH:mm:ss"
                   />

@@ -26,6 +26,8 @@ const CustomSchema = new Schema({
     name: String,
     id: String,
     leve: String,
+    pageId: String,
+    pageTitle: String,
   }, // 页面的属性
   signHistory: [{
     source: String,

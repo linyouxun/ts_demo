@@ -10,6 +10,9 @@ import ActiveAdd from './active/ActiveAdd';
 import NotFound from './NotFound';
 // 统计页面
 import StatisticsList from './statistics/StatisticsList';
+import CommonStatisticsList from './statistics/CommonStatisticsList';
+import UserStatisticsList from './statistics/UserStatisticsList';
+import PageStatisticsList from './statistics/PageStatisticsList';
 // 用户管理
 import UserList from './user/UserList';
 
@@ -100,10 +103,30 @@ export const routes = [{
   path:'/active',
   sideIcon: 'anticon anticon-file-word',
 }, {
-  breadcrumbName:'页面统计',
+  breadcrumbName:'统计',
+  children: [{
+    breadcrumbName:'页面统计',
+    component: PageStatisticsList,
+    path:'/page',
+    children: [],
+    sideIcon: 'anticon anticon-file-word'
+  }, {
+    breadcrumbName:'通用统计',
+    component: CommonStatisticsList,
+    path:'/common',
+    children: [],
+    sideIcon: 'anticon anticon-file-word'
+  }, {
+    breadcrumbName:'报名统计',
+    component: UserStatisticsList,
+    path:'/user',
+    userLeve: power.admin,
+    children: [],
+    sideIcon: 'anticon anticon-file-word'
+  }],
   component: StatisticsList,
   path:'/statistics',
-  sideIcon: 'anticon anticon-file-word',
+  sideIcon: 'anticon anticon-file-word'
 }, {
   breadcrumbName:'用户管理',
   userLeve: power.admin,
@@ -125,8 +148,10 @@ for (const iterator of routes) {
   }
   if(!!iterator.children && iterator.children.length > 0) {
     for (const iterator2 of iterator.children) {
+      console.log('iterator2', iterator2);
       iterator2.path = iterator.path + iterator2.path;
       for (const iterator3 of iterator2.children) {
+        console.log('iterator3', iterator3);
         iterator3.path = iterator2.path + iterator3.path;
         routesList.push({
           exact: true,
