@@ -6,14 +6,14 @@ process.env.GENERATE_SOURCEMAP = false;
 process.on('unhandledRejection', err => {
   throw err;
 });
-require('../config/env');
+require('../../config_data/env');
 
 const path = require('path');
 const chalk = require('chalk');
 const fs = require('fs-extra');
 const webpack = require('webpack');
-const config = require('../config/webpack.config.prod');
-const paths = require('../config/paths');
+const config = require('../../config_data/webpack.config.prod');
+const paths = require('../../config_data/paths');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const printHostingInstructions = require('react-dev-utils/printHostingInstructions');

@@ -78,6 +78,7 @@
     "zlib": "^1.0.5"
   },
   "scripts": {
+    "start_data": "node scripts/data/start.js",
     "server": "node server/index.js",
     "devServer": "cross-env NODE_ENV=development nodemon server/index.js",
     "start": "node scripts/start.js",
@@ -145,23 +146,5 @@
   },
   "eslintConfig": {
     "extends": "react-app"
-  },
-  "proxy": {
-    "/xcx/": {
-      "target": "http://xcx.yoju360.com",
-      "secure": false,
-      "changeOrigin": true,
-      "pathRewrite": {
-        "^/xcx/": ""
-      }
-    },
-    "/images/": {
-      "target": "http://xcx.yoju360.com",
-      "secure": false,
-      "changeOrigin": true,
-      "pathRewrite": {
-        "^/": ""
-      }
-    }
   }
 }

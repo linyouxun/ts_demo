@@ -36,7 +36,7 @@ export class SiteBreadcrumb extends React.Component<any, any> {
   public render(){
     return (
       <div className="component site-breadcrumb">
-        {this.breadcrumbPath()}
+        您现在的位置: {this.breadcrumbPath()}
       </div>
     )
   }

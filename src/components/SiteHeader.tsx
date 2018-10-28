@@ -64,7 +64,7 @@ export class SiteHeader extends React.Component<any, any> {
         <a className="header-logo" href="/" title="首页"/>
         <div className="header-action">
           <nav>
-            <span className="action-shop-name"> ※ 优居小程序后台管理系统 </span>
+            <span className="action-shop-name"> ※ 智慧门店 </span>
             <span className="action-user-name"><Icon type="user"/><span>{ userInfo.userName }</span></span>
             <span className="action-log-out" onClick={this.onClickLogout}><Icon type="logout"/><span>退出系统</span></span>
           </nav>

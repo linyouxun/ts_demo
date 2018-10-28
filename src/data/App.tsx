@@ -1,10 +1,10 @@
 import * as React from 'react';
 // import { Switch, Route, withRouter } from 'react-router-dom';
 import { Switch, Route } from 'react-router-dom';
-import SiteHeader from './components/SiteHeader';
-import SiteSide from './components/SiteSide';
+import SiteHeader from '../components/SiteHeader';
+import SiteSide from '../components/SiteSide';
 // import SiteFooter from './components/SiteFooter';
-import SiteBreadcrumb from './components/SiteBreadcrumb';
+import SiteBreadcrumb from '../components/SiteBreadcrumb';
 import './App.less';
 import {routes2, routesList, routesObject} from './routes';
 

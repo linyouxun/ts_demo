@@ -3,6 +3,7 @@
   "linterOptions": {
     "exclude": [
       "config/**/*.js",
+      "config_data/**/*.js",
       "node_modules/**/*.ts"
     ]
   },

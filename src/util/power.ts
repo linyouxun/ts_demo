@@ -4,7 +4,7 @@ let userLeve = 1;
 let userName = '';
 if (!!window) {
   userLeve = window.userLeve || +(getCookie('leve') || power.general);
-  userName = window.userName || (getCookie('name') || '未知');
+  userName = window.userName || (getCookie('name') || '管理员');
 }
 
 export default {

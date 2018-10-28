@@ -20,6 +20,7 @@
   },
   "exclude": [
     "server",
+    "config_data",
     "static",
     "node_modules",
     "build",
