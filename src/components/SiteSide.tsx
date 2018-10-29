@@ -92,7 +92,7 @@ class SiteSide extends React.Component<any, any> {
       }
     }
     return (
-      <Sider className="component site-side" collapsible={true} collapsed={collapsed} onCollapse={this.onCollapse}>
+      <Sider className="component site-side" collapsible={false} collapsed={collapsed} onCollapse={this.onCollapse}>
         <Menu theme="dark" mode={mode} onOpenChange={this.onOpenChangeMenu} openKeys={openMenu} onClick={this.onClickMenu} selectedKeys={[location.pathname]}>
           {menuList}
         </Menu>

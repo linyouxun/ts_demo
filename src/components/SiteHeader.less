@@ -2,25 +2,56 @@
 
 .component.site-header{
   @base-color:@minor-color; //#58A83F;
-  @bar-height:3rem;
+  @bar-height: 3.5rem;
   height: @bar-height;
-  background-color: @minor-color;
-  border-bottom: 1px solid @base-color;
-  box-sizing: border-box;
+  background-color: @site-header-color;
+  border-bottom: 1rem solid @menu-bg;
+  box-sizing: content-box;
   .header-logo{
     display: block;
     width: 10rem;
     height: @bar-height;
     float: left;
-    background: url('../img/logo.png') center no-repeat;
-    background-size: 85%;
-    -webkit-filter: drop-shadow(1px 1px 1px darken(@base-color,5));
-    filter: drop-shadow(1px 1px 1px darken(@base-color,5));
+    background: url('../img/logo.jpg') center no-repeat;
+    background-size: 100%;
+    // -webkit-filter: drop-shadow(1px 1px 1px darken(@base-color,5));
+    // filter: drop-shadow(1px 1px 1px darken(@base-color,5));
+  }
+  .header-main-menu {
+    float: left;
+    display: block;
+    height: 2rem;
+    line-height: 2rem;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    margin-left: .5rem;
+    &-ul {
+      list-style: none;
+      padding: 0;
+      li {
+        display: inline-block;
+        // background: rgb(232,232,232);
+        background: linear-gradient(to right top, #ddd, #eee);
+        padding: 0 .8rem;
+        margin: 0 .25rem;
+        border-top-left-radius: .5rem;
+        border-top-right-radius: .5rem;
+        font-size: @YJ-XL;
+        cursor: pointer;
+      }
+      .active {
+        background: @menu-bg;
+        color: @site-header-color;
+      }
+      li:first-child {
+        margin: 0 .25rem 0 0;
+      }
+    }
   }
   .header-action{
     line-height: @bar-height;
-    color: #fff;
-    font-size: .7rem;
+    color: @primary-color;
+    font-size: .8rem;
     text-align: right;
     margin-right: 1rem;
     .header-tip{
@@ -31,7 +62,7 @@
       cursor: pointer;
     }
     .action-user-name:hover{
-      color: #555;
+      color: @minor-color;
     }
     nav>span{
       margin-left:1rem;
@@ -42,7 +73,7 @@
         cursor: pointer;
       }
       &.action-log-out:hover{
-        color: #555;
+        color: @minor-color;
       }
     }
   }
