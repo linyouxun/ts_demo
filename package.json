@@ -5,8 +5,10 @@
   "dependencies": {
     "@types/braft-editor": "^1.9.0",
     "@types/cookies": "^0.7.1",
+    "@types/numeral": "^0.0.25",
     "@types/qrcode.react": "^0.8.1",
     "@types/react-color": "^2.13.6",
+    "ant-design-pro": "^2.1.0",
     "antd": "^3.7.0",
     "autoprefixer": "7.1.6",
     "babel-jest": "^22.1.0",
@@ -45,6 +47,7 @@
     "mongoose": "^5.2.8",
     "node-fetch": "^2.2.0",
     "nodemon": "^1.18.3",
+    "numeral": "^2.0.6",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.8",
@@ -78,7 +81,6 @@
     "zlib": "^1.0.5"
   },
   "scripts": {
-    "start_data": "node scripts/data/start.js",
     "server": "node server/index.js",
     "devServer": "cross-env NODE_ENV=development nodemon server/index.js",
     "start": "node scripts/start.js",
@@ -146,5 +148,15 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "proxy": {
+    "/api/": {
+      "target": "https://lightyear.readsense.cn:8080",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/api/": ""
+      }
+    }
   }
 }

@@ -10,11 +10,11 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
       }
     }
   }
-  const params: RequestInit = Object.assign(opts,{
+  const params: RequestInit = Object.assign({
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
-  })
+  }, opts)
   if (opts.method === 'GET') {
     url += ('?' + objToUrlString(data));
   } else {

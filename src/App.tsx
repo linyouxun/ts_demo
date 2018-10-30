@@ -3,13 +3,18 @@ import * as React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import SiteHeader from './components/SiteHeader';
 import SiteSide from './components/SiteSide';
+import Login from './login/Login';
 // import SiteFooter from './components/SiteFooter';
 import SiteBreadcrumb from './components/SiteBreadcrumb';
 import './App.less';
+import 'ant-design-pro/dist/ant-design-pro.css'; // 统一引入样式
 import {routes2, routesList, routesObject} from './routes';
 
 class App extends React.Component<any, any> {
   public render() {
+    if (window.location.pathname === '/login') {
+      return <Login/>;
+    }
     return (
       <div className="app">
         <SiteHeader />

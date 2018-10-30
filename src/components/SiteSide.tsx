@@ -50,6 +50,7 @@ class SiteSide extends React.Component<any, any> {
   }
 
   public onOpenChangeMenu(openKeys: string[]) {
+    console.log(openKeys);
     this.setState({
       openMenu: openKeys
     })

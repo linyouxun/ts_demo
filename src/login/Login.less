@@ -1,0 +1,108 @@
+//background: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(../img/login-bg.jpg) center no-repeat;
+// background: url(../img/logo.jpg) center no-repeat; //引入图片文件时,相对目录是sass引用文件的目录,即index.scss的目录
+@import '../common/veriables.less';
+.login{
+  height: 100%;
+  min-height: 500px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-image: url(../img/bg.png) ;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  .login-form {
+    height: 100%;
+    min-width: 1000px;
+    .rel {
+      position: relative;
+      .cdg {
+        position: absolute;
+        background: url(../img/cdg.png);
+        width: 499px;
+        height: 49px;
+        left: 5rem;
+        top: 5rem;
+      }
+      .title {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: url(../img/pc.png);
+        width: 515px;
+        height: 497px;
+      }
+    }
+    .login-box {
+      height: 100%;
+      margin-right: 8vw;
+      .name {
+        text-align: center;
+        height: 100px;
+        line-height: 100px;
+      }
+      .tip {
+        color: @YJ-font-color;
+        font-size: 1.25rem;
+        border-bottom: 4px solid @primary-color;
+        display: inline-block;
+      }
+      form {
+        width: 32rem;
+        padding: 0 2.5rem;
+        font-size: 0.7rem;
+        height: 100%;
+        .ant-form-item {
+          margin-bottom: 1.4rem;
+        }
+        input{
+          height: 3rem;
+          font-size: 1rem;
+        }
+        .form-remember{
+          color: @white-color;
+        }
+        .form-login-btn{
+          width: 100%;
+          padding: 8px 0;
+          height: 3rem;
+          font-size: 1.5rem;
+          background-color: @login-btn;
+        }
+        .form-login-btn + p{
+          margin-top: .5rem;
+        }
+      }
+    }
+  }
+  .logo {
+    position: absolute;
+    background: url(../img/login_logo.png) no-repeat;
+    width: 411px;
+    height: 59px;
+  }
+  .anticon:before {
+    width: 2rem;
+    font-size: 1.5rem;
+  }
+  .login .login-form .login-box form .ant-form-item-name {
+    margin-bottom: 0;
+    background: #fff;
+  }
+  .login .login-form .login-box form .ant-form-item-pwd {
+    background: #fff;
+  }
+  .ant-input-affix-wrapper .ant-input:not(:first-child) {
+    padding-left: 2.5rem;
+  }
+  .has-error .ant-form-explain, .has-error .ant-form-split {
+    color: #f81a24;
+    font-size: .8rem;
+  }
+  .ant-checkbox-checked .ant-checkbox-inner, .ant-checkbox-indeterminate .ant-checkbox-inner {
+    background-color: @login-btn;
+    border-color: @login-btn;
+  }
+}
+body .ant-cascader-menu{
+  height: 12rem;
+}
