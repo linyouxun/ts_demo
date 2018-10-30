@@ -8,17 +8,44 @@
   dependencies:
     "@antv/util" "~1.2.5"
 
+"@antv/adjust@~0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@antv/adjust/-/adjust-0.1.0.tgz#c4bce8ba0aef7cd5b3bf271f75f434c07bd215a0"
+  dependencies:
+    "@antv/util" "~1.3.1"
+
 "@antv/attr@~0.0.7":
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/@antv/attr/-/attr-0.0.7.tgz#333f252ce35fc3efdf8ad48046c263a6be2d7d04"
   dependencies:
     "@antv/util" "~1.2.5"
 
+"@antv/attr@~0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@antv/attr/-/attr-0.1.0.tgz#68734b0557d9392645e947342acc8fca370d4a56"
+  dependencies:
+    "@antv/util" "~1.3.1"
+
+"@antv/component@~0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@antv/component/-/component-0.2.0.tgz#514002a0d526232ceedf0b91e085b5cf80c6c62a"
+  dependencies:
+    "@antv/attr" "~0.1.0"
+    "@antv/g" "~3.3.3"
+    "@antv/util" "~1.3.1"
+    wolfy87-eventemitter "~5.1.0"
+
 "@antv/coord@~0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@antv/coord/-/coord-0.0.3.tgz#d5b41b9691fd7b6395ed6ea30f8c39987f06da26"
   dependencies:
     "@antv/util" "~1.2.3"
+
+"@antv/coord@~0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@antv/coord/-/coord-0.1.0.tgz#48a80ae36d07552f96657e7f8095227c63f0c0a9"
+  dependencies:
+    "@antv/util" "~1.3.1"
 
 "@antv/data-set@^0.9.6":
   version "0.9.6"
@@ -59,12 +86,37 @@
     venn.js "~0.2.20"
     wolfy87-eventemitter "~5.1.0"
 
+"@antv/g2@3.3.3":
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/@antv/g2/-/g2-3.3.3.tgz#da997eb6422437d0827cbc26e184e455c06944b1"
+  dependencies:
+    "@antv/adjust" "~0.1.0"
+    "@antv/attr" "~0.1.0"
+    "@antv/component" "~0.2.0"
+    "@antv/coord" "~0.1.0"
+    "@antv/g" "~3.3.4"
+    "@antv/scale" "~0.1.0"
+    "@antv/util" "~1.3.1"
+    venn.js "~0.2.20"
+    wolfy87-eventemitter "~5.1.0"
+
 "@antv/g@~3.2.2":
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/@antv/g/-/g-3.2.2.tgz#ab30f69a9d72e629912aee0461f54d276519c237"
   dependencies:
     "@antv/gl-matrix" "~2.7.1"
     "@antv/util" "~1.2.3"
+    d3-ease "~1.0.3"
+    d3-interpolate "~1.1.5"
+    d3-timer "~1.0.6"
+    wolfy87-eventemitter "~5.1.0"
+
+"@antv/g@~3.3.3", "@antv/g@~3.3.4":
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/@antv/g/-/g-3.3.4.tgz#46cb6ae5fe0b6e1937f6ab384318d97a737385ad"
+  dependencies:
+    "@antv/gl-matrix" "~2.7.1"
+    "@antv/util" "~1.3.1"
     d3-ease "~1.0.3"
     d3-interpolate "~1.1.5"
     d3-timer "~1.0.6"
@@ -87,7 +139,14 @@
     "@antv/util" "~1.2.5"
     fecha "~2.3.3"
 
-"@antv/util@^1.2.4":
+"@antv/scale@~0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@antv/scale/-/scale-0.1.0.tgz#2b5459a100f97aac04781376d53904ccab18aab7"
+  dependencies:
+    "@antv/util" "~1.3.1"
+    fecha "~2.3.3"
+
+"@antv/util@^1.2.4", "@antv/util@~1.3.1":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@antv/util/-/util-1.3.1.tgz#30a34b201ff9126ec0d58c72c8166a9c3e644ccd"
   dependencies:
@@ -1365,6 +1424,15 @@ bizcharts@^3.2.2:
   resolved "https://registry.yarnpkg.com/bizcharts/-/bizcharts-3.2.4.tgz#12dfd28c569c31f4e47df02d21deb3438930dd8e"
   dependencies:
     "@antv/g2" "3.2.8"
+    invariant "^2.2.2"
+    prop-types "^15.6.0"
+    warning "^3.0.0"
+
+bizcharts@^3.2.5-beta.4:
+  version "3.2.5-beta.4"
+  resolved "https://registry.yarnpkg.com/bizcharts/-/bizcharts-3.2.5-beta.4.tgz#4f27e62c3d4a9a5c49a29c54978e4f1f42ae4d1a"
+  dependencies:
+    "@antv/g2" "3.3.3"
     invariant "^2.2.2"
     prop-types "^15.6.0"
     warning "^3.0.0"
