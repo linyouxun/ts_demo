@@ -8,7 +8,11 @@ import Login from './login/Login';
 import SiteBreadcrumb from './components/SiteBreadcrumb';
 import './App.less';
 import 'ant-design-pro/dist/ant-design-pro.css'; // 统一引入样式
-import {routes2, routesList, routesObject} from './routes';
+// import {routes2, routesList, routesObject} from './routes';
+import {routes2, routesList, routesObject} from './wisdomShop/routes';
+import * as moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 
 class App extends React.Component<any, any> {
   public render() {

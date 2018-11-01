@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ChartCard, MiniArea, Pie, MiniBar } from 'ant-design-pro/lib/Charts';
 import FormField from "../../components/FormField";
 import { Bar } from 'ant-design-pro/lib/Charts';
-import { Row, Col, Select, DatePicker, Button, Modal, InputNumber, message, Icon } from 'antd';
+import { Row, Col, Select, DatePicker, Button, Modal, InputNumber, message, Icon, Radio } from 'antd';
 import {
   Chart,
   Geom,
@@ -47,6 +47,7 @@ class Index extends React.Component<any, any> {
     vitalityType: 'interval',
     firstNumber: 0,
     lastNumber: 0,
+    monthType: 'hour'
   }
   constructor(props: any) {
     super(props);
@@ -56,6 +57,7 @@ class Index extends React.Component<any, any> {
     this.pieValueFormat = this.pieValueFormat.bind(this);
     this.handleModalOk = this.handleModalOk.bind(this);
     this.handleModalCancel = this.handleModalCancel.bind(this);
+    this.handleSizeChange = this.handleSizeChange.bind(this);
   }
   public async componentDidMount() {
     const {shopId, from_date, to_date} = this.state;
@@ -94,11 +96,11 @@ class Index extends React.Component<any, any> {
   public async groupByEventNewFun(shopId: any, fromDate: any, toDate: any) {
     const res2: any = await fetchData({
       from_date: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
-      to_date: Math.ceil(+moment(toDate.format('YYYY-MM-DD')) / 1000) + 23 * 60 * 60,
+      to_date: Math.ceil(+moment(toDate.format('YYYY-MM-DD')) / 1000),
       shop_id: shopId + '',
       return: 'all_list',
       sort_by: 'asc',
-      period: 'hour'
+      period: +fromDate === +toDate ? 'hour' : 'day'
     }, '/v1/api/company/reports/group_by_event', {
       method: 'GET',
       headers: {
@@ -116,7 +118,7 @@ class Index extends React.Component<any, any> {
       eventCount += +item.event_count || 0;
       customerCount += +item.customer_count || 0;
       vipCount += +item.vip_count || 0;
-      const newItem = moment(item.time).format('YYYY-MM-DD HH:mm:ss')
+      const newItem = +fromDate === +toDate ? moment(item.time).format('YYYY-MM-DD HH:mm:ss') : moment(item.time).format('YYYY-MM-DD')
       eventList.push({
         x: newItem,
         y: item.event_count,
@@ -130,7 +132,7 @@ class Index extends React.Component<any, any> {
         y: item.vip_count,
       })
       customerDefList.push({
-        x: moment(item.time).format('H时'),
+        x: moment(item.time).format(+fromDate === +toDate ? 'H时' : 'MM/DD'),
         '进店客流': item.event_count,
         '去重客流': item.customer_count,
       })
@@ -350,6 +352,41 @@ class Index extends React.Component<any, any> {
     }
   }
 
+  public handleSizeChange(e: any) {
+    const type = e.target.value;
+    if (type === 'w') {
+      const weekOfday = moment().format('E');// 计算今天是这周第几天
+      const monday = moment().subtract(+weekOfday - 1, 'days');// 周一日期
+      const sunday = moment().subtract(+ weekOfday - 7, 'days');// 周日日期
+      this.setState({
+        from_date: monday,
+        to_date: sunday,
+      })
+    } else if (type === 'w2') {
+      const weekOfday = moment().format('E');// 计算今天是这周第几天
+      const monday = moment().subtract(+weekOfday+7-1, 'days');// 周一日期
+      const sunday = moment().subtract(weekOfday, 'days');// 周日日期
+      this.setState({
+        from_date: monday,
+        to_date: sunday,
+      })
+    } else if (type === 'm') {
+      const firstDay = moment(moment().subtract('month', 0).format('YYYY-MM') + '-01');// 周一日期
+      const lastDay = moment(moment().subtract('month', -1).format('YYYY-MM') + '-01').add('days', -1);// 周日日期
+      this.setState({
+        from_date: firstDay,
+        to_date: lastDay,
+      })
+    } else if (type === 'm2') {
+      const firstDay = moment(moment().subtract('month', 1).format('YYYY-MM') + '-01');// 周一日期
+      const lastDay = moment(moment().subtract('month', 0).format('YYYY-MM') + '-01').add('days', -1);// 周日日期
+      this.setState({
+        from_date: firstDay,
+        to_date: lastDay,
+      })
+    }
+  }
+
   public getSection(age: any) {
     if(age < 20) {
       return '20岁以下';
@@ -468,7 +505,27 @@ class Index extends React.Component<any, any> {
   }
 
   public render() {
-    const {shops, from_date, to_date, eventCount, customerCount, vipCount, eventList, customerList, customerDefList, vipList, oldEventCount, oldCustomerCount, oldVipCount, ageList, femaleCount, maleCount, menberList, vitalityIntervalList, vitalityFrequencyList} = this.state;
+    const {
+      shops,
+      from_date,
+      to_date,
+      eventCount,
+      customerCount,
+      vipCount,
+      eventList,
+      customerList,
+      customerDefList,
+      vipList,
+      oldEventCount,
+      oldCustomerCount,
+      oldVipCount,
+      ageList,
+      femaleCount,
+      maleCount,
+      menberList,
+      vitalityIntervalList,
+      vitalityFrequencyList,
+    } = this.state;
     const selectChildren: any[] = [];
     selectChildren.push(<Option
       key={'0'}
@@ -512,6 +569,12 @@ class Index extends React.Component<any, any> {
         value={[from_date, to_date]}
         className="padding"
       />
+      <Radio.Group value={''} className="padding" onChange={this.handleSizeChange}>
+        <Radio.Button value="w">本周</Radio.Button>
+        <Radio.Button value="w2">上周</Radio.Button>
+        <Radio.Button value="m">本月</Radio.Button>
+        <Radio.Button value="m2">上月</Radio.Button>
+      </Radio.Group>
       <Button className="padding" onClick={this.searchBtn} type="primary">搜索</Button>
     </FormField>
     <Row className="flex form-field-item2">

@@ -14,6 +14,7 @@
     "no-reference": false,
     "jsdoc-format": [true, "check-multiline-start"],
     "object-literal-sort-keys": false,
-    "prefer-for-of": false
+    "prefer-for-of": false,
+    "jsx-no-bind": false
   }
 }

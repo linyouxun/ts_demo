@@ -1,15 +1,15 @@
 import {objToUrlString} from './tools';
 import { Modal, message } from 'antd';
 export function fetchData(data: object, url: string, opts: RequestInit = {}) {
-  // 清除空参数
-  for (const key in data) {
-    if (data.hasOwnProperty(key)) {
-      const element = data[key];
-      if (!element) {
-        delete data[key];
-      }
-    }
-  }
+  // // 清除空参数
+  // for (const key in data) {
+  //   if (data.hasOwnProperty(key)) {
+  //     const element = data[key];
+  //     if (!element) {
+  //       delete data[key];
+  //     }
+  //   }
+  // }
   const params: RequestInit = Object.assign({
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -18,7 +18,7 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
   if (opts.method === 'GET') {
     url += ('?' + objToUrlString(data));
   } else {
-    params.body = objToUrlString(data);
+    params.body = JSON.stringify(data);
   }
   params.credentials = 'include';
   try {
@@ -43,10 +43,7 @@ export function fetchData(data: object, url: string, opts: RequestInit = {}) {
       } else if (!!json.stutasCode && json.stutasCode !== 200) {
         message.error(json.result);
       }
-      return Object.assign(json, {
-        message: json.message || json.msg || '请求错误',
-        msg: json.message || json.msg || '请求错误',
-      })
+      return Object.assign(json)
     }).catch(error => {
       console.log(error);
     });
