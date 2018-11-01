@@ -21,8 +21,8 @@ class Index extends React.Component<any, any> {
   public state = {
     shops: [], // 商店
     shopId: 0, // 商店ID
-    from_date: moment(), // 搜索开始时间
-    to_date: moment(), // 搜索结束时间
+    from_date: moment({hour:0,minute:0,second:0,millisecond: 0}), // 搜索开始时间
+    to_date: moment({hour:23,minute:59,second:59,millisecond: 0}), // 搜索结束时间
     eventCount: 0, // 访问顾客数
     customerCount: 0, // 访问顾客数(去重)
     vipCount: 0, // 访问VIP顾客数(去重)
@@ -47,7 +47,8 @@ class Index extends React.Component<any, any> {
     vitalityType: 'interval',
     firstNumber: 0,
     lastNumber: 0,
-    monthType: 'hour'
+    tipType: '',
+    tipName: '昨天',
   }
   constructor(props: any) {
     super(props);
@@ -64,19 +65,19 @@ class Index extends React.Component<any, any> {
     // 获取门店
     this.shopsFun();
     // 客流量
-    this.groupByEventNewFun(shopId, from_date, to_date);
+    this.groupByEventNewFun(shopId, from_date.clone(), to_date.clone());
     // 昨日客流量
-    this.groupByEventOldFun(shopId, from_date, to_date);
+    this.groupByEventOldFun(shopId, from_date.clone(), to_date.clone());
     // 男女列表
-    this.groupByEventFun(shopId, from_date, to_date);
+    this.groupByEventFun(shopId, from_date.clone(), to_date.clone());
     // 进店顾客
-    this.vipRecordsFun(shopId, from_date);
+    this.vipRecordsFun(shopId, from_date.clone());
     // 进店频次
-    this.vitalityFun(shopId, from_date, 'frequency');
+    this.vitalityFun(shopId, from_date.clone(), 'frequency');
     // 进店间隔
-    this.vitalityFun(shopId, from_date, 'interval');
+    this.vitalityFun(shopId, from_date.clone(), 'interval');
     // 获取规则
-    this.vitalityRulesFun(shopId, from_date);
+    this.vitalityRulesFun(shopId, from_date.clone());
   }
   // 获取门店
   public async shopsFun() {
@@ -95,86 +96,112 @@ class Index extends React.Component<any, any> {
   // 客流量
   public async groupByEventNewFun(shopId: any, fromDate: any, toDate: any) {
     const res2: any = await fetchData({
-      from_date: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
-      to_date: Math.ceil(+moment(toDate.format('YYYY-MM-DD')) / 1000),
+      from_date: Math.ceil(+fromDate / 1000),
+      to_date: Math.ceil(+toDate / 1000),
       shop_id: shopId + '',
       return: 'all_list',
       sort_by: 'asc',
-      period: +fromDate === +toDate ? 'hour' : 'day'
+      period: fromDate.format('YYYY-MM-DD') === toDate.format('YYYY-MM-DD') ? 'hour' : 'day'
     }, '/v1/api/company/reports/group_by_event', {
       method: 'GET',
       headers: {
         Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
       }
     })
-    let eventCount = 0;
-    let customerCount = 0;
-    let vipCount = 0;
-    const eventList: any[] = [];
-    const customerList: any[] = [];
-    const vipList: any[] = [];
-    const customerDefList: any[] = [];
-    res2.data.map((item: any) => {
-      eventCount += +item.event_count || 0;
-      customerCount += +item.customer_count || 0;
-      vipCount += +item.vip_count || 0;
-      const newItem = +fromDate === +toDate ? moment(item.time).format('YYYY-MM-DD HH:mm:ss') : moment(item.time).format('YYYY-MM-DD')
-      eventList.push({
-        x: newItem,
-        y: item.event_count,
-      })
-      customerList.push({
-        x: newItem,
-        y: item.customer_count,
-      })
-      vipList.push({
-        x: newItem,
-        y: item.vip_count,
-      })
-      customerDefList.push({
-        x: moment(item.time).format(+fromDate === +toDate ? 'H时' : 'MM/DD'),
-        '进店客流': item.event_count,
-        '去重客流': item.customer_count,
-      })
-      return item
-    });
-    this.setState({
-      eventCount,
-      customerCount,
-      vipCount,
-      eventList,
-      customerList,
-      customerDefList,
-      vipList,
-    });
+    if (!!res2 && !!res2.errors) {
+      if (!!res2.errors[0]) {
+        message.error(res2.errors[0].detail);
+      } else {
+        message.error('客流量列表拉取出错');
+      }
+    } else {
+      let eventCount = 0;
+      let customerCount = 0;
+      let vipCount = 0;
+      const eventList: any[] = [];
+      const customerList: any[] = [];
+      const vipList: any[] = [];
+      const customerDefList: any[] = [];
+      res2.data.map((item: any) => {
+        eventCount += +item.event_count || 0;
+        customerCount += +item.customer_count || 0;
+        vipCount += +item.vip_count || 0;
+        const newItem = fromDate.format('YYYY-MM-DD') === toDate.format('YYYY-MM-DD') ? moment(item.time).format('YYYY-MM-DD HH:mm:ss') : moment(item.time).format('YYYY-MM-DD')
+        eventList.push({
+          x: newItem,
+          y: item.event_count,
+        })
+        customerList.push({
+          x: newItem,
+          y: item.customer_count,
+        })
+        vipList.push({
+          x: newItem,
+          y: item.vip_count,
+        })
+        customerDefList.push({
+          x: moment(item.time).format(fromDate.format('YYYY-MM-DD') === toDate.format('YYYY-MM-DD') ? 'H时' : 'MM/DD'),
+          '进店客流': item.event_count,
+          '去重客流': item.customer_count,
+        })
+        return item
+      });
+      this.setState({
+        eventCount,
+        customerCount,
+        vipCount,
+        eventList,
+        customerList,
+        customerDefList,
+        vipList,
+      });
+    }
   }
   // 昨日客流量
   public async groupByEventOldFun(shopId: any, fromDate: any, toDate: any) {
-    const res3: any = await fetchData({
-      from_date: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000) - 23 * 60 * 60,
-      to_date: Math.ceil(+toDate / 1000) - 23 * 60 * 60,
+    const stamptime = toDate - fromDate;
+    let params = {
+      from_date: Math.ceil(+moment(fromDate - stamptime) / 1000),
+      to_date: Math.ceil(+moment(toDate - stamptime) / 1000),
       shop_id: shopId + '',
       return: 'all_count'
-    }, '/v1/api/company/reports/group_by_event', {
+    };
+    if (stamptime > 704799000) {
+      params = {
+        from_date: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')).add(-1, 'month') / 1000),
+        to_date: Math.ceil(+fromDate / 1000) - 1,
+        shop_id: shopId + '',
+        return: 'all_count'
+      };
+    }
+    const res3: any = await fetchData(params, '/v1/api/company/reports/group_by_event', {
       method: 'GET',
       headers: {
         Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
       }
     })
-    const oldEventCount = res3.data[0].event_count || 0;
-    const oldCustomerCount = res3.data[0].customer_count || 0;
-    const oldVipCount = res3.data[0].vip_count || 0;
-    this.setState({
-      oldEventCount,
-      oldCustomerCount,
-      oldVipCount,
-    });
+    if (!!res3 && !!res3.errors) {
+      if (!!res3.errors[0]) {
+        message.error(res3.errors[0].detail);
+      } else {
+        message.error('昨日客流量拉取出错');
+      }
+    } else {
+      const oldEventCount = res3.data[0].event_count || 0;
+      const oldCustomerCount = res3.data[0].customer_count || 0;
+      const oldVipCount = res3.data[0].vip_count || 0;
+      this.setState({
+        oldEventCount,
+        oldCustomerCount,
+        oldVipCount,
+      });
+    }
   }
   // 男女列表
   public async groupByEventFun(shopId: any, fromDate: any, toDate: any) {
     const res4: any = await fetchData({
-      from_date: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
-      to_date: Math.ceil(+moment(toDate.format('YYYY-MM-DD')) / 1000) + 23 * 60 * 60,
+      from_date: Math.ceil(+fromDate / 1000),
+      to_date: Math.ceil(+toDate / 1000),
       shop_id: shopId + '',
       return: 'all_count'
     }, '/v1/api/company/reports/group_by_event', {
@@ -222,7 +249,7 @@ class Index extends React.Component<any, any> {
   // 进店顾客
   public async vipRecordsFun(shopId: any, fromDate: any) {
     const res5: any = await fetchData({
-      since: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
+      since: Math.ceil(+fromDate / 1000),
       shop_id: shopId + '',
       order_by: 'capture_at'
     }, '/v1/api/company/reports/vip_records', {
@@ -241,7 +268,7 @@ class Index extends React.Component<any, any> {
   // 进店间隔 进店频次
   public async vitalityFun(shopId: any, fromDate: any, type: any) {
     const res7: any = await fetchData({
-      since: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
+      since: Math.ceil(+fromDate / 1000),
       shop_id: shopId + '',
       rule_type: type
     }, '/v1/api/company/reports/vitality', {
@@ -282,7 +309,7 @@ class Index extends React.Component<any, any> {
   // 获取规则
   public async vitalityRulesFun(shopId: any, fromDate: any) {
     const res8: any = await fetchData({
-      since: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
+      since: Math.ceil(+fromDate / 1000),
       shop_id: shopId + '',
     }, '/v1/api/vitality_rules', {
       method: 'GET',
@@ -356,33 +383,37 @@ class Index extends React.Component<any, any> {
     const type = e.target.value;
     if (type === 'w') {
       const weekOfday = moment().format('E');// 计算今天是这周第几天
-      const monday = moment().subtract(+weekOfday - 1, 'days');// 周一日期
-      const sunday = moment().subtract(+ weekOfday - 7, 'days');// 周日日期
+      const monday = moment().subtract(+weekOfday - 1, 'days').clone().set({hour:0,minute:0,second:0,millisecond: 0});// 周一日期
+      const sunday = moment().subtract(+ weekOfday - 7, 'days').clone().set({hour:23,minute:59,second:59,millisecond: 0});// 周日日期
       this.setState({
         from_date: monday,
         to_date: sunday,
+        tipType: '上周'
       })
     } else if (type === 'w2') {
       const weekOfday = moment().format('E');// 计算今天是这周第几天
-      const monday = moment().subtract(+weekOfday+7-1, 'days');// 周一日期
-      const sunday = moment().subtract(weekOfday, 'days');// 周日日期
+      const monday = moment().subtract(+weekOfday+7-1, 'days').clone().set({hour:0,minute:0,second:0,millisecond: 0});// 周一日期
+      const sunday = moment().subtract(weekOfday, 'days').clone().set({hour:23,minute:59,second:59,millisecond: 0});// 周日日期
       this.setState({
         from_date: monday,
         to_date: sunday,
+        tipType: '上上周'
       })
     } else if (type === 'm') {
-      const firstDay = moment(moment().subtract('month', 0).format('YYYY-MM') + '-01');// 周一日期
-      const lastDay = moment(moment().subtract('month', -1).format('YYYY-MM') + '-01').add('days', -1);// 周日日期
+      const firstDay = moment(moment().subtract('month', 0).format('YYYY-MM') + '-01').clone().set({hour:0,minute:0,second:0,millisecond: 0});// 周一日期
+      const lastDay = moment(moment().subtract('month', -1).format('YYYY-MM') + '-01').add('days', -1).clone().set({hour:23,minute:59,second:59,millisecond: 0});// 周日日期
       this.setState({
         from_date: firstDay,
         to_date: lastDay,
+        tipType: '上月'
       })
     } else if (type === 'm2') {
-      const firstDay = moment(moment().subtract('month', 1).format('YYYY-MM') + '-01');// 周一日期
-      const lastDay = moment(moment().subtract('month', 0).format('YYYY-MM') + '-01').add('days', -1);// 周日日期
+      const firstDay = moment(moment().subtract('month', 1).format('YYYY-MM') + '-01').clone().set({hour:0,minute:0,second:0,millisecond: 0});// 周一日期
+      const lastDay = moment(moment().subtract('month', 0).format('YYYY-MM') + '-01').add('days', -1).clone().set({hour:23,minute:59,second:59,millisecond: 0});// 周日日期
       this.setState({
         from_date: firstDay,
         to_date: lastDay,
+        tipType: '上上月'
       })
     }
   }
@@ -408,27 +439,39 @@ class Index extends React.Component<any, any> {
     });
   }
   public searchBtn() {
-    const {shopId, from_date, to_date} = this.state;
+    const {shopId, from_date, to_date, tipType} = this.state;
     // 客流量
-    this.groupByEventNewFun(shopId, from_date, to_date);
+    this.groupByEventNewFun(shopId, from_date.clone(), to_date.clone());
     // 昨日客流量
-    this.groupByEventOldFun(shopId, from_date, to_date);
+    this.groupByEventOldFun(shopId, from_date.clone(), to_date.clone());
     // 男女列表
-    this.groupByEventFun(shopId, from_date, to_date);
+    this.groupByEventFun(shopId, from_date.clone(), to_date.clone());
     // 进店顾客
-    this.vipRecordsFun(shopId, from_date);
+    this.vipRecordsFun(shopId, from_date.clone());
     // 进店频次
-    this.vitalityFun(shopId, from_date, 'frequency');
+    this.vitalityFun(shopId, from_date.clone(), 'frequency');
     // 进店间隔
-    this.vitalityFun(shopId, from_date, 'interval');
+    this.vitalityFun(shopId, from_date.clone(), 'interval');
+    this.setState({
+      tipName: tipType
+    });
   }
   public handlePickDateChange(value: any, mode: any) {
     if (!!value && value.length > 0) {
-      if (+value[0] === +value[1]) {
-        this.setState({
-          from_date: value[0],
-          to_date: value[1],
-        });
+      if (value[0].format('YYYY-MM-DD') === value[1].format('YYYY-MM-DD')) {
+        if (value[0].format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+          this.setState({
+            from_date: value[0].clone().set({hour:0,minute:0,second:0,millisecond: 0}),
+            to_date: value[1].clone().set({hour:23,minute:59,second:59,millisecond: 0}),
+            tipType: '昨天'
+          });
+        } else {
+          this.setState({
+            from_date: value[0].clone().set({hour:0,minute:0,second:0,millisecond: 0}),
+            to_date: value[1].clone().set({hour:23,minute:59,second:59,millisecond: 0}),
+            tipType: value[0].add(-1, 'days').format('MM/DD')
+          });
+        }
       } else {
         message.warn('只能选择同一天')
       }
@@ -454,6 +497,12 @@ class Index extends React.Component<any, any> {
   }
 
   public handleModalOk() {
+    // 
+    const {shopId, from_date} = this.state;
+    // 进店频次
+    this.vitalityFun(shopId, from_date.clone(), 'frequency');
+    // 进店间隔
+    this.vitalityFun(shopId, from_date.clone(), 'interval');
     this.setState({
       modalVisible: false
     });
@@ -525,6 +574,7 @@ class Index extends React.Component<any, any> {
       menberList,
       vitalityIntervalList,
       vitalityFrequencyList,
+      tipName
     } = this.state;
     const selectChildren: any[] = [];
     selectChildren.push(<Option
@@ -588,13 +638,13 @@ class Index extends React.Component<any, any> {
           <MiniArea line={true} height={45} data={eventList}/>
           {
             oldEventCount > 0 ? <div className="antd-pro-number-info-numberInfo">
-              {`昨日: ${oldEventCount} 变化率:`}
+              {`${tipName}: ${oldEventCount} 变化率:`}
               {
                 eventCount > oldEventCount ?
                 <span className={'up'}>{Math.ceil(((eventCount - oldEventCount) / oldEventCount) * 100) + '%'}<Icon type="rise"/></span>:
                 <span className={'down'}>{Math.ceil(((eventCount - oldEventCount) / oldEventCount) * 100) + '%'}<Icon type="fall"/></span>
               }
-            </div> : <div className="antd-pro-number-info-numberInfo">{`昨日: 0 变化率: 0`}</div>
+            </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
           }
         </ChartCard>
       </FormField>
@@ -608,13 +658,13 @@ class Index extends React.Component<any, any> {
           <MiniArea line={true} height={45} data={customerList}/>
           {
             oldCustomerCount > 0 ? <div className="antd-pro-number-info-numberInfo">
-              {`昨日: ${oldCustomerCount} 变化率:`}
+              {`${tipName}: ${oldCustomerCount} 变化率:`}
               {
                 customerCount > oldCustomerCount ?
                 <span className={'up'}>{Math.ceil(((customerCount - oldCustomerCount) / oldCustomerCount) * 100) + '%'}<Icon type="rise"/></span>:
                 <span className={'down'}>{Math.ceil(((customerCount - oldCustomerCount) / oldCustomerCount) * 100) + '%'}<Icon type="fall"/></span>
               }
-            </div> : <div className="antd-pro-number-info-numberInfo">{`昨日: 0 变化率: 0`}</div>
+            </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
           }
         </ChartCard>
       </FormField>
@@ -631,13 +681,13 @@ class Index extends React.Component<any, any> {
           />
           {
             oldVipCount > 0 ? <div className="antd-pro-number-info-numberInfo">
-              {`昨日: ${oldVipCount} 变化率:`}
+              {`${tipName}: ${oldVipCount} 变化率:`}
               {
                 vipCount > oldVipCount ?
                 <span className={'up'}>{Math.ceil(((vipCount - oldVipCount) / oldVipCount) * 100) + '%'}<Icon type="rise"/></span>:
                 <span className={'down'}>{Math.ceil(((vipCount - oldVipCount) / oldVipCount) * 100) + '%'}<Icon type="fall"/></span>
               }
-            </div> : <div className="antd-pro-number-info-numberInfo">{`昨日: 0 变化率: 0`}</div>
+            </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
           }
         </ChartCard>
       </FormField>

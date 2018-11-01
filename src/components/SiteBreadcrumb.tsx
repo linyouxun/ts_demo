@@ -21,6 +21,7 @@ export class SiteBreadcrumb extends React.Component<any, any> {
     const paths = location.pathname.split('/');
     const pathDom = [];
     let path = '';
+    console.log('log');
     for (const iterator of paths) {
       path += '/' + iterator;
       path = path.replace('//', '/');

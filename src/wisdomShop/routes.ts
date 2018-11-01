@@ -53,7 +53,7 @@ export const routes = [{
     sideIcon: 'anticon anticon-file-word',
   }],
   component:CommonStatisticsList,
-  path:'/active',
+  path:'/wisdom/active',
   userLeve: power.general + power.admin,
   sideIcon: 'anticon anticon-file-word',
 }, {

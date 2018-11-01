@@ -21,8 +21,8 @@ class Index extends React.Component<any, any> {
   public state = {
     shops: [], // 商店
     shopId: 0, // 商店ID
-    from_date: moment(), // 搜索开始时间
-    to_date: moment(), // 搜索结束时间
+    from_date: moment({hour:0,minute:0,second:0,millisecond: 0}), // 搜索开始时间
+    to_date: moment({hour:23,minute:59,second:59,millisecond: 0}), // 搜索结束时间
     eventCount: 0, // 访问顾客数
     customerCount: 0, // 访问顾客数(去重)
     vipCount: 0, // 访问VIP顾客数(去重)
@@ -92,9 +92,10 @@ class Index extends React.Component<any, any> {
   }
   // 客流量
   public async groupByEventNewFun(shopId: any, fromDate: any, toDate: any) {
+    
     const res2: any = await fetchData({
-      from_date: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
-      to_date: Math.ceil(+moment(toDate.format('YYYY-MM-DD')) / 1000) + 23 * 60 * 60,
+      from_date: Math.ceil(+fromDate / 1000),
+      to_date: Math.ceil(+toDate / 1000),
       shop_id: shopId + '',
       return: 'all_list',
       sort_by: 'asc',
@@ -149,8 +150,8 @@ class Index extends React.Component<any, any> {
   // 昨日客流量
   public async groupByEventOldFun(shopId: any, fromDate: any, toDate: any) {
     const res3: any = await fetchData({
-      from_date: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000) - 23 * 60 * 60,
-      to_date: Math.ceil(+toDate / 1000) - 23 * 60 * 60,
+      from_date: Math.ceil(+fromDate / 1000),
+      to_date: Math.ceil(+toDate / 1000),
       shop_id: shopId + '',
       return: 'all_count'
     }, '/v1/api/company/reports/group_by_event', {
@@ -168,11 +169,12 @@ class Index extends React.Component<any, any> {
       oldVipCount,
     });
   }
+
   // 男女列表
   public async groupByEventFun(shopId: any, fromDate: any, toDate: any) {
     const res4: any = await fetchData({
-      from_date: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
-      to_date: Math.ceil(+moment(toDate.format('YYYY-MM-DD')) / 1000) + 23 * 60 * 60,
+      from_date: Math.ceil(+fromDate / 1000),
+      to_date: Math.ceil(+toDate / 1000),
       shop_id: shopId + '',
       return: 'all_count'
     }, '/v1/api/company/reports/group_by_event', {
@@ -219,8 +221,9 @@ class Index extends React.Component<any, any> {
   }
   // 进店顾客
   public async vipRecordsFun(shopId: any, fromDate: any) {
+
     const res5: any = await fetchData({
-      since: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
+      since: Math.ceil(+fromDate / 1000),
       shop_id: shopId + '',
       order_by: 'capture_at'
     }, '/v1/api/company/reports/vip_records', {
@@ -239,7 +242,7 @@ class Index extends React.Component<any, any> {
   // 进店间隔 进店频次
   public async vitalityFun(shopId: any, fromDate: any, type: any) {
     const res7: any = await fetchData({
-      since: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
+      since: Math.ceil(+fromDate / 1000),
       shop_id: shopId + '',
       rule_type: type
     }, '/v1/api/company/reports/vitality', {
@@ -280,7 +283,7 @@ class Index extends React.Component<any, any> {
   // 获取规则
   public async vitalityRulesFun(shopId: any, fromDate: any) {
     const res8: any = await fetchData({
-      since: Math.ceil(+moment(fromDate.format('YYYY-MM-DD')) / 1000),
+      since: Math.ceil(+fromDate / 1000),
       shop_id: shopId + '',
     }, '/v1/api/vitality_rules', {
       method: 'GET',
@@ -389,8 +392,8 @@ class Index extends React.Component<any, any> {
     if (!!value && value.length > 0) {
       if (+value[0] === +value[1]) {
         this.setState({
-          from_date: value[0],
-          to_date: value[1],
+          from_date: value[0].clone().set({hour:0,minute:0,second:0,millisecond: 0}),
+          to_date: value[1].clone().set({hour:23,minute:59,second:59,millisecond: 0}),
         });
       } else {
         message.warn('只能选择同一天')
