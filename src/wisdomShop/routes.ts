@@ -1,6 +1,9 @@
 import * as React from "react";
 import CommonStatisticsList from '../statistics/CommonStatisticsList';
 import Index from './faceid/Index';
+import DataReport from './faceid/DataReport';
+import PassengerFlow from './faceid/PassengerFlow';
+import Device from './faceid/Device';
 import NotFound from '../NotFound';
 
 // 用户信息
@@ -41,14 +44,14 @@ export const routes = [{
     sideIcon: 'anticon anticon-file-word',
   }, {
     breadcrumbName:'数据报表',
-    component: CommonStatisticsList,
+    component: DataReport,
     path:'/datareport',
     children: [],
     sideIcon: 'anticon anticon-file-word',
   }, {
-    breadcrumbName:'识别列表查询',
-    component: CommonStatisticsList,
-    path:'/list3',
+    breadcrumbName:'进店客流查询',
+    component: PassengerFlow,
+    path:'/passengerflow',
     children: [],
     sideIcon: 'anticon anticon-file-word',
   }],
@@ -56,35 +59,35 @@ export const routes = [{
   path:'/wisdom/active',
   userLeve: power.general + power.admin,
   sideIcon: 'anticon anticon-file-word',
+// }, {
+//   breadcrumbName:'顾客管理',
+//   component:CommonStatisticsList,
+//   children: [{
+//     breadcrumbName:'会员组管理',
+//     component: CommonStatisticsList,
+//     path:'/list',
+//     children: [],
+//     sideIcon: 'anticon anticon-file-word',
+//   }, {
+//     breadcrumbName:'会员管理',
+//     component: CommonStatisticsList,
+//     path:'/list2',
+//     children: [],
+//     sideIcon: 'anticon anticon-file-word',
+//   }],
+//   path:'/active2',
+//   userLeve: power.general + power.admin,
+//   sideIcon: 'anticon anticon-file-word',
 }, {
-  breadcrumbName:'顾客管理',
-  component:CommonStatisticsList,
-  children: [{
-    breadcrumbName:'会员组管理',
-    component: CommonStatisticsList,
-    path:'/list',
-    children: [],
-    sideIcon: 'anticon anticon-file-word',
-  }, {
-    breadcrumbName:'会员管理',
-    component: CommonStatisticsList,
-    path:'/list2',
-    children: [],
-    sideIcon: 'anticon anticon-file-word',
-  }],
-  path:'/active2',
+  breadcrumbName:'Face ID设备管理',
+  component: Device,
+  path:'/wisdom/device',
   userLeve: power.general + power.admin,
   sideIcon: 'anticon anticon-file-word',
 }, {
-  breadcrumbName:'设备管理',
+  breadcrumbName:'Face ID公司管理',
   component:CommonStatisticsList,
-  path:'/active3',
-  userLeve: power.general + power.admin,
-  sideIcon: 'anticon anticon-file-word',
-}, {
-  breadcrumbName:'公司管理',
-  component:CommonStatisticsList,
-  path:'/active4',
+  path:'/wisdom/shop',
   userLeve: power.general + power.admin,
   children: [{
     breadcrumbName:'门店管理',
@@ -95,7 +98,7 @@ export const routes = [{
   }, {
     breadcrumbName:'员工账号管理',
     component: CommonStatisticsList,
-    path:'/list2',
+    path:'/employee',
     children: [],
     sideIcon: 'anticon anticon-file-word',
   }],

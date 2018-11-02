@@ -3,6 +3,7 @@ import {Modal, Icon, message } from 'antd';
 import { fetchData } from "../util/request";
 import { APISERVER } from '../util/const';
 import userInfo from '../util/power';
+import { withRouter } from "react-router-dom";
 import "./SiteHeader.less";
 
 interface IMenuParams {
@@ -22,15 +23,14 @@ export class SiteHeader extends React.Component<any, any> {
     this.cancelModal = this.cancelModal.bind(this);
     this.menuChoose = this.menuChoose.bind(this);
     this.state = {
-      menuIndex: 'index2',
+      menuIndex: props.location.pathname,
       menu: [
-        {name: '智慧门店', path: '#', key: 'index1'},
-        {name: '我的数据', path: '#', key: 'index2'},
-        {name: '智慧营销', path: '#', key: 'index3'},
-        {name: '呼叫+派单系统', path: '#', key: 'index4'},
-        {name: 'ERP系统', path: '#', key: 'index5'},
-        {name: '设计软件接入', path: '#', key: 'index6'},
-        {name: '在线教育', path: '#', key: 'index7'},
+        {name: '首页', path: '/', key: 'index1'},
+        {name: '智慧巡店', path: '/wisdom/active/index', key: 'index2'},
+        {name: '我的数据', path: '/data/active/index', key: 'index3'},
+        {name: '智慧营销', path: '/marketing', key: 'index4'},
+        {name: '派单系统', path: '/order', key: 'index5'},
+        {name: '智慧大学', path: '/university', key: 'index6'}
       ]
     }
   }
@@ -80,7 +80,8 @@ export class SiteHeader extends React.Component<any, any> {
   public menuChoose(e: any) {
     this.setState({
       menuIndex: e.target.dataset.index
-    })
+    });
+    this.props.history.push(e.target.dataset.index);
   }
   public render(){
     const { menuIndex, menu } = this.state;
@@ -90,7 +91,7 @@ export class SiteHeader extends React.Component<any, any> {
         <div className='header-main-menu'>
           <ul className='header-main-menu-ul'>
             {menu.map((item: IMenuParams, key: any) => {
-              return <li data-index={item.key} className={item.key === menuIndex ? 'active' : ''} onClick={this.menuChoose} key={key}>{item.name}</li>
+              return <li data-index={item.path} className={item.path === menuIndex ? 'active' : ''} onClick={this.menuChoose} key={key}>{item.name}</li>
             })}
           </ul>
         </div>
@@ -105,4 +106,5 @@ export class SiteHeader extends React.Component<any, any> {
     )
   }
 }
-export default SiteHeader;
+
+export default withRouter(SiteHeader);

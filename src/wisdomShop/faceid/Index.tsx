@@ -13,6 +13,7 @@ import {
 const { RangePicker } = DatePicker;
 import { fetchData } from "../../util/request";
 const Option = Select.Option;
+import { ymToken } from '../../util/const';
 import * as numeral from 'numeral';
 import * as moment from 'moment';
 import './Index.less';
@@ -49,6 +50,7 @@ class Index extends React.Component<any, any> {
     lastNumber: 0,
     tipType: '',
     tipName: '昨天',
+    shopRanks: {}
   }
   constructor(props: any) {
     super(props);
@@ -71,20 +73,23 @@ class Index extends React.Component<any, any> {
     // 男女列表
     this.groupByEventFun(shopId, from_date.clone(), to_date.clone());
     // 进店顾客
-    this.vipRecordsFun(shopId, from_date.clone());
+    // this.vipRecordsFun(shopId, from_date.clone());
+    this.vipRecordsFun(shopId, from_date.clone(), to_date.clone());
     // 进店频次
     this.vitalityFun(shopId, from_date.clone(), 'frequency');
     // 进店间隔
     this.vitalityFun(shopId, from_date.clone(), 'interval');
     // 获取规则
     this.vitalityRulesFun(shopId, from_date.clone());
+    //
+    this.shopRanksFun(from_date.clone(), to_date.clone());
   }
   // 获取门店
   public async shopsFun() {
     const res: any = await fetchData({return: 'all_list'}, '/v1/api/company/shops', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
+        Authorization: 'Bearer ' + ymToken
       }
     })
     if(res.length > 0) {
@@ -105,7 +110,7 @@ class Index extends React.Component<any, any> {
     }, '/v1/api/company/reports/group_by_event', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
+        Authorization: 'Bearer ' + ymToken
       }
     })
     if (!!res2 && !!res2.errors) {
@@ -177,7 +182,7 @@ class Index extends React.Component<any, any> {
     const res3: any = await fetchData(params, '/v1/api/company/reports/group_by_event', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
+        Authorization: 'Bearer ' + ymToken
       }
     })
     if (!!res3 && !!res3.errors) {
@@ -207,7 +212,7 @@ class Index extends React.Component<any, any> {
     }, '/v1/api/company/reports/group_by_event', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
+        Authorization: 'Bearer ' + ymToken
       }
     })
     const ageObj = {
@@ -247,22 +252,48 @@ class Index extends React.Component<any, any> {
     });
   }
   // 进店顾客
-  public async vipRecordsFun(shopId: any, fromDate: any) {
-    const res5: any = await fetchData({
-      since: Math.ceil(+fromDate / 1000),
-      shop_id: shopId + '',
-      order_by: 'capture_at'
-    }, '/v1/api/company/reports/vip_records', {
+  public async vipRecordsFun(shopId: any, fromDate: any, toDate: any) {
+    const res: any = await fetchData({
+      shop_id: shopId,
+      return: 'all_list',
+      from_date: Math.ceil(+fromDate / 1000),
+      to_date: Math.ceil(+toDate / 1000),
+      per_page: 9,
+      page: 1,
+      event_type: 'in',
+      status: 'analyzed'
+    }, '/v1/api/company/events', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
+        Authorization: 'Bearer ' + ymToken
       }
     })
-    if (!!res5 && res5.length > 0) {
+    if (!!res && !!res.errors) {
+      if (!!res.errors[0]) {
+        message.error(res.errors[0].detail);
+      } else {
+        message.error('进店顾客拉取出错');
+      }
+    } else {
       this.setState({
-        menberList: res5
-      })
+        menberList: res || [],
+      });
     }
+    // const res5: any = await fetchData({
+    //   since: Math.ceil(+fromDate / 1000),
+    //   shop_id: shopId + '',
+    //   order_by: 'capture_at'
+    // }, '/v1/api/company/reports/vip_records', {
+    //   method: 'GET',
+    //   headers: {
+    //     Authorization: 'Bearer ' + ymToken
+    //   }
+    // })
+    // if (!!res5 && res5.length > 0) {
+    //   this.setState({
+    //     menberList: res5
+    //   })
+    // }
   }
 
   // 进店间隔 进店频次
@@ -274,7 +305,7 @@ class Index extends React.Component<any, any> {
     }, '/v1/api/company/reports/vitality', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
+        Authorization: 'Bearer ' + ymToken
       }
     })
     if (!!res7 && !!res7.errors) {
@@ -306,6 +337,31 @@ class Index extends React.Component<any, any> {
     }
   }
 
+  // 门店排名客流量排名
+  public async shopRanksFun(fromDate: any, toDate: any) {
+    const res: any = await fetchData({
+      from_date: Math.ceil(+fromDate / 1000),
+      to_date: Math.ceil(+toDate / 1000),
+      order_by: 'customer_count'
+    }, '/v1/api/company/reports/shop_ranks', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + ymToken
+      }
+    })
+    if (!!res && !!res.errors) {
+      if (!!res.errors[0]) {
+        message.error(res.errors[0].detail);
+      } else {
+        message.error('门店排名客流量排名拉取出错');
+      }
+    } else {
+      this.setState({
+        shopRanks: res,
+      });
+    }
+  }
+
   // 获取规则
   public async vitalityRulesFun(shopId: any, fromDate: any) {
     const res8: any = await fetchData({
@@ -314,7 +370,7 @@ class Index extends React.Component<any, any> {
     }, '/v1/api/vitality_rules', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
+        Authorization: 'Bearer ' + ymToken
       }
     })
     if (!!res8) {
@@ -329,7 +385,7 @@ class Index extends React.Component<any, any> {
     }, `/v1/api/vitality_rules/${item.id}`, {
       method: 'DELETE',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70'
+        Authorization: 'Bearer ' + ymToken
       }
     });
     if (!!res.interval) {
@@ -360,7 +416,7 @@ class Index extends React.Component<any, any> {
     }, `/v1/api/vitality_rules`, {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer 887e7f12f869ed11e0f98c0b19c13d4445efbc70',
+        Authorization: 'Bearer ' + ymToken,
         'Content-Type': 'application/json'
       }
     });
@@ -447,7 +503,8 @@ class Index extends React.Component<any, any> {
     // 男女列表
     this.groupByEventFun(shopId, from_date.clone(), to_date.clone());
     // 进店顾客
-    this.vipRecordsFun(shopId, from_date.clone());
+    // this.vipRecordsFun(shopId, from_date.clone());
+    this.vipRecordsFun(shopId, from_date.clone(), to_date.clone());
     // 进店频次
     this.vitalityFun(shopId, from_date.clone(), 'frequency');
     // 进店间隔
@@ -497,7 +554,7 @@ class Index extends React.Component<any, any> {
   }
 
   public handleModalOk() {
-    // 
+    //
     const {shopId, from_date} = this.state;
     // 进店频次
     this.vitalityFun(shopId, from_date.clone(), 'frequency');
@@ -551,6 +608,10 @@ class Index extends React.Component<any, any> {
 
   public disabledDate(current: any) {
     return current > moment().endOf('day');
+  }
+
+  public moreInfo() {
+    this.props.history.push(`/wisdom/active/passengerflow`);
   }
 
   public render() {
@@ -774,7 +835,9 @@ class Index extends React.Component<any, any> {
     </FormField>
     <FormField className="form-item form-field-item2">
       <Row className="boder-bottom">
-        会员进店数据
+        {/* 会员进店数据 */}
+        顾客进店数据
+        <div className='float-right click' onClick={this.moreInfo.bind(this, 'interval')}>更多</div>
       </Row>
       <Row style={{margin: '0 1rem'}} className="flex flex-wrap">
         {menberList.map((item: any, key: any) => {
@@ -782,10 +845,12 @@ class Index extends React.Component<any, any> {
             <div className="flex">
               <img src={item.original_face_url} alt=""/>
               <div className='f-f-i-content'>
-                <div className="title">{item.name}</div>
-                <div className="address">{`${item.last_event_shop_name} | ${item.last_event_device_name}`}</div>
+                {/* <div className="title">{item.name}</div> */}
+                {/* <div className="address">{`${item.last_event_shop_name} | ${item.last_event_device_name}`}</div>
+                <div className="time">{moment(item.capture_at).format('YYYY/MM/DD HH:mm:ss')}</div> */}
+                <div className="address">{`${item.shop_name} | ${item.device_name}`}</div>
                 <div className="time">{moment(item.capture_at).format('YYYY/MM/DD HH:mm:ss')}</div>
-                <div className="to-day"> {`${from_date.format('YYYY年MM月DD日')}至今共${item.events_count}次`} </div>
+                {/* <div className="to-day"> {`${from_date.format('YYYY年MM月DD日')}至今共${item.events_count}次`} </div> */}
               </div>
             </div>
         </div>

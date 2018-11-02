@@ -14,11 +14,49 @@ export const APISERVER = (function s() {
 // 小程序图片前缀
 export const miniImgPath = 'http://xcx.yoju360.com';
 
+// 阅面常量
+// 位置
+export const ymPosition = {
+  corridor: {
+    key: 'corridor',
+    name: '过道',
+    id: '1'
+  },
+  entrance: {
+    key: 'entrance',
+    name: '入口',
+    id: '2'
+  },
+  checkout_desk: {
+    key: 'checkout_desk',
+    name: '收银台',
+    id: '3'
+  }
+}
+// 状态
+export const ymStatus = {
+  'true': {
+    name: '在线',
+    status: true,
+    id: '1'
+  },
+  'false': {
+    name: '未知',
+    status: false,
+    id: '2'
+  }
+}
+// 阅面登录token
+export const ymToken = '887e7f12f869ed11e0f98c0b19c13d4445efbc70';
+// export const ymToken = '42f4c8d0aa4b3aefd5a875da24904d931b6b1d6c';
+
+
+
 // 初始化分页
 export const PAGE = {
   defaultPageSize: 10,
   defaultCurrentPage: 1,
-  defaultPageSizeOptions: ['10', '25', '50', '100'],
+  defaultPageSizeOptions: ['10', '25', '50'],
   limit: 10,
   offset: 0,
   total: 0,
@@ -64,6 +102,13 @@ export enum ARROW {
   HIDE = 2,
   SHOW = 3,
 }
+
+export const gender = {
+  '0': '女',
+  '1': '男',
+  '2': '未知'
+};
+
 
 export const marksWidth = {
   0: '0',
