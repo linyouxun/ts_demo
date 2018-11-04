@@ -24,6 +24,7 @@ class SiteSide extends React.Component<any, any> {
     this.onCollapse = this.onCollapse.bind(this);
     this.onClickMenu = this.onClickMenu.bind(this);
     this.onOpenChangeMenu = this.onOpenChangeMenu.bind(this);
+    console.log('menu');
   }
 
   public onCollapse(collapsed: boolean){
@@ -61,10 +62,28 @@ class SiteSide extends React.Component<any, any> {
   }
 
   public setOpenMenu() {
-    const {location} = this.props;
-    const paths = location.pathname.split('/');
-    this.setState({
-      openMenu: ['/' + paths[1]]
+    const { history } = this.props;
+    history.listen(() => {
+      const {openMenu} = this.state;
+      const paths = window.location.pathname.split('/');
+      let setMenuFlat = true;
+      for (const iterator of openMenu) {
+        if (RegExp(paths[1]).test(iterator)) {
+          setMenuFlat = false;
+          break;
+        }
+      }
+      if (setMenuFlat) {
+        const openMenus: any[] = [];
+        paths.reduce((i: any, i2: any) => {
+          openMenus.push(i + '/' + i2);
+          return i + '/' + i2;
+        });
+        console.log('openMenus', openMenus);
+        this.setState({
+          openMenu: openMenus
+        })
+      }
     })
   }
 

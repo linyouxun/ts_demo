@@ -2,7 +2,8 @@ import * as React from 'react';
 import { ChartCard, MiniArea, Pie, MiniBar } from 'ant-design-pro/lib/Charts';
 import FormField from "../../components/FormField";
 import { Bar } from 'ant-design-pro/lib/Charts';
-import { Row, Col, Select, DatePicker, Button, Modal, InputNumber, message, Icon, Radio } from 'antd';
+import Trend from 'ant-design-pro/lib/Trend';
+import { Row, Col, Select, DatePicker, Button, Modal, InputNumber, message, Radio, Spin, List } from 'antd';
 import {
   Chart,
   Geom,
@@ -50,7 +51,16 @@ class Index extends React.Component<any, any> {
     lastNumber: 0,
     tipType: '',
     tipName: '昨天',
-    shopRanks: {}
+    shopRanks: {
+      average: {},
+      rank_list: []
+    },
+    loading: false,
+    loading2: false,
+    loading3: false,
+    loading4: false,
+    loading5: false,
+    loading6: false,
   }
   constructor(props: any) {
     super(props);
@@ -61,6 +71,7 @@ class Index extends React.Component<any, any> {
     this.handleModalOk = this.handleModalOk.bind(this);
     this.handleModalCancel = this.handleModalCancel.bind(this);
     this.handleSizeChange = this.handleSizeChange.bind(this);
+    this.renderShopList = this.renderShopList.bind(this);
   }
   public async componentDidMount() {
     const {shopId, from_date, to_date} = this.state;
@@ -100,6 +111,9 @@ class Index extends React.Component<any, any> {
   }
   // 客流量
   public async groupByEventNewFun(shopId: any, fromDate: any, toDate: any) {
+    this.setState({
+      loading: true
+    });
     const res2: any = await fetchData({
       from_date: Math.ceil(+fromDate / 1000),
       to_date: Math.ceil(+toDate / 1000),
@@ -113,6 +127,9 @@ class Index extends React.Component<any, any> {
         Authorization: 'Bearer ' + ymToken
       }
     })
+    this.setState({
+      loading: false
+    });
     if (!!res2 && !!res2.errors) {
       if (!!res2.errors[0]) {
         message.error(res2.errors[0].detail);
@@ -164,6 +181,9 @@ class Index extends React.Component<any, any> {
   }
   // 昨日客流量
   public async groupByEventOldFun(shopId: any, fromDate: any, toDate: any) {
+    this.setState({
+      loading2: true
+    });
     const stamptime = toDate - fromDate;
     let params = {
       from_date: Math.ceil(+moment(fromDate - stamptime) / 1000),
@@ -185,6 +205,9 @@ class Index extends React.Component<any, any> {
         Authorization: 'Bearer ' + ymToken
       }
     })
+    this.setState({
+      loading2: true
+    });
     if (!!res3 && !!res3.errors) {
       if (!!res3.errors[0]) {
         message.error(res3.errors[0].detail);
@@ -204,6 +227,9 @@ class Index extends React.Component<any, any> {
   }
   // 男女列表
   public async groupByEventFun(shopId: any, fromDate: any, toDate: any) {
+    this.setState({
+      loading3: true
+    });
     const res4: any = await fetchData({
       from_date: Math.ceil(+fromDate / 1000),
       to_date: Math.ceil(+toDate / 1000),
@@ -215,6 +241,9 @@ class Index extends React.Component<any, any> {
         Authorization: 'Bearer ' + ymToken
       }
     })
+    this.setState({
+      loading3: false
+    });
     const ageObj = {
       '20岁以下': 0,
       '20岁到30岁': 0,
@@ -225,24 +254,32 @@ class Index extends React.Component<any, any> {
     const ageList = [];
     let femaleCount = 0;
     let maleCount = 0;
-    if (!!res4.data && res4.data.length > 0 && typeof res4.data[0].age_count === 'object') {
-      const ageCountObj = res4.data[0].age_count;
-      for (const key in ageCountObj) {
-        if (ageCountObj.hasOwnProperty(key)) {
-          const element = this.getSection(key)
-          ageObj[element] += ageCountObj[key];
-        }
+    if (!!res4 && !!res4.errors) {
+      if (!!res4.errors[0]) {
+        message.error(res4.errors[0].detail);
+      } else {
+        message.error('男女列表拉取出错');
       }
-      femaleCount = res4.data[0].female_count;
-      maleCount = res4.data[0].male_count;
-    }
-    for (const key in ageObj) {
-      if (ageObj.hasOwnProperty(key)) {
-        const element = ageObj[key];
-        ageList.push({
-          x: key,
-          y: element
-        });
+    } else {
+      if (!!res4.data && res4.data.length > 0 && typeof res4.data[0].age_count === 'object') {
+        const ageCountObj = res4.data[0].age_count;
+        for (const key in ageCountObj) {
+          if (ageCountObj.hasOwnProperty(key)) {
+            const element = this.getSection(key)
+            ageObj[element] += ageCountObj[key];
+          }
+        }
+        femaleCount = res4.data[0].female_count;
+        maleCount = res4.data[0].male_count;
+      }
+      for (const key in ageObj) {
+        if (ageObj.hasOwnProperty(key)) {
+          const element = ageObj[key];
+          ageList.push({
+            x: key,
+            y: element
+          });
+        }
       }
     }
     this.setState({
@@ -253,6 +290,9 @@ class Index extends React.Component<any, any> {
   }
   // 进店顾客
   public async vipRecordsFun(shopId: any, fromDate: any, toDate: any) {
+    this.setState({
+      loading4: true
+    });
     const res: any = await fetchData({
       shop_id: shopId,
       return: 'all_list',
@@ -268,6 +308,9 @@ class Index extends React.Component<any, any> {
         Authorization: 'Bearer ' + ymToken
       }
     })
+    this.setState({
+      loading4: false
+    });
     if (!!res && !!res.errors) {
       if (!!res.errors[0]) {
         message.error(res.errors[0].detail);
@@ -298,6 +341,9 @@ class Index extends React.Component<any, any> {
 
   // 进店间隔 进店频次
   public async vitalityFun(shopId: any, fromDate: any, type: any) {
+    this.setState({
+      loading6: true
+    });
     const res7: any = await fetchData({
       since: Math.ceil(+fromDate / 1000),
       shop_id: shopId + '',
@@ -308,6 +354,9 @@ class Index extends React.Component<any, any> {
         Authorization: 'Bearer ' + ymToken
       }
     })
+    this.setState({
+      loading6: false
+    });
     if (!!res7 && !!res7.errors) {
       if (!!res7.errors[0]) {
         message.error(res7.errors[0].detail);
@@ -339,6 +388,9 @@ class Index extends React.Component<any, any> {
 
   // 门店排名客流量排名
   public async shopRanksFun(fromDate: any, toDate: any) {
+    this.setState({
+      loading5: true
+    });
     const res: any = await fetchData({
       from_date: Math.ceil(+fromDate / 1000),
       to_date: Math.ceil(+toDate / 1000),
@@ -349,6 +401,9 @@ class Index extends React.Component<any, any> {
         Authorization: 'Bearer ' + ymToken
       }
     })
+    this.setState({
+      loading5: false
+    });
     if (!!res && !!res.errors) {
       if (!!res.errors[0]) {
         message.error(res.errors[0].detail);
@@ -606,6 +661,15 @@ class Index extends React.Component<any, any> {
     </div>
   }
 
+  public renderShopList(item: any) {
+    return <List.Item>
+      <List.Item.Meta
+        title={<a>{item.shop_name}</a>}
+        description={`访问顾客一共${item.customer_count}人，占${item.customer_count_proportion}%`}
+      />
+    </List.Item>
+  }
+
   public disabledDate(current: any) {
     return current > moment().endOf('day');
   }
@@ -635,7 +699,14 @@ class Index extends React.Component<any, any> {
       menberList,
       vitalityIntervalList,
       vitalityFrequencyList,
-      tipName
+      shopRanks,
+      tipName,
+      loading,
+      loading2,
+      loading3,
+      loading4,
+      loading5,
+      loading6,
     } = this.state;
     const selectChildren: any[] = [];
     selectChildren.push(<Option
@@ -690,67 +761,97 @@ class Index extends React.Component<any, any> {
     </FormField>
     <Row className="flex form-field-item2">
       <FormField className="flex-1">
-        <ChartCard
-          title="进店客流"
-          total={numeral(eventCount || 0).format('0,0')}
-          contentHeight={134}
-          // action={<Tooltip title="指标说明"><Icon type="info-circle-o" /></Tooltip>}
-        >
-          <MiniArea line={true} height={45} data={eventList}/>
-          {
-            oldEventCount > 0 ? <div className="antd-pro-number-info-numberInfo">
-              {`${tipName}: ${oldEventCount} 变化率:`}
-              {
-                eventCount > oldEventCount ?
-                <span className={'up'}>{Math.ceil(((eventCount - oldEventCount) / oldEventCount) * 100) + '%'}<Icon type="rise"/></span>:
-                <span className={'down'}>{Math.ceil(((eventCount - oldEventCount) / oldEventCount) * 100) + '%'}<Icon type="fall"/></span>
-              }
-            </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
-          }
-        </ChartCard>
+        <Spin spinning={loading && loading2}>
+          <ChartCard
+            title="进店客流"
+            total={numeral(eventCount || 0).format('0,0')}
+            contentHeight={134}
+            // action={<Tooltip title="指标说明"><Icon type="info-circle-o" /></Tooltip>}
+          >
+            <MiniArea line={true} height={45} data={eventList}/>
+            {
+              oldEventCount > 0 ? <div className="antd-pro-number-info-numberInfo">
+                {`${tipName}: ${oldEventCount} 变化率:`}
+                {
+                  eventCount > oldEventCount ?
+                  <span className={'up'}>
+                    <Trend flag="up" style={{ marginLeft: 8, color: "#f5222d" }}>
+                      {Math.ceil(((eventCount - oldEventCount) / oldEventCount) * 100) + '%'}
+                    </Trend>
+                  </span>:
+                  <span className={'down'}>
+                    <Trend flag="down" style={{ marginLeft: 8, color: '#52c41a' }}>
+                      {Math.ceil(((eventCount - oldEventCount) / oldEventCount) * 100) + '%'}
+                    </Trend>
+                  </span>
+                }
+              </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
+            }
+          </ChartCard>
+        </Spin>
       </FormField>
       <FormField className="flex-1">
-        <ChartCard
-          title="去重客流"
-          total={numeral(customerCount || 0).format('0,0')}
-          contentHeight={134}
-          // action={<Tooltip title="指标说明"><Icon type="info-circle-o" /></Tooltip>}
-        >
-          <MiniArea line={true} height={45} data={customerList}/>
-          {
-            oldCustomerCount > 0 ? <div className="antd-pro-number-info-numberInfo">
-              {`${tipName}: ${oldCustomerCount} 变化率:`}
-              {
-                customerCount > oldCustomerCount ?
-                <span className={'up'}>{Math.ceil(((customerCount - oldCustomerCount) / oldCustomerCount) * 100) + '%'}<Icon type="rise"/></span>:
-                <span className={'down'}>{Math.ceil(((customerCount - oldCustomerCount) / oldCustomerCount) * 100) + '%'}<Icon type="fall"/></span>
-              }
-            </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
-          }
-        </ChartCard>
+        <Spin spinning={loading && loading2}>
+          <ChartCard
+            title="去重客流"
+            total={numeral(customerCount || 0).format('0,0')}
+            contentHeight={134}
+            // action={<Tooltip title="指标说明"><Icon type="info-circle-o" /></Tooltip>}
+          >
+            <MiniArea line={true} height={45} data={customerList}/>
+            {
+              oldCustomerCount > 0 ? <div className="antd-pro-number-info-numberInfo">
+                {`${tipName}: ${oldCustomerCount} 变化率:`}
+                {
+                  customerCount > oldCustomerCount ?
+                  <span className={'up'}>
+                    <Trend flag="up" style={{ marginLeft: 8, color: "#f5222d" }}>
+                      {Math.ceil(((customerCount - oldCustomerCount) / oldCustomerCount) * 100) + '%'}
+                    </Trend>
+                  </span>:
+                  <span className={'down'}>
+                    <Trend flag="down" style={{ marginLeft: 8, color: '#52c41a' }}>
+                      {Math.ceil(((customerCount - oldCustomerCount) / oldCustomerCount) * 100) + '%'}
+                    </Trend>
+                  </span>
+                }
+              </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
+            }
+          </ChartCard>
+        </Spin>
       </FormField>
       <FormField className="flex-1">
-        <ChartCard
-          title="会员进店数"
-          total={numeral(vipCount || 0).format('0,0')}
-          contentHeight={134}
-          // action={<Tooltip title="指标说明"><Icon type="info-circle-o" /></Tooltip>}
-        >
-          <MiniBar
-            height={46}
-            data={vipList}
-          />
-          {
-            oldVipCount > 0 ? <div className="antd-pro-number-info-numberInfo">
-              {`${tipName}: ${oldVipCount} 变化率:`}
-              {
-                vipCount > oldVipCount ?
-                <span className={'up'}>{Math.ceil(((vipCount - oldVipCount) / oldVipCount) * 100) + '%'}<Icon type="rise"/></span>:
-                <span className={'down'}>{Math.ceil(((vipCount - oldVipCount) / oldVipCount) * 100) + '%'}<Icon type="fall"/></span>
-              }
-            </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
-          }
-        </ChartCard>
+        <Spin spinning={loading && loading2}>
+          <ChartCard
+            title="会员进店数"
+            total={numeral(vipCount || 0).format('0,0')}
+            contentHeight={134}
+            // action={<Tooltip title="指标说明"><Icon type="info-circle-o" /></Tooltip>}
+          >
+            <MiniBar
+              height={46}
+              data={vipList}
+            />
+            {
+              oldVipCount > 0 ? <div className="antd-pro-number-info-numberInfo">
+                {`${tipName}: ${oldVipCount} 变化率:`}
+                {
+                  vipCount > oldVipCount ?
+                  <span className={'up'}>
+                    <Trend flag="up" style={{ marginLeft: 8, color: "#f5222d" }}>
+                      {Math.ceil(((vipCount - oldVipCount) / oldVipCount) * 100) + '%'}
+                    </Trend>
+                  </span>:
+                  <span className={'down'}>
+                    <Trend flag="down" style={{ marginLeft: 8, color: '#52c41a' }}>
+                      {Math.ceil(((vipCount - oldVipCount) / oldVipCount) * 100) + '%'}
+                    </Trend>
+                  </span>
+                }
+              </div> : <div className="antd-pro-number-info-numberInfo">{`${tipName}: 0 变化率: 0`}</div>
+            }
+          </ChartCard>
+        </Spin>
       </FormField>
     </Row>
     <FormField className="form-item form-field-item">
@@ -759,34 +860,38 @@ class Index extends React.Component<any, any> {
       </Row>
       <Row>
         <Col span={12}>
-          <Pie
-            hasLegend={true}
-            colors={['#1890ff', '#13c2c2', '#2fc25b', '#facc14', '#f04864', '#8543e0']}
-            title="年龄分布图"
-            subTitle="进店客流"
-            total={this.pieTotal.bind(this, ageList)}
-            data={ageList}
-            valueFormat={this.pieValueFormat}
-            height={200}
-          />
+          <Spin spinning={loading3}>
+            <Pie
+              hasLegend={true}
+              colors={['#1890ff', '#13c2c2', '#2fc25b', '#facc14', '#f04864', '#8543e0']}
+              title="年龄分布图"
+              subTitle="进店客流"
+              total={this.pieTotal.bind(this, ageList)}
+              data={ageList}
+              valueFormat={this.pieValueFormat}
+              height={200}
+            />
+          </Spin>
         </Col>
         <Col span={12}>
-          <Pie
-            hasLegend={true}
-            colors={['#ff92cd', '#75bcff']}
-            title="男女比例环形图"
-            subTitle="进店客流"
-            total={maleCount + femaleCount + '位'}
-            data={[{
-              x: '男',
-              y: maleCount
-            }, {
-              x: '女',
-              y: femaleCount
-            }]}
-            valueFormat={this.pieValueFormat}
-            height={200}
-          />
+          <Spin spinning={loading3}>
+            <Pie
+              hasLegend={true}
+              colors={['#ff92cd', '#75bcff']}
+              title="男女比例环形图"
+              subTitle="进店客流"
+              total={maleCount + femaleCount + '位'}
+              data={[{
+                x: '男',
+                y: maleCount
+              }, {
+                x: '女',
+                y: femaleCount
+              }]}
+              valueFormat={this.pieValueFormat}
+              height={200}
+            />
+          </Spin>
         </Col>
       </Row>
     </FormField>
@@ -795,81 +900,87 @@ class Index extends React.Component<any, any> {
         客流趋势展示
       </Row>
       <Row>
-        {
-          customerDefList.length > 0 ? <Col span={24}>
-            <Chart height={400} data={dv} scale={cols} forceFit={true}>
-              <Geom
-                type="line"
-                position="x*temperature"
-                size={2}
-                color={"city"}
-              />
-              <Geom
-                type="point"
-                position="x*temperature"
-                size={4}
-                shape={"circle"}
-                color={"city"}
-                style={{
-                  stroke: "#fff",
-                  lineWidth: 1
-                }}
-              />
-              <Legend />
-              <Axis name="x" />
-              <Axis
-                name="temperature"
-                label={{
-                  formatter: val => `${val}`
-                }}
-              />
-              <Tooltip
-                crosshairs={{
-                  type: "y"
-                }}
-              />
-            </Chart>
-          </Col> : ''
-        }
+        <Spin spinning={loading}>
+          {
+            customerDefList.length > 0 ? <Col span={24}>
+              <Chart height={400} data={dv} scale={cols} forceFit={true}>
+                <Geom
+                  type="line"
+                  position="x*temperature"
+                  size={2}
+                  color={"city"}
+                />
+                <Geom
+                  type="point"
+                  position="x*temperature"
+                  size={4}
+                  shape={"circle"}
+                  color={"city"}
+                  style={{
+                    stroke: "#fff",
+                    lineWidth: 1
+                  }}
+                />
+                <Legend />
+                <Axis name="x" />
+                <Axis
+                  name="temperature"
+                  label={{
+                    formatter: val => `${val}`
+                  }}
+                />
+                <Tooltip
+                  crosshairs={{
+                    type: "y"
+                  }}
+                />
+              </Chart>
+            </Col> : ''
+          }
+        </Spin>
       </Row>
     </FormField>
     <FormField className="form-item form-field-item2">
       <Row className="boder-bottom">
         {/* 会员进店数据 */}
         顾客进店数据
-        <div className='float-right click' onClick={this.moreInfo.bind(this, 'interval')}>更多</div>
+        <div className='float-right click padding-right' onClick={this.moreInfo.bind(this, 'interval')}>更多</div>
       </Row>
-      <Row style={{margin: '0 1rem'}} className="flex flex-wrap">
-        {menberList.map((item: any, key: any) => {
-          return <div key={key} style={{width: '380px', marginBottom: '.5rem'}}>
-            <div className="flex">
-              <img src={item.original_face_url} alt=""/>
-              <div className='f-f-i-content'>
-                {/* <div className="title">{item.name}</div> */}
-                {/* <div className="address">{`${item.last_event_shop_name} | ${item.last_event_device_name}`}</div>
-                <div className="time">{moment(item.capture_at).format('YYYY/MM/DD HH:mm:ss')}</div> */}
-                <div className="address">{`${item.shop_name} | ${item.device_name}`}</div>
-                <div className="time">{moment(item.capture_at).format('YYYY/MM/DD HH:mm:ss')}</div>
-                {/* <div className="to-day"> {`${from_date.format('YYYY年MM月DD日')}至今共${item.events_count}次`} </div> */}
+      <Spin spinning={loading4}>
+        <Row style={{margin: '0 1rem'}} className="flex flex-wrap">
+          {menberList.map((item: any, key: any) => {
+            return <div key={key} style={{width: '380px', marginBottom: '.5rem'}}>
+              <div className="flex">
+                <img src={item.original_face_url} alt=""/>
+                <div className='f-f-i-content'>
+                  {/* <div className="title">{item.name}</div> */}
+                  {/* <div className="address">{`${item.last_event_shop_name} | ${item.last_event_device_name}`}</div>
+                  <div className="time">{moment(item.capture_at).format('YYYY/MM/DD HH:mm:ss')}</div> */}
+                  <div className="address">{`${item.shop_name} | ${item.device_name}`}</div>
+                  <div className="time">{moment(item.capture_at).format('YYYY/MM/DD HH:mm:ss')}</div>
+                  {/* <div className="to-day"> {`${from_date.format('YYYY年MM月DD日')}至今共${item.events_count}次`} </div> */}
+                </div>
               </div>
-            </div>
-        </div>
-        })}
-      </Row>
+          </div>
+          })}
+        </Row>
+      </Spin>
     </FormField>
     <Row>
       <Col span={12}>
         <FormField className="form-item form-field-item2">
           <Row className="boder-bottom">
             进店间隔
-            <div className='float-right click' onClick={this.vitalityConfig.bind(this, 'interval')}>设置</div>
+            <div className='float-right click padding-right' onClick={this.vitalityConfig.bind(this, 'interval')}>设置</div>
           </Row>
           <Row>
-            <Bar
-              height={200}
-              title=""
-              data={vitalityIntervalList}
-            />
+            <Spin spinning={loading6}>
+              <Bar
+                height={200}
+                title=""
+                data={vitalityIntervalList}
+              />
+            </Spin>
           </Row>
         </FormField>
       </Col>
@@ -877,18 +988,34 @@ class Index extends React.Component<any, any> {
         <FormField className="form-item form-field-item2">
           <Row className="boder-bottom">
             进店频率
-            <div className='float-right click' onClick={this.vitalityConfig.bind(this, 'frequency')}>设置</div>
+            <div className='float-right click padding-right' onClick={this.vitalityConfig.bind(this, 'frequency')}>设置</div>
           </Row>
           <Row>
-            <Bar
-              height={200}
-              title=""
-              data={vitalityFrequencyList}
-            />
+            <Spin spinning={loading6}>
+              <Bar
+                height={200}
+                title=""
+                data={vitalityFrequencyList}
+              />
+            </Spin>
           </Row>
         </FormField>
       </Col>
     </Row>
+    <FormField className="form-item form-field-item2">
+      <Row className="boder-bottom" style={{'marginBottom': '0'}}>
+        门店排名
+      </Row>
+      <Row style={{margin: '0 1rem'}} className="flex flex-wrap">
+        <Spin spinning={loading5}>
+          <List
+            itemLayout="horizontal"
+            dataSource={shopRanks.rank_list}
+            renderItem={this.renderShopList}
+          />
+        </Spin>
+      </Row>
+    </FormField>
     <Modal
       title="会员活跃度分析设置"
       visible={this.state.modalVisible}

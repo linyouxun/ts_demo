@@ -1,11 +1,7 @@
-@import '../../common/veriables.less';
+@import '../common/veriables.less';
 .index {
   .form-item {
       padding-bottom: .4rem;
-      .ant-radio-button-wrapper-checked {
-        background: #239bff;
-        color: #fff;
-      }
   }
   .padding {
       margin-right: 1rem;
@@ -41,13 +37,28 @@
   .form-field-item2 {
     margin: 1rem;
     margin-bottom: 0;
-    .content {
-      padding: 0;
-    }
     .flex-1 {
       margin-right: 1rem;
       &:last-child {
         margin-right: 0;
+      }
+    }
+    .tip {
+      position: relative;
+      padding-right: 1rem;
+      height: 1.5rem;
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+      font-weight: bold;
+      color: #666;
+      &::after {
+        content: '\4EBA';
+        position: absolute;
+        right: 0;
+        font-size: .7rem;
+        bottom: 0;
+        height: 1.3rem;
+        color: #919191;
       }
     }
     .antd-pro-number-info-numberInfo {

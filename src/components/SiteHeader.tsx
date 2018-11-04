@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Modal, Icon, message } from 'antd';
 import { fetchData } from "../util/request";
 import { APISERVER } from '../util/const';
-import userInfo from '../util/power';
+// import userInfo from '../util/power';
 import { withRouter } from "react-router-dom";
 import "./SiteHeader.less";
 
@@ -27,7 +27,7 @@ export class SiteHeader extends React.Component<any, any> {
       menu: [
         {name: '首页', path: '/', key: 'index1'},
         {name: '智慧巡店', path: '/wisdom/active/index', key: 'index2'},
-        {name: '我的数据', path: '/data/active/index', key: 'index3'},
+        {name: '我的数据', path: '/data/preview', key: 'index3'},
         {name: '智慧营销', path: '/marketing', key: 'index4'},
         {name: '派单系统', path: '/order', key: 'index5'},
         {name: '智慧大学', path: '/university', key: 'index6'}
@@ -97,8 +97,8 @@ export class SiteHeader extends React.Component<any, any> {
         </div>
         <div className="header-action">
           <nav>
-            <span className="action-shop-name"> ※ 智慧门店 </span>
-            <span className="action-user-name"><Icon type="user"/><span>{ userInfo.userName }</span></span>
+            {/* <span className="action-shop-name"> ※ 智慧门店 </span>
+            <span className="action-user-name"><Icon type="user"/><span>{ userInfo.userName }</span></span> */}
             <span className="action-log-out" onClick={this.onClickLogout}><Icon type="logout"/><span>退出系统</span></span>
           </nav>
         </div>

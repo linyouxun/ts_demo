@@ -1,9 +1,6 @@
 import * as React from "react";
 import CommonStatisticsList from '../statistics/CommonStatisticsList';
-import Index from './faceid/Index';
-import DataReport from './faceid/DataReport';
-import PassengerFlow from './faceid/PassengerFlow';
-import Device from './faceid/Device';
+import Index from './Index';
 import NotFound from '../NotFound';
 
 // 用户信息
@@ -24,85 +21,30 @@ interface Iprop {
 }
 
 export const routes = [{
-  breadcrumbName:'智慧巡店',
+  breadcrumbName:'我的大学',
   component: Index,
   isNotMenu: true,
-  path: '/wisdom',
+  path: '/university',
   sideIcon: 'anticon anticon-picture',
 }, {
-  breadcrumbName:'Face ID数据',
+  breadcrumbName:'数据预览',
+  component:CommonStatisticsList,
+  path:'/university/preview',
+  userLeve: power.general + power.admin,
+}, {
+  breadcrumbName:'客户数据管理',
+  component: CommonStatisticsList,
+  path:'/university/administration',
   children: [{
     breadcrumbName:'概览',
     children: [{
       breadcrumbName:'实时客流分析',
       component: CommonStatisticsList,
       path:'/add',
-      sideIcon: 'anticon anticon-file-word',
     }],
     component: Index,
     path:'/index',
-    sideIcon: 'anticon anticon-file-word',
-  }, {
-    breadcrumbName:'数据报表',
-    component: DataReport,
-    path:'/datareport',
-    children: [],
-    sideIcon: 'anticon anticon-file-word',
-  }, {
-    breadcrumbName:'进店客流查询',
-    component: PassengerFlow,
-    path:'/passengerflow',
-    children: [],
-    sideIcon: 'anticon anticon-file-word',
   }],
-  component:CommonStatisticsList,
-  path:'/wisdom/active',
-  userLeve: power.general + power.admin,
-  sideIcon: 'anticon anticon-file-word',
-// }, {
-//   breadcrumbName:'顾客管理',
-//   component:CommonStatisticsList,
-//   children: [{
-//     breadcrumbName:'会员组管理',
-//     component: CommonStatisticsList,
-//     path:'/list',
-//     children: [],
-//     sideIcon: 'anticon anticon-file-word',
-//   }, {
-//     breadcrumbName:'会员管理',
-//     component: CommonStatisticsList,
-//     path:'/list2',
-//     children: [],
-//     sideIcon: 'anticon anticon-file-word',
-//   }],
-//   path:'/active2',
-//   userLeve: power.general + power.admin,
-//   sideIcon: 'anticon anticon-file-word',
-}, {
-  breadcrumbName:'Face ID设备管理',
-  component: Device,
-  path:'/wisdom/device',
-  userLeve: power.general + power.admin,
-  sideIcon: 'anticon anticon-file-word',
-}, {
-  breadcrumbName:'Face ID公司管理',
-  component:CommonStatisticsList,
-  path:'/wisdom/shop',
-  userLeve: power.general + power.admin,
-  children: [{
-    breadcrumbName:'门店管理',
-    component: CommonStatisticsList,
-    path:'/list',
-    children: [],
-    sideIcon: 'anticon anticon-file-word',
-  }, {
-    breadcrumbName:'员工账号管理',
-    component: CommonStatisticsList,
-    path:'/employee',
-    children: [],
-    sideIcon: 'anticon anticon-file-word',
-  }],
-  sideIcon: 'anticon anticon-file-word',
 }, {
   component:NotFound,
   isFull: true,

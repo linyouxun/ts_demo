@@ -1,11 +1,12 @@
 import * as React from "react";
 import CommonStatisticsList from './statistics/CommonStatisticsList';
-import Index from './data/index/Index';
+import Index from './data/Index';
 import NotFound from './NotFound';
 
 // 用户信息
 import userInfo from './util/power';
 import { power } from './util/const';
+
 
 
 interface Iprop {

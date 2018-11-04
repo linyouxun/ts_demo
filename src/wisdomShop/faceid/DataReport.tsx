@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Pie } from 'ant-design-pro/lib/Charts';
-import { Row, Col, message, Select, Radio, Button, DatePicker} from 'antd';
+import { Row, Col, message, Select, Radio, Button, DatePicker, Spin} from 'antd';
 import FormField from "../../components/FormField";
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -24,7 +24,9 @@ class DataReport extends React.Component<any, any> {
     to_date: moment({hour:23,minute:59,second:59,millisecond: 0}), // 搜索结束时间
     memberList: [],
     memberReachList: [],
-    dateType: 'hour'
+    dateType: 'hour',
+    loading: false,
+    loading2: false
   }
   constructor(props: any) {
     super(props);
@@ -80,12 +82,18 @@ class DataReport extends React.Component<any, any> {
   }
   // 会员占比环形图
   public async customerGroupFun(shopId: any) {
+    this.setState({
+      loading: true
+    });
     const res: any = await fetchData({shop_id: shopId}, '/v1/api/company/reports/group_by_customer_group', {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + ymToken
       }
     })
+    this.setState({
+      loading: false
+    });
     if (!!res && !!res.errors) {
       if (!!res.errors[0]) {
         message.error(res.errors[0].detail);
@@ -107,6 +115,9 @@ class DataReport extends React.Component<any, any> {
   }
   // 会员到店分析
   public async groupByEventFun(shopId: any, fromDate: any, toDate: any, dateType: any) {
+    this.setState({
+      loading2: true
+    });
     let moreOneDay = false;
     if (+toDate - fromDate > 24 * 60 * 60 * 1000) {
       moreOneDay = true;
@@ -124,6 +135,9 @@ class DataReport extends React.Component<any, any> {
         Authorization: 'Bearer ' + ymToken
       }
     })
+    this.setState({
+      loading2: false
+    });
     if (!!res && !!res.errors) {
       if (!!res.errors[0]) {
         message.error(res.errors[0].detail);
@@ -170,7 +184,9 @@ class DataReport extends React.Component<any, any> {
       from_date,
       to_date,
       memberReachList,
-      dateType
+      dateType,
+      loading,
+      loading2
     } = this.state;
     const selectChildren: any[] = [];
     selectChildren.push(<Option
@@ -201,18 +217,20 @@ class DataReport extends React.Component<any, any> {
           会员占比环形图
         </Row>
         <Row>
-          <Col span={16} offset={3}>
-            <Pie
-              hasLegend={true}
-              colors={['#1890ff', '#13c2c2', '#2fc25b', '#facc14', '#f04864', '#8543e0']}
-              title=""
-              subTitle="会员总数"
-              total={this.pieTotal.bind(this, memberList)}
-              data={memberList}
-              valueFormat={this.pieValueFormat}
-              height={300}
-            />
-          </Col>
+          <Spin spinning={loading}>
+            <Col span={16} offset={3}>
+              <Pie
+                hasLegend={true}
+                colors={['#1890ff', '#13c2c2', '#2fc25b', '#facc14', '#f04864', '#8543e0']}
+                title=""
+                subTitle="会员总数"
+                total={this.pieTotal.bind(this, memberList)}
+                data={memberList}
+                valueFormat={this.pieValueFormat}
+                height={300}
+              />
+            </Col>
+          </Spin>
         </Row>
       </FormField>
       <FormField className="form-item form-field-item">
@@ -239,43 +257,45 @@ class DataReport extends React.Component<any, any> {
           </Radio.Group>
         </Row>
         <Row>
-        {
-          memberReachList.length > 0 ? <Col span={24}>
-            <Chart height={400} data={dv} scale={cols} forceFit={true}>
-              <Geom
-                type="line"
-                position="x*temperature"
-                size={2}
-                color={"city"}
-              />
-              <Geom
-                type="point"
-                position="x*temperature"
-                size={4}
-                shape={"circle"}
-                color={"city"}
-                style={{
-                  stroke: "#fff",
-                  lineWidth: 1
-                }}
-              />
-              <Legend />
-              <Axis name="x" />
-              <Axis
-                name="temperature"
-                label={{
-                  formatter: val => `${val}`
-                }}
-              />
-              <Tooltip
-                crosshairs={{
-                  type: "y"
-                }}
-              />
-            </Chart>
-          </Col> : ''
-        }
-      </Row>
+          <Spin spinning={loading2}>
+            {
+              memberReachList.length > 0 ? <Col span={24}>
+                <Chart height={400} data={dv} scale={cols} forceFit={true}>
+                  <Geom
+                    type="line"
+                    position="x*temperature"
+                    size={2}
+                    color={"city"}
+                  />
+                  <Geom
+                    type="point"
+                    position="x*temperature"
+                    size={4}
+                    shape={"circle"}
+                    color={"city"}
+                    style={{
+                      stroke: "#fff",
+                      lineWidth: 1
+                    }}
+                  />
+                  <Legend />
+                  <Axis name="x" />
+                  <Axis
+                    name="temperature"
+                    label={{
+                      formatter: val => `${val}`
+                    }}
+                  />
+                  <Tooltip
+                    crosshairs={{
+                      type: "y"
+                    }}
+                  />
+                </Chart>
+              </Col> : ''
+            }
+          </Spin>
+        </Row>
       </FormField>
     </div>)
   }

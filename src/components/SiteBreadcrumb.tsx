@@ -21,8 +21,10 @@ export class SiteBreadcrumb extends React.Component<any, any> {
     const paths = location.pathname.split('/');
     const pathDom = [];
     let path = '';
-    console.log('log');
     for (const iterator of paths) {
+      if (iterator.trim() === '' ) {
+        continue;
+      }
       path += '/' + iterator;
       path = path.replace('//', '/');
       pathDom.push(<Item key={path}><Link to={path}>{routes[path] || '没有找到'}</Link></Item>);
