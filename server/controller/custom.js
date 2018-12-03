@@ -1,6 +1,6 @@
 const { fetchData } = require('../utils/request');
 const { GAODE_KEY } = require('../utils/const');
-const { setShortNum, isCurrentDay } = require('../utils/tools');
+const { setShortNum, isCurrentDay, filterSpecialChar } = require('../utils/tools');
 const { updateConfigCustomItem, addConfigCustomItem, findConfigCustomItem, listCustomItem } = require('../dbhelper/configCustom');
 const { getConfigHtmlItem } = require('../dbhelper/configHtmlHelper');
 const { power } = require('../utils/const');
@@ -16,10 +16,23 @@ exports.customList = async function(ctx, next) {
     currentPage = 1;
   }
   let params = {};
+  try {
+    params = JSON.parse(extraData);
+    if(!!params.id) {
+      params.id = filterSpecialChar(params.id);
+    }
+    if(!!params.phone) {
+      params.phone = filterSpecialChar(params.phone);
+    }
+  } catch (error) {
+    return falied(ctx, next, '额外参数出错了')
+  }
+
   // 用户
   if (!(ctx.session.leve & power.admin)) {
     params.userId = ctx.session.id;
   }
+
   const res = await listCustomItem(+currentPage, +pageSize, params);
   success(ctx, next, res);
 }

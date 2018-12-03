@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import ContentHeader from "../components/ContentHeader";
+import UserStatisticsFilter from './components/UserStatisticsFilter';
 import FormField from "../components/FormField";
 import { Table } from 'antd';
 import { fetchData } from "../util/request";
@@ -36,14 +37,22 @@ class UserStatisticsList extends React.Component<any, any> {
       {title: '姓名', dataIndex: 'name', width: 220},
       {title: '电话', dataIndex: 'mobile', width: 220},
       {title: '额外信息', dataIndex: 'extraInfo', width: 220, render:(text: any,record: any, index: any)=> {
-        const extraInfo = JSON.parse(text);
+        let extraInfo = {
+          name: '',
+          mobile: ''
+        };
+        try {
+          extraInfo = JSON.parse(text);
+        } catch (error) {
+          return <div>{text}</div>
+        }
         delete extraInfo.name;
         delete extraInfo.mobile;
         const itemDiv = [];
         for (const key in extraInfo) {
           if (extraInfo.hasOwnProperty(key)) {
             const element = extraInfo[key];
-            itemDiv.push(<div>
+            itemDiv.push(<div key={key}>
               {key}: {element}
             </div>)
           }
@@ -61,8 +70,7 @@ class UserStatisticsList extends React.Component<any, any> {
       }}
     ],
     loading: false,
-    list: [],
-    cityList: []
+    list: []
   }
   public constructor(props: any) {
     super(props);
@@ -100,10 +108,17 @@ class UserStatisticsList extends React.Component<any, any> {
     }
   }
   public onSubmit(params: any) {
-   console.log('onSubmit');
+    if (!!params.time && params.time.length > 0) {
+      params.time = [+params.time[0], +params.time[1]];
+    }
+    this.extraData = params;
+    const { pageSize } = this.page;
+    this.loadList(pageSize, PAGE.defaultCurrentPage);
   }
   public onReset() {
-    console.log('onReset');
+    this.extraData = {};
+    const { pageSize } = this.page;
+    this.loadList(pageSize, PAGE.defaultCurrentPage);
   }
 
   public onPageChange(current: any, pageSize: any) {
@@ -142,9 +157,9 @@ class UserStatisticsList extends React.Component<any, any> {
     };
     return <div className="page user-statistics-list">
       <ContentHeader title="报名统计" />
-      {/* <FormField>
-        <StatisticsFilter cityList={cityList} onSubmit={this.onSubmit} onReset={this.onReset}/>
-      </FormField> */}
+      <FormField>
+        <UserStatisticsFilter onSubmit={this.onSubmit} onReset={this.onReset}/>
+      </FormField>
       <FormField>
         <Table scroll={{x:1420}} {...tableProps} />
       </FormField>

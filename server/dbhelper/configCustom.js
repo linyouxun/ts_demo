@@ -40,25 +40,18 @@ exports.listCustomItem = async (currentPage, pageSize, params) => {
   if(!!params.userId) {
     findParams['affiliation.id'] =  params.userId;
   }
-  // if(!!params.channel_city && params.channel_city.length > 0) {
-  //   findParams['channel_city'] =  params.channel_city;
-  // }
-  // if(!!params.city && params.city.length > 0) {
-  //   findParams['cityInfo.city'] =  params.city;
-  // }
-  // if(!!params.html) {
-  //   findParams['currentHtml'] =  RegExp(params.html);
-  // }
-  // if(!!params.id) {
-  //   // findParams['_id'] = mongoose.Types.ObjectId(params.id);
-  //   findParams['configId'] = RegExp(params.id);
-  // }
-  // if(!!params.time && params.time.length > 0) {
-  //   findParams['timestamp'] = {
-  //     '$gte': params.time[0]+'',
-  //     '$lte': params.time[1]+''
-  //   };
-  // }
+  if(!!params.phone) {
+    findParams['mobile'] =  RegExp(params.phone);
+  }
+  if(!!params.id) {
+    findParams['configId'] = RegExp(params.id);
+  }
+  if(!!params.time && params.time.length > 0) {
+    findParams['timestamp'] = {
+      '$gte': params.time[0]+'',
+      '$lte': params.time[1]+''
+    };
+  }
   const total = await Custom.find(findParams).countDocuments();
   let list = await Custom.find(findParams).sort({'signTime': -1}).skip((currentPage - 1) * pageSize).limit(+pageSize).exec();
   list = list.map(item => {
