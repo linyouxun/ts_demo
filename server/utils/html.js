@@ -53,7 +53,7 @@ function saveHtml(id, htmlData) {
   fs.writeFileSync(htmlCssPath + '/swiper.min.css', fs.readFileSync(path.resolve(__dirname, './html.swiper.min.css')));
   // 拷贝文件
   for (const iterator of htmlData.configList) {
-    if (iterator.key === ActiveComponentType.pic.key || iterator.key === ActiveComponentType.swiper.key) {
+    if (iterator.key === ActiveComponentType.pic.key || iterator.key === ActiveComponentType.form.key || iterator.key === ActiveComponentType.swiper.key) {
       for (const iterator2 of iterator.config.fileList) {
         const src = path.resolve(__dirname, '../../static/images/', './' + iterator2.url.split('images').pop());
         const descSrc = path.resolve(htmlImgPath , './' + iterator2.url.split('/').pop());

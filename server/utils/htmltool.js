@@ -231,7 +231,7 @@ function htmlForm(formData, count) {
     }
   </style>
   <div class="relative">
-    ${ relative ? '<img src="' + fileList[0].url + '" style="width:100vw;height:' + fileList[0].height * 100 / fileList[0].width + 'vw;">' : ''}
+    ${ relative ? '<img src="./img/' + (fileList[0].url || '').split('/').pop() + '" style="width:100vw;height:' + fileList[0].height * 100 / fileList[0].width + 'vw;">' : ''}
     <div class="form ${relative ? 'abs' : ''}">
         ${inputs}
         <div style="color:${formData.button.color};background-color:${formData.button.bgColor}" id="submit${count}" class="submit-btn form-item" onclick="send${count}('${checkList.map(item => '#'+item+count).join("','")}')">${formData.button.tip}</div>
