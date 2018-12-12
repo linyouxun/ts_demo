@@ -47,6 +47,32 @@ export function urlStringToObj(s: string) {
   return params;
 }
 
+/**
+ * @description 过滤对象键值
+ * @param [s]
+ * @returns {{}}
+ */
+export function deleteInstanceKeys(instance: any, keys: string[]) {
+  switch (typeof instance) {
+    case 'string':
+      try {
+        instance = JSON.parse(instance);
+      } catch (error) {
+        instance = {};
+      }
+      break;
+    case 'object':
+      break
+    default:
+      instance = {};
+      break;
+  }
+  for (const iterator of keys) {
+    delete instance[iterator];
+  }
+  return instance;
+}
+
 export function setShortNum(num: string, minLen: number) {
 	let str = '';
 	const munLen = num.length;

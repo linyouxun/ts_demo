@@ -27,7 +27,6 @@ exports.customList = async function(ctx, next) {
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
   }
-
   // 用户
   if (!(ctx.session.leve & power.admin)) {
     params.userId = ctx.session.id;

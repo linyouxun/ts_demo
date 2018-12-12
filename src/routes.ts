@@ -148,10 +148,8 @@ for (const iterator of routes) {
   }
   if(!!iterator.children && iterator.children.length > 0) {
     for (const iterator2 of iterator.children) {
-      console.log('iterator2', iterator2);
       iterator2.path = iterator.path + iterator2.path;
       for (const iterator3 of iterator2.children) {
-        console.log('iterator3', iterator3);
         iterator3.path = iterator2.path + iterator3.path;
         routesList.push({
           exact: true,

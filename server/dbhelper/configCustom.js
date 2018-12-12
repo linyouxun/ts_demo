@@ -44,10 +44,10 @@ exports.listCustomItem = async (currentPage, pageSize, params) => {
     findParams['mobile'] =  RegExp(params.phone);
   }
   if(!!params.id) {
-    findParams['configId'] = RegExp(params.id);
+    findParams['affiliation.pageId'] = RegExp(params.id);
   }
   if(!!params.time && params.time.length > 0) {
-    findParams['timestamp'] = {
+    findParams['signTime'] = {
       '$gte': params.time[0]+'',
       '$lte': params.time[1]+''
     };

@@ -3,9 +3,11 @@ import * as moment from 'moment';
 import ContentHeader from "../components/ContentHeader";
 import UserStatisticsFilter from './components/UserStatisticsFilter';
 import FormField from "../components/FormField";
-import { Table } from 'antd';
+import { Table, Modal } from 'antd';
 import { fetchData } from "../util/request";
 import { PAGE, APISERVER } from '../util/const';
+import { deleteInstanceKeys } from '../util/tools';
+
 import './UserStatisticsList.less';
 
 enum FixedTpye {
@@ -37,17 +39,7 @@ class UserStatisticsList extends React.Component<any, any> {
       {title: '姓名', dataIndex: 'name', width: 220},
       {title: '电话', dataIndex: 'mobile', width: 220},
       {title: '额外信息', dataIndex: 'extraInfo', width: 220, render:(text: any,record: any, index: any)=> {
-        let extraInfo = {
-          name: '',
-          mobile: ''
-        };
-        try {
-          extraInfo = JSON.parse(text);
-        } catch (error) {
-          return <div>{text}</div>
-        }
-        delete extraInfo.name;
-        delete extraInfo.mobile;
+        const extraInfo = deleteInstanceKeys(text, ['name', 'mobile']);
         const itemDiv = [];
         for (const key in extraInfo) {
           if (extraInfo.hasOwnProperty(key)) {
@@ -63,20 +55,30 @@ class UserStatisticsList extends React.Component<any, any> {
       }},
       {title: '报名时间', dataIndex: 'signTime',width: 180, render:(text: any,record: any, index: any)=> {
         let title = '';
+        let historyDom: any = null;
         if (!!record.signHistory && record.signHistory.length > 0) {
-          title = '上一次报名时间为: ' + moment(+record.signHistory[0].signTime).format('YYYY年MM月DD HH小时mm分钟ss秒')
+          title = '上一次报名时间为: ' + moment(+record.signHistory[0].signTime).format('YYYY年MM月DD HH小时mm分钟ss秒');
+          historyDom = <span className='iconfont icon-history' onClick={this.showHistory.bind(this, record)}/>
         }
-        return  <div title={title}>{moment(+record.signTime).format('YYYY-MM-DD HH:mm:ss')}</div>
+        return  <div title={title}>
+          {moment(+record.signTime).format('YYYY-MM-DD HH:mm:ss')}
+          {historyDom}
+        </div>
       }}
     ],
     loading: false,
-    list: []
+    list: [],
+    history: [],
+    pageTitle: '',
+    isHistoryShow: false
   }
   public constructor(props: any) {
     super(props);
     this.onSubmit = this.onSubmit.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
     this.onReset = this.onReset.bind(this);
+    this.okBtn = this.okBtn.bind(this);
+    this.cancelBtn = this.cancelBtn.bind(this);
   }
   public componentDidMount() {
     const { pageSize, currentPage } = this.page;
@@ -125,8 +127,27 @@ class UserStatisticsList extends React.Component<any, any> {
     this.loadList(+pageSize, +current);
   }
 
+  public showHistory(record: any) {
+    this.setState({
+      history: record.signHistory,
+      pageTitle: record.affiliation.pageTitle,
+      isHistoryShow: true
+    })
+  }
+
+  public okBtn() {
+    this.cancelBtn();
+  }
+  public cancelBtn() {
+    this.setState({
+      history: [],
+      pageTitle: '',
+      isHistoryShow: false
+    })
+  }
+
   public render(): JSX.Element {
-    const { column, loading, list } = this.state;
+    const { column, loading, list, history, pageTitle, isHistoryShow } = this.state;
     const { pageSize, currentPage, total } = this.page;
     const tableProps = {
       bordered  : true,
@@ -163,6 +184,37 @@ class UserStatisticsList extends React.Component<any, any> {
       <FormField>
         <Table scroll={{x:1420}} {...tableProps} />
       </FormField>
+      <Modal
+        title={pageTitle + '的历史报名数据'}
+        visible={isHistoryShow}
+        className='user-statistics-list-model'
+        cancelText="取消"
+        okText="确定"
+        onOk={this.okBtn}
+        onCancel={this.cancelBtn}
+      >
+        <div className="flex">
+          <div className="m-name">姓名</div>
+          <div className="m-mobile">电话</div>
+          <div className="m-sign">报名时间</div>
+          {/* <div className="flex-1">
+            {item.name}
+          </div> */}
+        </div>
+        {
+          history.map((item: any, index: any) => {
+            // const extraInfo = deleteInstanceKeys(item.extraInfo, ['name', 'mobile']);
+            return <div key={index} className="flex">
+              <div className="m-name">{item.name}</div>
+              <div className="m-mobile">{item.mobile}</div>
+              <div className="m-sign">{moment(item.signTime).format('YYYY-MM-DD hh:mm:ss')}</div>
+              {/* <div className="flex-1">
+                {item.name}
+              </div> */}
+            </div>
+          })
+        }
+      </Modal>
     </div>;
   }
 }
