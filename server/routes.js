@@ -3,7 +3,7 @@ const koaBody = require('koa-body');
 const path = require('path');
 const util = require('./utils/tools');
 const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml, updateConfigHtml, downloadData, curlHtmlItem } = require('./controller/configHtml');
-const { statistics, statisticsjs, statisticsList } = require('./controller/statistics');
+const { statistics, statisticsjs, statisticsList, aggregateCount, aggregateCountTime } = require('./controller/statistics');
 const { customAdd, customList } = require('./controller/custom');
 const { cityLocation, cityList, cityListFull, citySetList } = require('./controller/city');
 const { addImg } = require('./controller/configFile');
@@ -59,6 +59,8 @@ module.exports = function() {
   router.get('/statistics/s.js', statisticsjs);
   router.get('/statistics/:id/s.js', statisticsjs);
   router.get('/api2/statistics/list', statisticsList);
+  router.get('/api2/statistics/aggregateCount', aggregateCount);
+  router.get('/api2/statistics/aggregateCountTime', aggregateCountTime);
   router.post('/custom/:id/add', customAdd);
   router.options('/custom/:id/add', return204);
   router.get('/api2/custom/list', customList);

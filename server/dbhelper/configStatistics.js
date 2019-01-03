@@ -67,3 +67,102 @@ exports.listStatisticsItem = async (currentPage, pageSize, params) => {
     total: +total,
   };
 }
+/**
+ * @param {timestamp时间，configId配置ID }
+ */
+exports.countStatisticsAggregate = async (params) => {
+  const match = {};
+  if(!!params.time && params.time.length > 0) {
+    match['timestamp'] = {
+      '$gte': params.time[0]+'',
+      '$lte': params.time[1]+''
+    };
+  }
+  if(!!params.userId) {
+    match['affiliation.id'] =  params.userId;
+  }
+  if(!!params.configId) {
+    match['configId'] = RegExp(params.configId);
+  }
+  const res = await Statistics.aggregate([
+    {'$match': match}, // 匹配字段
+    {'$group': { // 分组字段
+      _id: '$cityInfo.province',
+      province: {'$first': '$cityInfo.province'},
+      adcode: {'$first': '$cityInfo.adcode'},
+      sum: {'$sum': 1}
+    }},
+    {'$project': {
+      _id: 0
+    }}, // 隐藏字段
+    {'$sort': {sum: -1}}, // 排序 1升 -1降
+  ]);
+  const total = res.length;
+  let totalSum = 0;
+  if (res.length > 0) {
+    totalSum = res.reduce((a, b) => {
+      return {
+        sum: a.sum + b.sum
+      }
+    }).sum;
+  }
+  return {
+    list: res,
+    total,
+    totalSum
+  };
+}
+
+/**
+ * @param { timestamp时间，configId配置ID } params
+ */
+exports.countStatisticsAggregateTime = async (params) => {
+  const match = {};
+  if(!!params.time && params.time.length > 0) {
+    match['timestamp'] = {
+      '$gte': params.time[0]+'',
+      '$lte': params.time[1]+''
+    };
+  }
+  if(!!params.userId) {
+    match['affiliation.id'] =  params.userId;
+  }
+  if(!!params.configId) {
+    match['configId'] = RegExp(params.configId);
+  }
+  const res = await Statistics.aggregate([
+    {'$match': match}, // 匹配字段
+    // {
+    //   '$project': {
+    //      'date1Str': {'$dateToString': {format: '%Y-%m-%d %H:%M:%S:%L', date:{'$add':[new Date(0),{$toLong: '$timestamp'}]}}},
+    //      'date2Str': {'$dateToString': {format: '%Y-%m-%d %H:%M:%S:%L', date:{'$add':[new Date(0),{$toLong: '$timestamp'},28800000]}}}
+    //   }
+    // },
+    {'$group': { // 分组字段
+      _id: '$cityInfo.province',
+      // day: { $dayOfMonth: new Date("2016-01-01") },
+      year: { '$first': { '$toLong': '$timestamp' } },
+      province: {'$first': '$cityInfo.province'},
+      // adcode: {'$first': '$cityInfo.adcode'},
+      sum: {'$sum': 1}
+    }},
+    {'$project': {
+      _id: 0
+    }}, // 隐藏字段
+    {'$sort': {sum: -1}}, // 排序 1升 -1降
+  ]);
+  const total = res.length;
+  let totalSum = 0;
+  if (res.length > 0) {
+    totalSum = res.reduce((a, b) => {
+      return {
+        sum: a.sum + b.sum
+      }
+    }).sum;
+  }
+  return {
+    list: res,
+    total,
+    totalSum
+  };
+}

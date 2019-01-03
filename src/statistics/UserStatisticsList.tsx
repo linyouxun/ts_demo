@@ -32,8 +32,8 @@ class UserStatisticsList extends React.Component<any, any> {
       }},
       {title: '页面信息', dataIndex: 'configId', width: 220, render:(text: any,record: any, index: any)=> {
         return  <div>
-          <div>标题：{record.affiliation.pageTitle}</div>
-          <div className='page-id'>ID：{record.affiliation.pageId}</div>
+          <div>标题：{!!record.affiliation ? record.affiliation.pageTitle : '--'}</div>
+          <div className='page-id'>ID：{!!record.affiliation ? record.affiliation.pageId : '--'}</div>
         </div>
       }},
       {title: '姓名', dataIndex: 'name', width: 220},

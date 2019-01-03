@@ -8,7 +8,7 @@ const { ihdr, idat } = require('../utils/png');
 const { power } = require('../utils/const');
 
 const { success, falied } = require('./base');
-const { addConfigStatisticsItem, listStatisticsItem, userStatisticsItem } = require('../dbhelper/configStatistics');
+const { addConfigStatisticsItem, listStatisticsItem, userStatisticsItem, countStatisticsAggregate, countStatisticsAggregateTime } = require('../dbhelper/configStatistics');
 
 const { getConfigHtmlItem } = require('../dbhelper/configHtmlHelper');
 
@@ -141,6 +141,52 @@ exports.statisticsList = async function(ctx, next) {
   }
 
   const res = await listStatisticsItem(+currentPage, +pageSize, params);
+  success(ctx, next, res);
+}
+/**
+ *
+ */
+exports.aggregateCount = async function(ctx, next) {
+
+  // 筛选条件
+  let { extraData = '{}'} = ctx.query;
+  let params = {};
+  try {
+    params = JSON.parse(extraData);
+    if(!!params.configId) {
+      params.configId = filterSpecialChar(params.configId);
+    }
+  } catch (error) {
+    return falied(ctx, next, '额外参数出错了')
+  }
+
+  // 用户
+  if (!(ctx.session.leve & power.admin)) {
+    params.userId = ctx.session.id;
+  }
+  const res = await countStatisticsAggregate(params);
+  success(ctx, next, res);
+}
+
+exports.aggregateCountTime = async function(ctx, next) {
+
+  // 筛选条件
+  let { extraData = '{}'} = ctx.query;
+  let params = {};
+  try {
+    params = JSON.parse(extraData);
+    if(!!params.configId) {
+      params.configId = filterSpecialChar(params.configId);
+    }
+  } catch (error) {
+    return falied(ctx, next, '额外参数出错了')
+  }
+
+  // 用户
+  if (!(ctx.session.leve & power.admin)) {
+    params.userId = ctx.session.id;
+  }
+  const res = await countStatisticsAggregateTime(params);
   success(ctx, next, res);
 }
 
