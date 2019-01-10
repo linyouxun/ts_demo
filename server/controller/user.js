@@ -31,14 +31,26 @@ exports.createUser = async(ctx, next) => {
 }
 exports.listUser = async(ctx, next) => {
   const userInfo = ctx.session;
-  const { pageSize = 10, currentPage = 1, id = '0' } = ctx.request.query;
+  const { pageSize = 10, currentPage = 1, extraData = '{}' } = ctx.request.query;
   if (+pageSize < 0) {
     pageSize = 10;
   }
   if (+currentPage < 0) {
     pageSize = 1;
   }
-  const res = await listConfigUserInfo(pageSize, currentPage, userInfo);
+  let params = {};
+  try {
+    params = JSON.parse(extraData);
+    if(!!params.id) {
+      params.id = filterSpecialChar(params.id);
+    }
+    if(!!params.title) {
+      params.title = filterSpecialChar(params.title);
+    }
+  } catch (error) {
+    return falied(ctx, next, '额外参数出错了')
+  }
+  const res = await listConfigUserInfo(pageSize, currentPage, userInfo, params);
   success(ctx, next, res);
 }
 

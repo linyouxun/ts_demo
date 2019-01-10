@@ -32,7 +32,7 @@ exports.statistics = async function(ctx, next) {
     if(!!id) {
       // 查找页面所属用户
       try {
-        const configHtmlInfo = await getConfigHtmlItem(setShortNum(id, 24));
+        const configHtmlInfo = await getConfigHtmlItem(setShortNum(id, 24), false);
         if(!!configHtmlInfo) {
           affiliation = configHtmlInfo.userInfo;
         }
@@ -117,7 +117,7 @@ exports.statisticsjs = async function(ctx, next) {
 
 exports.statisticsList = async function(ctx, next) {
   // 筛选条件
-  let { currentPage = 1, pageSize = 10 , extraData = {}} = ctx.query;
+  let { currentPage = 1, pageSize = 10 , extraData = '{}'} = ctx.query;
   currentPage = Math.floor(currentPage);
   if (+currentPage < 1) {
     currentPage = 1;
@@ -153,9 +153,9 @@ exports.aggregateCount = async function(ctx, next) {
   let params = {};
   try {
     params = JSON.parse(extraData);
-    if(!!params.configId) {
-      params.configId = filterSpecialChar(params.configId);
-    }
+    // if(!!params.configId) {
+    //   params.configId = filterSpecialChar(params.configId);
+    // }
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
   }
@@ -175,9 +175,9 @@ exports.aggregateCountTime = async function(ctx, next) {
   let params = {};
   try {
     params = JSON.parse(extraData);
-    if(!!params.configId) {
-      params.configId = filterSpecialChar(params.configId);
-    }
+    // if(!!params.configId) {
+    //   params.configId = filterSpecialChar(params.configId);
+    // }
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
   }

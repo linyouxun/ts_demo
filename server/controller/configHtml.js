@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const configHtmlHelper =  require('../dbhelper/configHtmlHelper');
 const { success, falied } = require('./base');
-const { setShortNum, checkFileExist, curlPostTar } = require('../utils/tools');
+const { setShortNum, checkFileExist, curlPostTar, filterSpecialChar } = require('../utils/tools');
 const { power } = require('../utils/const');
 const { saveHtml } = require('../utils/html');
 
@@ -68,7 +68,7 @@ exports.deleteConfigHtml = async (ctx, next) => {
 }
 
 exports.listConfigHtml = async(ctx, next) => {
-  const { pageSize = 10, currentPage = 1, id = '0' } = ctx.request.query;
+  const { pageSize = 10, currentPage = 1, extraData = '{}' } = ctx.request.query;
   if (+pageSize < 0) {
     pageSize = 10;
   }
@@ -76,6 +76,17 @@ exports.listConfigHtml = async(ctx, next) => {
     pageSize = 1;
   }
   let params = {};
+  try {
+    params = JSON.parse(extraData);
+    if(!!params.id) {
+      params.id = filterSpecialChar(params.id);
+    }
+    if(!!params.title) {
+      params.title = filterSpecialChar(params.title);
+    }
+  } catch (error) {
+    return falied(ctx, next, '额外参数出错了')
+  }
   // 用户
   if (!(ctx.session.leve & power.admin)) {
     params.userId = ctx.session.id;

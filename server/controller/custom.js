@@ -53,7 +53,7 @@ exports.customAdd = async function(ctx, next) {
     if(!!id) {
       // 查找页面所属用户
       try {
-        const configHtmlInfo = await getConfigHtmlItem(setShortNum(id, 24));
+        const configHtmlInfo = await getConfigHtmlItem(setShortNum(id, 24), false);
         if(!!configHtmlInfo) {
           affiliation = {
             name: configHtmlInfo.userInfo.name,

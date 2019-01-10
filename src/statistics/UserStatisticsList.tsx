@@ -37,9 +37,11 @@ class UserStatisticsList extends React.Component<any, any> {
         </div>
       }},
       {title: '姓名', dataIndex: 'name', width: 220},
-      {title: '电话', dataIndex: 'mobile', width: 220},
+      {title: '电话', dataIndex: 'mobile', width: 220, render:(text: any,record: any, index: any)=> {
+        return  <div> {record.mobile || record.phone} </div>
+      }},
       {title: '额外信息', dataIndex: 'extraInfo', width: 220, render:(text: any,record: any, index: any)=> {
-        const extraInfo = deleteInstanceKeys(text, ['name', 'mobile']);
+        const extraInfo = deleteInstanceKeys(text, ['name', 'mobile', 'phone']);
         const itemDiv = [];
         for (const key in extraInfo) {
           if (extraInfo.hasOwnProperty(key)) {

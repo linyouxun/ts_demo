@@ -15,9 +15,9 @@ exports.addConfigHtmlItem = async (config) => {
 /**
  * 查找单条记录
  */
-exports.getConfigHtmlItem = async(objectId = '000000000000000000000000') => {
+exports.getConfigHtmlItem = async(objectId = '000000000000000000000000', ignore = true) => {
   const res = await ConfigHtml.findOne({'_id': mongoose.Types.ObjectId(objectId)}).exec();
-  if(!res || (!!res.isDelete || !res.isUpdate)) {
+  if(!!res && ignore && (!!res.isDelete || !res.isUpdate)) {
     return {};
   }
   return res;
@@ -82,7 +82,13 @@ exports.listConfigHtml = async(pageSize = 10, currentPage = 1, params) => {
     isDelete: {'$ne': true}
   };
   if(!!params.userId) {
-    findParams['userInfo.id'] =  params.userId;
+    findParams['userInfo.id'] = params.userId;
+  }
+  if(!!params.title) {
+    findParams['configBase.title'] = RegExp(params.title);
+  }
+  if(!!params.id) {
+    findParams['_id'] = mongoose.Types.ObjectId(params.id);
   }
   let query = ConfigHtml.find(findParams);
   // 总数

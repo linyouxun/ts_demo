@@ -78,12 +78,17 @@ exports.countStatisticsAggregate = async (params) => {
       '$lte': params.time[1]+''
     };
   }
+  if(!!params.configIds && params.configIds.length > 0) {
+    match['configId'] = {
+      '$in': params.configIds,
+    };
+  }
   if(!!params.userId) {
     match['affiliation.id'] =  params.userId;
   }
-  if(!!params.configId) {
-    match['configId'] = RegExp(params.configId);
-  }
+  // if(!!params.configId) {
+  //   match['configId'] = RegExp(params.configId);
+  // }
   const res = await Statistics.aggregate([
     {'$match': match}, // 匹配字段
     {'$group': { // 分组字段
