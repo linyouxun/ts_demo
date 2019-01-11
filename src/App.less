@@ -20,23 +20,72 @@ html, body, #root, .app{
   font-size: 20px;
   height: 100%;
   width: 100%;
-  background: #eeeeee;
+  background: #f8f8f8;
   color: #333;
   .wrapper {
-    height: calc(100% - 3rem);
+    height: calc(100% - 4.5rem);
     overflow-y: auto;
     display: flex;
     .container {
       height: 100%;
       flex: 1;
       position: relative;
-      border-bottom: 40px;
+      // border-bottom: 40px;
       box-sizing: border-box;
       overflow: auto;
+      // padding-bottom: .5rem;
+      // display: flex;
+      // flex-direction: column;
+      & > div:nth-child(2) {
+        min-height: calc(100% - 3rem - 50px);
+      }
     }
   }
   .ant-table tbody td {
     padding: .5rem 16px;
+  }
+  .float-right {
+    float: right;
+  }
+  .click {
+    cursor: pointer;
+  }
+  .padding {
+    padding: 1rem;
+  }
+  .padding-top {
+    padding-top: 1rem;
+  }
+  .padding-right {
+    padding-right: 1rem;
+  }
+  .padding-left {
+    padding-left: 1rem;
+  }
+  .margin-right {
+    margin-right: 1rem;
+  }
+  .margin {
+    margin: 1rem;
+  }
+  .margin-left {
+    margin-left: 1rem;
+  }
+  .margin-top {
+    margin-top: 1rem;
+  }
+  .text-align-left {
+    text-align: left;
+  }
+  .text-align-center {
+    text-align: center;
+  }
+  .text-align-right {
+    text-align: right;
+  }
+
+  .header-margin {
+    margin: .2rem 0;
   }
 }
 
@@ -80,8 +129,12 @@ html, body, #root, .app{
 .flex {
   display: flex;
 }
+
+.flex-direction {
+  flex-direction: column
+}
 .flex-wrap {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 .flex-1 {
   flex: 1;
@@ -92,7 +145,13 @@ html, body, #root, .app{
 
 .page {
   margin: 0.5rem;
-  height: calc(100% - 3.5rem - 42px);
+  height: calc(100% - 4.5rem - 42px);
   overflow: auto;
 }
 
+.border-left {
+  border-left: 1px solid #efefef;
+}
+.border-right {
+  border-right: 1px solid #efefef;
+}

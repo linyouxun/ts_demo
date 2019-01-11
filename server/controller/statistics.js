@@ -147,15 +147,11 @@ exports.statisticsList = async function(ctx, next) {
  *
  */
 exports.aggregateCount = async function(ctx, next) {
-
   // 筛选条件
   let { extraData = '{}'} = ctx.query;
   let params = {};
   try {
     params = JSON.parse(extraData);
-    // if(!!params.configId) {
-    //   params.configId = filterSpecialChar(params.configId);
-    // }
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
   }
@@ -175,9 +171,6 @@ exports.aggregateCountTime = async function(ctx, next) {
   let params = {};
   try {
     params = JSON.parse(extraData);
-    // if(!!params.configId) {
-    //   params.configId = filterSpecialChar(params.configId);
-    // }
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
   }

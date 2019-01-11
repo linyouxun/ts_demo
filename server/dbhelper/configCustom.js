@@ -79,3 +79,78 @@ exports.listCustomItem = async (currentPage, pageSize, params) => {
     total: +total,
   };
 }
+
+
+/**
+ * 报名数据时间
+ * @param { timestamp时间，configId配置ID }
+ */
+exports.countCustomAggregateTime = async (params) => {
+  const match = {};
+  if(!!params.time && params.time.length > 0) {
+    match['signTime'] = {
+      '$gte': params.time[0],
+      '$lte': params.time[1]
+    };
+  }
+  if(!!params.configIds && params.configIds.length > 0) {
+    match['configId'] = {
+      '$in': params.configIds,
+    };
+  }
+  if(!!params.userId) {
+    match['affiliation.id'] =  params.userId;
+  }
+
+  // 现在默认10分钟选择
+  const splitTime = 10 * 60 * 1000;
+  // IOSTime比我们少8个小时
+  const IOSTime = 8 * 60 * 60 * 1000;
+  // 初始时间
+  const startTime = new Date(0);
+
+  const res = await Custom.aggregate([
+    {'$match': match}, // 匹配字段
+    {
+      '$project': {
+        'signTime': 1,
+        'groupDate': {
+          '$dateToString': {
+            // 'format': "%Y-%m-%d %H:%M:%S:%L",
+            'format': "%Y-%m-%d %H:%M:%S",
+            'date': {
+              "$add": [
+                startTime,
+                {'$subtract': ['$signTime', {"$mod": ['$signTime', splitTime]}]},
+                IOSTime
+              ]
+            }
+          }
+        },
+      }
+    },
+    {'$group': { // 分组字段
+      _id: '$groupDate',
+      groupDate: {'$first': '$groupDate'},
+      sum: {'$sum': 1}
+    }},
+    {'$project': {
+      _id: 0
+    }}, // 隐藏字段
+    {'$sort': {groupDate: 1}}, // 排序 1升 -1降
+  ]);
+  const total = res.length;
+  let totalSum = 0;
+  if (res.length > 0) {
+    totalSum = res.reduce((a, b) => {
+      return {
+        sum: a.sum + b.sum
+      }
+    }).sum;
+  }
+  return {
+    list: res,
+    total,
+    totalSum
+  };
+}

@@ -7,6 +7,7 @@ import FormField from "../components/FormField";
 import ContentHeader from "../components/ContentHeader";
 import { fetchData } from "../util/request";
 import { APISERVER } from '../util/const';
+import * as moment from 'moment';
 
 
 
@@ -16,14 +17,17 @@ class CommonStatisticsList extends React.Component<any, any> {
   };
 
   public column:any = [
-    {title: '省', dataIndex: 'province', render:(text: any,record: any, index: any)=> {
-      return !!text ? text : '未知省'
+    {title: '省份', dataIndex: 'province', render:(text: any,record: any, index: any)=> {
+      return !!text ? text : '未知省份'
     }},
-    {title: '访问量', dataIndex: 'sum'},
+    {title: '投放页面访问量(次数)', dataIndex: 'sum'},
   ]
 
   public state = {
+    fromDate: moment({hour:0,minute:0,second:0,millisecond: 0}), // 搜索开始时间
+    toDate: moment({hour:23,minute:59,second:59,millisecond: 0}), // 搜索结束时间
     loading: false,
+    totalSum: 0,
     cityData: []
   }
 
@@ -34,6 +38,9 @@ class CommonStatisticsList extends React.Component<any, any> {
   }
 
   public componentDidMount() {
+    // 设置时间
+    const { fromDate, toDate } = this.state;
+    this.extraData.time = [+fromDate, +toDate];
     this.loadList();
   }
 
@@ -75,7 +82,8 @@ class CommonStatisticsList extends React.Component<any, any> {
     })
     if (res.stutasCode === 200) {
       this.setState({
-        cityData: res.result.list || []
+        cityData: res.result.list || [],
+        totalSum: res.result.totalSum || 0
       });
     }
   }
@@ -83,34 +91,46 @@ class CommonStatisticsList extends React.Component<any, any> {
 
   public render(): JSX.Element {
     const pagination: any = false;
-    const { loading, cityData } = this.state;
+    const { loading, cityData, totalSum } = this.state;
     const tableProps = {
       bordered  : false,
       columns   : this.column,
-      dataSource: cityData,
+      dataSource: totalSum > 0 ? [{
+        province: '省份总计',
+        sum: totalSum
+      }, ...cityData] : [],
       pagination,
+      locale: {
+        filterTitle: '筛选',
+        filterConfirm: '确定',
+        filterReset: '重置',
+        emptyText: '暂无数据',
+      },
       rowKey    : (record: any, index: number) => {
         return (index + '')
       },
     };
     return <div className="page common-statistics-list">
-      <ContentHeader title="通用统计" />
-      <FormField>
-        <CommonStatisticsFilter onSubmit={this.onSubmit} onReset={this.onReset}/>
-      </FormField>
-      <FormField>
-        <Spin spinning={loading}>
-          <div className="flex">
-            <div className="china-map">
-              <CChinaMap cityData={cityData} />
+      <Spin spinning={loading}>
+        <ContentHeader title="通用统计" />
+        <FormField>
+          <CommonStatisticsFilter onSubmit={this.onSubmit} onReset={this.onReset}/>
+        </FormField>
+        <FormField
+          header={{
+            title: '区域访问量'
+          }}>
+            <div className="flex">
+              <div className="china-map">
+                <CChinaMap cityData={cityData} />
+              </div>
+              <div className="flex-1"/>
+              <div className="china-map-list">
+                <Table scroll={{y: 320}} {...tableProps} />
+              </div>
             </div>
-            <div className="flex-1"/>
-            <div className="china-map-list">
-              <Table scroll={{y: 320}} {...tableProps} />
-            </div>
-          </div>
-        </Spin>
-      </FormField>
+        </FormField>
+      </Spin>
     </div>
   }
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as moment from 'moment';
-import {Button, Row, Form, Col, DatePicker, Select, Spin } from 'antd';
+import {Button, Row, Form, Col, DatePicker, Select, Spin, message } from 'antd';
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 import { fetchData } from "../../util/request";
@@ -28,10 +28,22 @@ class CommonStatisticsFilter extends React.Component<IProps & FormComponentProps
     this.onSubmit = this.onSubmit.bind(this);
     this.onReset = this.onReset.bind(this);
     this.loadList = this.loadList.bind(this)
+    this.pickerTime = this.pickerTime.bind(this);
   }
 
   public componentDidMount() {
     this.loadList();
+  }
+
+  public pickerTime(value: any, prevValue: any) {
+    if (!!value && value.length > 0) {
+      if (value[0].format('YYYY-MM-DD') === value[1].format('YYYY-MM-DD')) {
+        return value;
+      } else {
+        message.warn('只能选择同一天');
+        return prevValue;
+      }
+    }
   }
 
   public async loadList(value: string = '') {
@@ -116,7 +128,13 @@ class CommonStatisticsFilter extends React.Component<IProps & FormComponentProps
             </Col>
             <Col span={8}>
             <FormItem label="时间" {...formProps} help="">
-                {getFieldDecorator('time')(
+                {getFieldDecorator('time', {
+                  initialValue: [
+                    moment({hour:0,minute:0,second:0,millisecond: 0}), // 搜索开始时间
+                    moment({hour:23,minute:59,second:59,millisecond: 0}), // 搜索结束时间
+                  ],
+                  normalize: this.pickerTime,
+                })(
                   <RangePicker
                     showTime={{
                       hideDisabledOptions: true,

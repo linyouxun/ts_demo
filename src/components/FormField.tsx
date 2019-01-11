@@ -1,27 +1,26 @@
 import * as React from 'react';
 import './FormField.less';
 interface IProps {
-  title?: string;
-  afterContent?: any;
+  header?: any;
   className?: string;
+  contentClassName?: any;
   children?: any;
 }
 
 export default class FormField extends React.Component<IProps, any> {
   public render() {
-    const {title, afterContent, className} = this.props;
-    const emptyHeader = !title && !afterContent;
+    const {header, className, contentClassName} = this.props;
     return (
-      <div className={`component form-field ${className ? className : ''}`}>
-        {emptyHeader ? null : (
-          <div className="header">
-            <p className="title">
-              {title}
-              <span className="after-content">{afterContent}</span>
-            </p>
-          </div>
-        )}
-        <div className="content">
+      <div className={`form-field ${className ? className : ''}`}>
+        {
+          typeof header === 'object' ? <div className="form-field-boder-bottom">
+            {header.title || '标题'}
+            <div className='float-right click padding-right'>
+              {header.more}
+            </div>
+          </div>: null
+        }
+        <div className={`${contentClassName ? contentClassName : ''}`}>
           {this.props.children}
         </div>
       </div>

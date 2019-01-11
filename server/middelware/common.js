@@ -31,6 +31,7 @@ exports.commonError = async (ctx, next) => {
   try {
     await next();
   } catch (error) {
+    console.log(error);
     ctx.status = ERRORCODE.failed;
     ctx.body = {
       code: ERRORCODE.failed,

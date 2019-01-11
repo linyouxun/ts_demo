@@ -7,6 +7,9 @@ import SiteFooter from './components/SiteFooter';
 import SiteBreadcrumb from './components/SiteBreadcrumb';
 import './App.less';
 import {routes2, routesList, routesObject} from './routes';
+import * as moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 
 class App extends React.Component<any, any> {
   public render() {
