@@ -4,7 +4,7 @@ const path = require('path');
 const util = require('./utils/tools');
 const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml, updateConfigHtml, downloadData, curlHtmlItem } = require('./controller/configHtml');
 const { statistics, statisticsjs, statisticsList, aggregateCount, aggregateCountTime } = require('./controller/statistics');
-const { customAdd, customList } = require('./controller/custom');
+const { customAdd, customList, customCount } = require('./controller/custom');
 const { cityLocation, cityList, cityListFull, citySetList } = require('./controller/city');
 const { addImg } = require('./controller/configFile');
 const { return204, checkUserInfo } = require('./controller/base');
@@ -64,6 +64,7 @@ module.exports = function() {
   router.post('/custom/:id/add', customAdd);
   router.options('/custom/:id/add', return204);
   router.get('/api2/custom/list', customList);
+  router.get('/api2/custom/aggregateCount', customCount); // 报名信息统计
   // router.get('/custom/:id/add.png', customAdd);
 
   // 城市

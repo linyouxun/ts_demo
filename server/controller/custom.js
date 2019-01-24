@@ -1,7 +1,7 @@
 const { fetchData } = require('../utils/request');
 const { GAODE_KEY } = require('../utils/const');
 const { setShortNum, isCurrentDay, filterSpecialChar } = require('../utils/tools');
-const { updateConfigCustomItem, addConfigCustomItem, findConfigCustomItem, listCustomItem } = require('../dbhelper/configCustom');
+const { updateConfigCustomItem, addConfigCustomItem, findConfigCustomItem, listCustomItem, customAggregateCount } = require('../dbhelper/configCustom');
 const { getConfigHtmlItem } = require('../dbhelper/configHtmlHelper');
 const { power } = require('../utils/const');
 const { success } = require('./base');
@@ -10,7 +10,7 @@ const { success } = require('./base');
 // 统计报名信息列表
 exports.customList = async function(ctx, next) {
   // 筛选条件
-  let { currentPage = 1, pageSize = 10 , extraData = {}} = ctx.query;
+  let { currentPage = 1, pageSize = 10 , extraData = '{}'} = ctx.query;
   currentPage = Math.floor(currentPage);
   if (+currentPage < 1) {
     currentPage = 1;
@@ -18,11 +18,11 @@ exports.customList = async function(ctx, next) {
   let params = {};
   try {
     params = JSON.parse(extraData);
-    if(!!params.id) {
-      params.id = filterSpecialChar(params.id);
+    if(!!params.signTime) {
+      params.signTime = filterSpecialChar(params.signTime);
     }
-    if(!!params.phone) {
-      params.phone = filterSpecialChar(params.phone);
+    if(!!params.configId) {
+      params.configId = filterSpecialChar(params.configId);
     }
   } catch (error) {
     return falied(ctx, next, '额外参数出错了')
@@ -136,6 +136,31 @@ exports.customAdd = async function(ctx, next) {
       await addConfigCustomItem(configItem);
     }
   }, 0);
+}
+
+// 统计报名信息
+exports.customCount = async function(ctx, next) {
+  // 筛选条件
+  let { extraData = '{}'} = ctx.query;
+  let params = {};
+  try {
+    params = JSON.parse(extraData);
+    if(!!params.id) {
+      params.id = filterSpecialChar(params.id);
+    }
+    if(!!params.phone) {
+      params.phone = filterSpecialChar(params.phone);
+    }
+  } catch (error) {
+    return falied(ctx, next, '额外参数出错了')
+  }
+  // 用户
+  if (!(ctx.session.leve & power.admin)) {
+    params.userId = ctx.session.id;
+  }
+
+  const res = await customAggregateCount( params );
+  success(ctx, next, res);
 }
 
 

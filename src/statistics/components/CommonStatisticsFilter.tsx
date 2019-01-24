@@ -136,6 +136,7 @@ class CommonStatisticsFilter extends React.Component<IProps & FormComponentProps
                   normalize: this.pickerTime,
                 })(
                   <RangePicker
+                    allowClear={false}
                     showTime={{
                       hideDisabledOptions: true,
                       defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],

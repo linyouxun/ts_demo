@@ -12,6 +12,8 @@ const { addConfigStatisticsItem, listStatisticsItem, userStatisticsItem, countSt
 
 const { getConfigHtmlItem } = require('../dbhelper/configHtmlHelper');
 
+const moment = require('moment');
+
 
 exports.statistics = async function(ctx, next) {
   // const r = await fetchData({key: 'f1f341fd8aa165eda6c0f29db0f5ef5d', ip: '113.65.13.91'}, 'https://restapi.amap.com/v3/ip', {
@@ -132,7 +134,7 @@ exports.statisticsList = async function(ctx, next) {
       params.html = filterSpecialChar(params.html);
     }
   } catch (error) {
-    return falied(ctx, next, '额外参数出错了')
+    return falied(ctx, next, {}, '额外参数出错了')
   }
 
   // 用户
@@ -153,7 +155,7 @@ exports.aggregateCount = async function(ctx, next) {
   try {
     params = JSON.parse(extraData);
   } catch (error) {
-    return falied(ctx, next, '额外参数出错了')
+    return falied(ctx, next, {}, '额外参数出错了')
   }
 
   // 用户
@@ -172,14 +174,43 @@ exports.aggregateCountTime = async function(ctx, next) {
   try {
     params = JSON.parse(extraData);
   } catch (error) {
-    return falied(ctx, next, '额外参数出错了')
+    return falied(ctx, next, {}, '额外参数出错了')
   }
+  // 处理时间
+  if(!params.time || params.time.length !== 2) {
+    params.time = [+moment({hour:0,minute:0,second:0,millisecond: 0}), +moment({hour:23,minute:59,second:59,millisecond: 0})]
+  }
+  if (moment(+params.time[0]).format('YYYY-MM-DD') !== moment(+params.time[1]).format('YYYY-MM-DD')) {
+    return falied(ctx, next, {}, '时间暂不支持跨天查询');
+  }
+
 
   // 用户
   if (!(ctx.session.leve & power.admin)) {
     params.userId = ctx.session.id;
   }
   const res = await countStatisticsAggregateTime(params);
-  success(ctx, next, res);
+  const result = {
+    total: res.total,
+    list: [],
+    totalSum: res.totalSum,
+  }
+  // 处理时间
+  const splitTime = 10 * 60 * 1000;
+  for (let i = params.time[0], j = 0; i < params.time[1]; i+=splitTime) {
+    const timeStamp = i - (i % splitTime);
+    const time = moment(timeStamp).format('YYYY-MM-DD HH:mm:ss');
+    let value = 0;
+    if (j < res.list.length && res.list[j]._id == time) {
+      value = res.list[j].value;
+      j++;
+    }
+    result.list.push({
+      time,
+      value,
+    })
+  }
+  result.total = result.list.length;
+  success(ctx, next, result);
 }
 

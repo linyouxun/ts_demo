@@ -138,54 +138,44 @@ exports.countStatisticsAggregateTime = async (params) => {
     match['affiliation.id'] =  params.userId;
   }
 
-  // 现在默认10分钟选择
-  const splitTime = 10 * 60 * 1000;
-  // IOSTime比我们少8个小时
-  const IOSTime = 8 * 60 * 60 * 1000;
-  // 初始时间
-  const startTime = new Date(0);
 
-  const res = await Statistics.aggregate([
-    {'$match': match}, // 匹配字段
-    {
-      '$project': {
-        'timestamp': 1,
-        'groupDate': {
-          '$dateToString': {
-            // 'format': "%Y-%m-%d %H:%M:%S:%L",
-            'format': "%Y-%m-%d %H:%M:%S",
-            'date': {
-              "$add": [
-                startTime,
-                {'$subtract': [parseFloat('$timestamp'), {"$mod": [parseFloat('$timestamp'), splitTime]}]},
-                IOSTime
-              ]
-            }
-          }
-        },
-      }
+  const res = await Statistics.mapReduce({
+    query: match,
+    map: function() {
+      // 现在默认10分钟选择
+      const splitTime = 10 * 60 * 1000;
+      // // 时差8小时
+      // const subTime = 8 * 60 * 60 * 1000;
+      // 发送数据
+      const timeStamp = this.timestamp - (+this.timestamp % splitTime);
+      const day = new Date(timeStamp);
+      const year = day.getFullYear();
+      const month = '00'.substr((day.getMonth() + 1 +'').length, 2) + (day.getMonth() + 1);
+      const date = '00'.substr((day.getDate()+'').length, 2) + day.getDate();
+      const hour = '00'.substr((day.getHours()+'').length, 2) + day.getHours();
+      const minutes = '00'.substr((day.getMinutes()+'').length, 2) + day.getMinutes();
+      const seconds = '00'.substr((day.getSeconds()+'').length, 2) + day.getSeconds();
+      const time = year + '-' + month + '-' + date + ' ' + hour + ':' + minutes + ':' + seconds;
+      emit(time, 1);
     },
-    {'$group': { // 分组字段
-      _id: '$groupDate',
-      groupDate: {'$first': '$groupDate'},
-      sum: {'$sum': 1}
-    }},
-    {'$project': {
-      _id: 0
-    }}, // 隐藏字段
-    {'$sort': {groupDate: 1}}, // 排序 1升 -1降
-  ]);
-  const total = res.length;
+    reduce: function(key, value) {
+      return value.reduce((i, i2) => {
+        return i + i2
+      });
+    }
+  })
+  const { results } = res;
+  const total = results.length;
   let totalSum = 0;
-  if (res.length > 0) {
-    totalSum = res.reduce((a, b) => {
+  if (results.length > 0) {
+    totalSum = results.reduce((a, b) => {
       return {
-        sum: a.sum + b.sum
+        value: a.value + b.value
       }
-    }).sum;
+    }).value;
   }
   return {
-    list: res,
+    list: res.results,
     total,
     totalSum
   };
