@@ -29,6 +29,10 @@ function htmlhead(title, bgColor, modelColor, configList) {
           img {
               width: 100%;
           }
+          .swiper-container1 {
+            width: 100%;
+            overflow: hidden;
+          }
           .relative {
               position: relative;
           }
@@ -298,7 +302,7 @@ function htmlFooter(id, configList) {
   return `
   ${flat ? '<script src="./js/swiper.min.js"></script>' : ''}
   <script src="./js/jquery.min.js"></script>
-  <script src="http://${host}/statistics${!!id ? '/' + id : ''}/s.js"></script>
+  <script src="http://xcx.yoju360.com/dev/statistics${!!id ? '/' + id : ''}/s.js"></script>
   <script src="./js/layer.js"></script>
   <script src="./js/index.js"></script>
   </body>

@@ -156,6 +156,14 @@
         "^/xcx/": ""
       }
     },
+    "/api-wisdom/": {
+      "target": "http://127.0.0.1:3002",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/api-wisdom/": ""
+      }
+    },
     "/images/": {
       "target": "http://xcx.yoju360.com",
       "secure": false,

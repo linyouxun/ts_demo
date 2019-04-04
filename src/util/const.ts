@@ -48,6 +48,33 @@ export const DECORATIONSTYLE = {
   },
 }
 
+
+// 发布类型
+export const labels = {
+  '1': {
+    id: '1',
+    name: 'web更新',
+  },
+  '2': {
+    id: '2',
+    name: '门店落地',
+  },
+  '3': {
+    id: '3',
+    name: '账号',
+  },
+  '4': {
+    id: '4',
+    name: '小程序更新',
+  },
+  '5': {
+    id: '5',
+    name: '其他',
+  },
+}
+
+
+
 // 上传图片类型
 export enum FILETYPE {
   done = 'done',

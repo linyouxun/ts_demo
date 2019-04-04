@@ -20,6 +20,10 @@ import UserList from './user/UserList';
 import userInfo from './util/power';
 import { power } from './util/const';
 
+// 智慧门店
+import WisdomList from './wisdom/Index';
+import WisdomAdd from './wisdom/Add';
+
 
 interface Iprop {
   breadcrumbName?: string,
@@ -132,6 +136,29 @@ export const routes = [{
   userLeve: power.admin,
   component: UserList,
   path:'/user',
+  sideIcon: 'anticon anticon-file-word',
+}, {
+  breadcrumbName:'智慧门店',
+  userLeve: power.admin,
+  children: [{
+    breadcrumbName:'发布列表',
+    children: [{
+      breadcrumbName:'发布添加',
+      component: WisdomAdd,
+      path:'/add',
+      sideIcon: 'anticon anticon-file-word',
+    }, {
+      breadcrumbName:'发布修改',
+      component: WisdomAdd,
+      path:'/modify',
+      sideIcon: 'anticon anticon-file-word',
+    }],
+    component: WisdomList,
+    path:'/list',
+    sideIcon: 'anticon anticon-file-word',
+  }],
+  component: WisdomList,
+  path:'/wisdom',
   sideIcon: 'anticon anticon-file-word',
 }, {
   component:NotFound,
