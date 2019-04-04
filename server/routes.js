@@ -30,17 +30,17 @@ module.exports = function() {
       keepExtensions: true,
       maxFieldsSize:2 * 1024 * 1024,
       onFileBegin:(name,file) => {
-        if (name != 'file' || name != 'image') {
-          if (name != 'binary') {
-            name = 'binary'
-          }
-          const relativeDir = `/${name}/${util.getUploadDirName()}`;
+        if (name == 'file' || name == 'image') {
+          const relativeDir = `/images/${util.getUploadDirName()}`;
           const dir = path.join(__dirname,`../static${relativeDir}`);
           util.checkDirExist(dir);
           file.path = `${dir}/${+new Date()}_${file.name}`;
           file.imgPath = `${relativeDir}/${+new Date()}_${file.name}`;
         } else {
-          const relativeDir = `/images/${util.getUploadDirName()}`;
+          if (name != 'binary') {
+            name = 'binary'
+          }
+          const relativeDir = `/${name}/${util.getUploadDirName()}`;
           const dir = path.join(__dirname,`../static${relativeDir}`);
           util.checkDirExist(dir);
           file.path = `${dir}/${+new Date()}_${file.name}`;
