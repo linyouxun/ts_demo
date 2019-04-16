@@ -93,6 +93,13 @@ function htmlhead(title, bgColor, modelColor, configList) {
               font-weight: bold;
               text-align: center;
           }
+          .link-btn {
+            display: block;
+            font-size: 4vw;
+            border: 0;
+            text-align: center;
+            font-weight: bold;
+          }
 
           .modal-content {
               padding-top: 20px;
@@ -243,6 +250,47 @@ function htmlForm(formData, count) {
   </div>`;
 }
 
+function htmlBtn(formData, count) {
+  const { fileList } = formData;
+  if (!formData.formWidth || formData.formWidth.length < 1) {
+    formData.formWidth = [10, 90];
+  }
+  if (!formData.formRadius) {
+    formData.formRadius = 0;
+  }
+  if (!formData.formHeight) {
+    formData.formHeight = 10;
+  }
+  let relative = false;
+  if (!!fileList && fileList.length > 0) {
+    relative = true;
+  }
+  return `
+  <style>
+    .btn-relative-${count} .abs {
+      position: absolute;
+      top: ${formData.formTop}vw;
+      margin: 0;
+    }
+    .btn-relative-${count} .btn-item-${count} {
+      margin-left:${formData.formWidth[0]}vw;
+      width:${formData.formWidth[1] - formData.formWidth[0]}vw;
+      border-radius: ${formData.formRadius / 50 * 11}vw;
+      line-height: ${formData.formHeight}vw;
+      height: ${formData.formHeight}vw;
+      color: ${formData.button.color};
+      background-color: ${formData.button.bgColor};
+      font-size: 3.5vw;
+    }
+  </style>
+  <div class="btn-relative-${count}">
+    ${ relative ? '<img src="./img/' + (fileList[0].url || '').split('/').pop() + '" style="width:100vw;height:' + fileList[0].height * 100 / fileList[0].width + 'vw;">' : ''}
+    <div class="${relative ? 'abs' : ''}">
+      <div id="btn${count}" class="link-btn btn-item-${count}" onclick="btn${count}('${formData.button.errorTip}')">${formData.button.tip}</div>
+    </div>
+  </div>`;
+}
+
 
 function htmlInput(id, inputItem, input, count) {
   return `
@@ -328,7 +376,16 @@ function jsLoction({configList}) {
 function jsFormPost(htmlData) {
   var str = ''
   htmlData.configList.filter(item => {
-    if(item.key == 2) {
+    // link
+    if(item.key == ActiveComponentType.form.key) {
+      str += `
+      function btn${item.count}(url) {
+        window.open(url, '_black');
+      }
+      `;
+    }
+    // 表单
+    if(item.key == ActiveComponentType.form.key) {
       str += `
     function send${item.count}(${item.config.checkList.join(',')}) {
       if (isSend) return;
@@ -361,14 +418,28 @@ function jsFormPost(htmlData) {
           },
           success:function(response){
             ableBtn${item.count}();
+            // 统计报名信息
+            sTool.sendForm({
+              res: JSON.stringify(response || {}),
+              code: response.code || 404,
+              ${item.config.checkList.map(item2 => {
+                return item2 + ':' +item2
+              }).join(',')}
+            });
             if (response.code == 200) {
               submit();
-              // 统计报名信息
-              sTool.sendForm({
-                ${item.config.checkList.map(item2 => {
-                  return item2 + ':' +item2
-                }).join(',')}
-              });
+              ${
+                htmlData.configBase.apiId > 0 ? `if (!!getUrlParam('gdt_vid')) {
+                $.post(serverPath + '/api/', {
+                  apiURL: 'api12/data/add',
+                  id: ${htmlData.configBase.apiId},
+                  originalUrl: window.location.href,
+                  clickId: getUrlParam('gdt_vid')
+                }, function(result){
+                  console.log(result);
+                });
+              }` : ''
+              }
             } else {
               layer.open({
                 content: '网络出现问题，请重新提交'
@@ -753,6 +824,7 @@ module.exports = {
   htmlhead,
   htmlImg,
   htmlForm,
+  htmlBtn,
   htmlModel,
   htmlFooter,
   htmlImgList,

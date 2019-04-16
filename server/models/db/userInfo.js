@@ -10,6 +10,7 @@ const UserInfoSchema = new Schema({
   age: Number,
   mobile: String,
   birthDate: Number,
+  res: String,
   pwd: String,
   leve: Number
 });

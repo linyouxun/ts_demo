@@ -27,9 +27,25 @@ class Add extends React.Component<any, any> {
       loading: false,
       title: params.title || '',
       value: params.value || '',
+      labelsList: []
     };
     this.onSubmit = this.onSubmit.bind(this);
     this.goback = this.goback.bind(this);
+  }
+
+  public async componentDidMount() {
+    const res = await fetchData( {}, '/api-wisdom/label/publishStatus', {
+      method: 'GET',
+    });
+    if (res.stutasCode === 200) {
+      this.setState({
+        labelsList: res.result.list
+      });
+    } else {
+      this.setState({
+        labelsList: []
+      });
+    }
   }
 
   public onSubmit(o: any) {
@@ -56,7 +72,6 @@ class Add extends React.Component<any, any> {
     console.log(data);
     const res = await fetchData( data, '/xcx/api/case/updateCase', {
       method: 'POST',
-
     });
     this.setState({loading: false});
     if (res.code !== 200) {
@@ -86,12 +101,12 @@ class Add extends React.Component<any, any> {
   }
 
   public render(){
-    const {id, labels, title, image, loading, value} = this.state;
+    const {id, labels, title, image, loading, value, labelsList} = this.state;
     return (
       <div className="page case-add">
         <ContentHeader title={!!id ? "修改发布内容":"添加发布内容"}/>
         <FormField>
-          <WisdomAddForm onSubmit={this.onSubmit} goback={this.goback} params={{id, labels, title, image, loading, value}}/>
+          <WisdomAddForm labelsList={labelsList} onSubmit={this.onSubmit} goback={this.goback} params={{id, labels, title, image, loading, value}}/>
         </FormField>
       </div>
     );

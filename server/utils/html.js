@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const {htmlhead, htmlImgList, htmlForm, htmlModel, htmlFooter, jsLoction, jsFormPost, jsExtra, htmlSwiperImgList} = require('../utils/htmltool');
+const {htmlhead, htmlImgList, htmlForm, htmlBtn, htmlModel, htmlFooter, jsLoction, jsFormPost, jsExtra, htmlSwiperImgList} = require('../utils/htmltool');
 const { ActiveComponentType } = require('../utils/const');
 const util = require('../utils/tools');
 
@@ -24,6 +24,9 @@ function renderSection(configObj) {
     }
     case ActiveComponentType.swiper.key:{
       return htmlSwiperImgList(configObj.config, configObj.count);
+    }
+    case ActiveComponentType.btn.key:{
+      return htmlBtn(configObj.config, configObj.count);
     }
     default:
       break;
@@ -53,7 +56,7 @@ function saveHtml(id, htmlData) {
   fs.writeFileSync(htmlCssPath + '/swiper.min.css', fs.readFileSync(path.resolve(__dirname, './html.swiper.min.css')));
   // 拷贝文件
   for (const iterator of htmlData.configList) {
-    if (iterator.key === ActiveComponentType.pic.key || iterator.key === ActiveComponentType.form.key || iterator.key === ActiveComponentType.swiper.key) {
+    if (iterator.key === ActiveComponentType.pic.key || iterator.key === ActiveComponentType.form.key || iterator.key === ActiveComponentType.swiper.key || iterator.key === ActiveComponentType.btn.key) {
       for (const iterator2 of iterator.config.fileList) {
         const src = path.resolve(__dirname, '../../static/images/', './' + iterator2.url.split('images').pop());
         const descSrc = path.resolve(htmlImgPath , './' + iterator2.url.split('/').pop());

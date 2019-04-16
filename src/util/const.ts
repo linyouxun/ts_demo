@@ -114,6 +114,14 @@ export const marksWidth = {
   90: '90vw',
   100: '100vw',
 };
+export const marksHeight = {
+  0: '0',
+  1: '1vw',
+  2: '2vw',
+  5: '5vw',
+  10: '10vw',
+  25: '25vw',
+};
 export const marksRadius = {
   0: '0',
   5: '5px',
@@ -150,6 +158,10 @@ export const ActiveComponentType = {
   swiper: {
     key: '3',
     name: '轮播图'
+  },
+  btn: {
+    key: '4',
+    name: '按钮'
   },
 }
 // 活动报名表单配置选项

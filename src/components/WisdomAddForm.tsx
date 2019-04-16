@@ -8,7 +8,7 @@ import { UploadChangeParam } from 'antd/lib/upload/interface';
 import * as BraftEditor from 'braft-editor';
 import 'braft-editor/dist/braft.css'
 
-import { IMGSERVER, labels } from '../util/const';
+import { IMGSERVER } from '../util/const';
 const Option = Select.Option;
 const FormItem = Form.Item;
 import './WisdomAddForm.less';
@@ -21,9 +21,14 @@ export interface IPramas {
   value?: any;
   loading: boolean;
 }
+export interface ILabels {
+  id: number,
+  labelName: string
+}
 export interface IProps {
   params: IPramas;
   form?: object[];
+  labelsList: ILabels[];
   goback:() => any;
   onSubmit:(o: IParamsSubmit) => any;
 }
@@ -142,7 +147,7 @@ export class WisdomAddForm extends React.Component<IProps & FormComponentProps, 
     });
   }
   public render() {
-    const {form, params} = this.props;
+    const {form, params, labelsList} = this.props;
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -158,11 +163,11 @@ export class WisdomAddForm extends React.Component<IProps & FormComponentProps, 
     }
     const {fileList} = this.state;
     const selectChildren = [];
-    for(const o in labels) {
-      if(labels.hasOwnProperty(o)) {
+    for(const o in labelsList) {
+      if(labelsList.hasOwnProperty(o)) {
         selectChildren.push(<Option
-          key={labels[o].id + ''}>
-            {labels[o].name}
+          key={labelsList[o].id + ''}>
+            {labelsList[o].labelName}
           </Option>);
       }
     }
@@ -204,9 +209,6 @@ export class WisdomAddForm extends React.Component<IProps & FormComponentProps, 
         onChange: null, // 指定媒体库文件列表发生变化时的回调，参数为媒体库文件列表(数组)
         onInsert: (files: any) => {
           return files.slice(0, 3);
-          return false;
-          return [];
-
         }, // 指定从媒体库插入文件到编辑器时的回调，参数为被插入的媒体文件列表(数组)
         onRemove: null, // 指定媒体库文件被删除时的回调，参数为被删除的媒体文件列表(数组)
         removeConfirmFn: null, // 指定删除前的确认函数，说明见下文
@@ -319,7 +321,7 @@ export class WisdomAddForm extends React.Component<IProps & FormComponentProps, 
         })(
           <Upload
             name="binary"
-            action={`http://localhost:3100/upload`}
+            action={`${IMGSERVER}/upload`}
             fileList={fileList}
             onChange={this.handleChange}
           >
@@ -338,6 +340,4 @@ export class WisdomAddForm extends React.Component<IProps & FormComponentProps, 
     </Form>
   }
 }
-export default Form.create()(WisdomAddForm);;
-
-
+export default Form.create()(WisdomAddForm);

@@ -30,7 +30,8 @@ const ConfigHtmlSchema = new Schema({
     modelTip: String,
     modelSubTip: String,
     isGoLink: Boolean,
-    goLinkUrl: String
+    goLinkUrl: String,
+    apiId: Number
   },
   configList:[{
     config: {
@@ -41,6 +42,7 @@ const ConfigHtmlSchema = new Schema({
         url: String,
       }],
       formWidth: [Number],
+      formHeight: Number,
       formRadius: Number,
       formTop: Number,
       checkList: [String],

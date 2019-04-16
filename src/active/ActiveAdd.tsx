@@ -2,9 +2,9 @@ import * as React from 'react';
 import ContentHeader from "../components/ContentHeader";
 // import FormField from "../components/FormField";
 import PickerButton from '../components/PickerButton';
-import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin, Slider, message } from 'antd';
+import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin, Slider, message, InputNumber } from 'antd';
 const ButtonGroup = Button.Group;
-import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem, marksWidth, marksRadius, marksTop } from '../util/const';
+import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem, marksWidth, marksRadius, marksTop, marksHeight } from '../util/const';
 import { fetchData } from "../util/request";
 import ActiveView, { IConfigObj } from './components/ActiveView';
 import './ActiveAdd.less';
@@ -37,7 +37,8 @@ class ActiveAdd extends React.Component<any, any> {
         bgColor: 'rgb(239, 239, 239)',
         modelColor: 'rgb(158, 158, 158)',
         modelTip: '您填写的信息已提交成功',
-        modelSubTip: '感谢您的参与'
+        modelSubTip: '感谢您的参与',
+        apiId: ''
       },
       modalVisible: false,
       previewImage: '',
@@ -78,6 +79,7 @@ class ActiveAdd extends React.Component<any, any> {
     }
   }
 
+  // 表单值改变
   public handleChange(key: string, e: any) {
     const {configBase} = this.state;
     if (key === 'title') {
@@ -98,10 +100,14 @@ class ActiveAdd extends React.Component<any, any> {
     if (key === 'modelColor') {
       configBase.modelColor = `rgba(${e.rgb.r},${e.rgb.g},${e.rgb.b},${e.rgb.a})`;
     }
+    if (key === 'apiId') {
+      configBase.apiId = e;
+    }
     this.setState({
       configBase
     });
   }
+  // 提交页面
   public async submitConfig() {
     const { configList, configBase, id } = this.state;
     const data: any = {
@@ -198,6 +204,23 @@ class ActiveAdd extends React.Component<any, any> {
           button: {
             tip: '提交信息',
             errorTip: '',
+            bgColor: 'rgba(255,255,255,1)',
+            color: 'rgba(0,0,0,1)'
+          },
+        }
+        break;
+      }
+      case ActiveAdd.componentType.btn.key: {
+        configObj.config = {
+          formRadius: 0,
+          formTop: 0,
+          formWidth: [ 10, 90],
+          formHeight: 10,
+          fileList: [],
+          button: {
+            tip: '我是个链接',
+            errorTip: '',
+            type: 1, // 1.顶置， 2跳转
             bgColor: 'rgba(255,255,255,1)',
             color: 'rgba(0,0,0,1)'
           },
@@ -349,6 +372,9 @@ class ActiveAdd extends React.Component<any, any> {
     const configObj = configList[index];
     if (inputKey === 'formWidth') {
       configObj.config.formWidth = e;
+    }
+    if (inputKey === 'formHeight') {
+      configObj.config.formHeight = e;
     }
     if (inputKey === 'formRadius') {
       configObj.config.formRadius = e;
@@ -510,6 +536,12 @@ class ActiveAdd extends React.Component<any, any> {
             <Col span={20}><Input size="large" value={configBase.modelSubTip} onChange={this.handleChange.bind(this, 'modelSubTip')}/></Col>
           </Col>
         </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>上报ID:</Col>
+          <Col span={20}>
+            <Col span={20}><InputNumber style={{width: '100%'}} size="large" value={configBase.apiId} onChange={this.handleChange.bind(this, 'apiId')}/></Col>
+          </Col>
+        </Row>
       </div>
     </div>);
   }
@@ -563,7 +595,7 @@ class ActiveAdd extends React.Component<any, any> {
     for (const itemName in ActiveAdd.formItem) {
       if (ActiveAdd.formItem.hasOwnProperty(itemName)) {
         const element = ActiveAdd.formItem[itemName];
-        checkListDom.push(<Col key={itemName} span={4}><Checkbox value={itemName}>{element.name}</Checkbox></Col>);
+        checkListDom.push(<Col key={itemName} span={6}><Checkbox value={itemName}>{element.name}</Checkbox></Col>);
       }
     }
     let style: {
@@ -674,19 +706,114 @@ class ActiveAdd extends React.Component<any, any> {
             </Col>
           </Row>
           <Row style={{paddingBottom: '.5rem'}}>
-            <Col className="ant-form-item-label" span={4}>按钮文字颜色:</Col>
+            <Col className="ant-form-item-label" span={4}>文字颜色:</Col>
             <Col span={20}>
               <PickerButton size="default" handleChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'color')} color={config.button.color}/>
             </Col>
           </Row>
           <Row style={{paddingBottom: '.5rem'}}>
-            <Col className="ant-form-item-label" span={4}>按钮背景颜色:</Col>
+            <Col className="ant-form-item-label" span={4}>背景颜色:</Col>
             <Col span={20}>
               <PickerButton size="default" handleChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'bgColor')} color={config.button.bgColor}/>
             </Col>
           </Row>
         </div>
 
+      </div>
+    </div>);
+  }
+
+  // 按钮组件
+  public renderBtnComponent(configObj: IConfigObj, key: string) {
+    const { name, config, show } = configObj;
+    const { previewVisible, previewImage } = this.state;
+    let style: {
+      height?: string;
+      overflow?: string;
+      padding?: string;
+    } = {
+      height: '0',
+      overflow: 'hidden',
+      padding: '0'
+    };
+    if (show) {
+      style = {}
+    }
+    const uploadButton = (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
+    return (<div key={key} className="active-view">
+      {this.renderHeaderComponent(name, key, show)}
+      <div className="active-view-content" style={style}>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>按钮宽度:</Col>
+          <Col span={20}>
+            <Slider range={true} marks={ marksWidth } step={1} value={config.formWidth || [10, 90]} onChange={this.handleFormChange.bind(this, key, 'formWidth')}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>按钮高度:</Col>
+          <Col span={20}>
+            <Slider max={25} min={0} marks={ marksHeight } step={.01} value={config.formHeight || 0} onChange={this.handleFormChange.bind(this, key, 'formHeight')}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>按钮圆角:</Col>
+          <Col span={20}>
+            <Slider max={25} min={0} marks={ marksRadius } step={1} value={config.formRadius || 0} onChange={this.handleFormChange.bind(this, key, 'formRadius')}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>文字:</Col>
+          <Col span={20}>
+            <Input value={config.button.tip} placeholder={`请输入按钮文字(必填)`} onChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'tip')}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>跳转链接:</Col>
+          <Col span={20}>
+            <Input value={config.button.errorTip} placeholder={`请输入跳转链接`} onChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'errorTip')}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>文字颜色:</Col>
+          <Col span={20}>
+            <PickerButton size="default" handleChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'color')} color={config.button.color}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>背景颜色:</Col>
+          <Col span={20}>
+            <PickerButton size="default" handleChange={this.onCheckBoxInputChange.bind(this, key, 'button', 'bgColor')} color={config.button.bgColor}/>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>背景图片:</Col>
+          <Col span={20}>
+            <Upload
+              action={`${APISERVER}/upload`}
+              listType="picture-card"
+              fileList={config.fileList || []}
+              onPreview={this.handleImgPreview}
+              beforeUpload={this.beforeUpload}
+              onChange={this.handleImgChange.bind(this, key)}
+            >
+              {config.fileList.length >= 1 ? null : uploadButton}
+            </Upload>
+            <Modal visible={previewVisible} footer={null} onCancel={this.handleImgCancel}>
+              <img alt="example" style={{ width: '100%' }} src={previewImage} />
+            </Modal>
+          </Col>
+        </Row>
+        <Row style={{paddingBottom: '.5rem'}}>
+          <Col className="ant-form-item-label" span={4}>上下微调:</Col>
+          <Col span={20}>
+            <Slider disabled={config.fileList.length < 1} max={100} min={0} marks={ marksTop } step={.01} value={config.formTop || 0} onChange={this.handleFormChange.bind(this, key, 'formTop')}/>
+          </Col>
+        </Row>
       </div>
     </div>);
   }
@@ -704,6 +831,9 @@ class ActiveAdd extends React.Component<any, any> {
         }
         case ActiveAdd.componentType.form.key: {
           return this.renderFormComponent(item, `${index}-${item.key}-${item.name}.${item.count}`);
+        }
+        case ActiveAdd.componentType.btn.key: {
+          return this.renderBtnComponent(item, `${index}-${item.key}-${item.name}.${item.count}`);
         }
         default: {
           break;

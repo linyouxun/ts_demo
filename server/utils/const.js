@@ -24,7 +24,11 @@ const ActiveComponentType = {
   swiper: {
     key: '3',
     name: '轮播图'
-  }
+  },
+  btn: {
+    key: '4',
+    name: '按钮'
+  },
 }
 /**
  * 100
