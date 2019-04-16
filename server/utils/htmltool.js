@@ -267,6 +267,9 @@ function htmlBtn(formData, count) {
   }
   return `
   <style>
+    .btn-relative-${count} {
+      position: relative;
+    }
     .btn-relative-${count} .abs {
       position: absolute;
       top: ${formData.formTop}vw;
