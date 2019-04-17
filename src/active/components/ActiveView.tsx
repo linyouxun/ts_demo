@@ -126,7 +126,7 @@ class ActiveView extends React.Component<IProps, any> {
     return (<div className="active-component">
       <div className="active-component-header">
         配置预览:
-        <Select onChange={this.selectChange} defaultValue="375*667" style={{width: '350px'}}>
+        <Select onChange={this.selectChange} defaultValue="375*667" style={{width: '300px'}}>
           <Option value="320*568">IPhone5(320 * 568)</Option>
           <Option value="375*667">IPhone6/7/8(375 * 667)</Option>
           <Option value="414*736">IPhone6/7/8 plus(414 * 736)</Option>
