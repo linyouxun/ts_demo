@@ -144,6 +144,19 @@ export const marksTop = {
   90: '90vw',
   100: '100vw'
 };
+export const marksBetween = {
+  '-50': '-50vw',
+  '-40': '-40vw',
+  '-30': '-30vw',
+  '-20': '-20vw',
+  '-10': '-10vw',
+  0: '0',
+  10: '10vw',
+  20: '20vw',
+  30: '30vw',
+  40: '40vw',
+  50: '50vw',
+};
 
 // 活动报名配置选项
 export const ActiveComponentType = {
@@ -161,7 +174,7 @@ export const ActiveComponentType = {
   },
   btn: {
     key: '4',
-    name: '按钮'
+    name: '按钮（跳转链接）'
   },
 }
 // 活动报名表单配置选项

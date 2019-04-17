@@ -222,12 +222,12 @@ function AvtiveViewBtn(props: any, configBase: any, submit: any, key: string, wi
     };
     return <div key={key} className="active-component-view-form-release">
       <img src={image.url} alt="" style={imageStyle}/>
-      <div key={key} className="active-component-view-form absolute" style={{top: ((width / 100) * formTop) + 'px'}}>
+      <div key={key} className="active-component-view-form absolute" style={{top: ((width / 100) * formTop) + 'px', paddingBottom: '0'}}>
         <span onClick={submit} style={Object.assign({}, formStyle, {color: props.button.color, backgroundColor: props.button.bgColor})} className="link-btn">{props.button.tip}</span>
       </div>
     </div>
   }
-  return (<div key={key} className="active-component-view-form">
+  return (<div key={key} className="active-component-view-form" style={{ paddingBottom: '0' }}>
     <span onClick={submit} style={Object.assign({}, formStyle, {color: props.button.color, backgroundColor: props.button.bgColor})} className="link-btn">{props.button.tip}</span>
   </div>)
 }
@@ -260,27 +260,27 @@ function AvtiveViewForm(props: any, configBase: any, submit: any, key: string, w
     };
     return <div key={key} className="active-component-view-form-release">
       <img src={image.url} alt="" style={imageStyle}/>
-      <div key={key} className="active-component-view-form absolute" style={{top: ((width / 100) * formTop) + 'px'}}>
+      <div key={key} className="active-component-view-form absolute" style={{top: ((width / 100) * formTop) + 'px', padding: '0' }}>
         {checkList.map((item: any, index: string) => {
           const inputStyle = {
             color: props[item].color,
             backgroundColor: props[item].bgColor
           }
-          return (<input style={Object.assign({}, formStyle, inputStyle)} key={index} className="input" type="text" placeholder={props[item].tip}/>);
+          return (<input style={Object.assign({}, formStyle, inputStyle, {marginBottom: (width / 100) * 4 + 'px'})} key={index} className="input" type="text" placeholder={props[item].tip}/>);
         })}
-        <span onClick={submit} style={Object.assign({}, formStyle, {color: props.button.color, backgroundColor: props.button.bgColor})} className="submit">{props.button.tip}</span>
+        <span onClick={submit} style={Object.assign({}, formStyle, {marginTop: (width / 100) * 2 + 'px', color: props.button.color, backgroundColor: props.button.bgColor})} className="submit">{props.button.tip}</span>
       </div>
     </div>
   }
-  return (<div key={key} className="active-component-view-form">
+  return (<div key={key} className="active-component-view-form" style={{ padding: ((width / 100) * 4) + 'px 0' }}>
     {checkList.map((item: any, index: string) => {
       const inputStyle = {
         color: props[item].color,
         backgroundColor: props[item].bgColor
       }
-      return (<input style={Object.assign({}, formStyle, inputStyle)} key={index} className="input" type="text" placeholder={props[item].tip}/>);
+      return (<input style={Object.assign({}, formStyle, inputStyle, {marginBottom: (width / 100) * 4 + 'px'})} key={index} className="input" type="text" placeholder={props[item].tip}/>);
     })}
-    <span onClick={submit} style={Object.assign({}, formStyle, {color: props.button.color, backgroundColor: props.button.bgColor})} className="submit">{props.button.tip}</span>
+    <span onClick={submit} style={Object.assign({}, formStyle, {marginTop: (width / 100) * 2 + 'px', color: props.button.color, backgroundColor: props.button.bgColor})} className="submit">{props.button.tip}</span>
   </div>)
 }
 

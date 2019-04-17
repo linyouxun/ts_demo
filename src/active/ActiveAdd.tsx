@@ -4,7 +4,7 @@ import ContentHeader from "../components/ContentHeader";
 import PickerButton from '../components/PickerButton';
 import { Modal, Button, Upload, Icon, Checkbox, Col, Row, Input, Spin, Slider, message, InputNumber } from 'antd';
 const ButtonGroup = Button.Group;
-import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem, marksWidth, marksRadius, marksTop, marksHeight } from '../util/const';
+import { APISERVER, IMGSERVER, FILETYPE, ARROW, ActiveComponentType, ActiveFormItem, marksWidth, marksBetween, marksRadius, marksTop, marksHeight } from '../util/const';
 import { fetchData } from "../util/request";
 import ActiveView, { IConfigObj } from './components/ActiveView';
 import './ActiveAdd.less';
@@ -218,7 +218,7 @@ class ActiveAdd extends React.Component<any, any> {
           formHeight: 10,
           fileList: [],
           button: {
-            tip: '我是个链接',
+            tip: '点我点我，快点我',
             errorTip: '',
             type: 1, // 1.顶置， 2跳转
             bgColor: 'rgba(255,255,255,1)',
@@ -811,7 +811,7 @@ class ActiveAdd extends React.Component<any, any> {
         <Row style={{paddingBottom: '.5rem'}}>
           <Col className="ant-form-item-label" span={4}>上下微调:</Col>
           <Col span={20}>
-            <Slider disabled={config.fileList.length < 1} max={100} min={0} marks={ marksTop } step={.01} value={config.formTop || 0} onChange={this.handleFormChange.bind(this, key, 'formTop')}/>
+            <Slider disabled={config.fileList.length < 1} max={50} min={-50} marks={ marksBetween } step={.01} value={config.formTop || 0} onChange={this.handleFormChange.bind(this, key, 'formTop')}/>
           </Col>
         </Row>
       </div>

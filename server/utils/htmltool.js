@@ -50,7 +50,7 @@ function htmlhead(title, bgColor, modelColor, configList) {
               border: 0;
               padding: 0 10px;
               border-radius: 5px;
-              margin-bottom: 3vw;
+              margin-bottom: 4vw;
               margin-left: 0.5vw;
           }
           #area {
@@ -88,7 +88,7 @@ function htmlhead(title, bgColor, modelColor, configList) {
               font-size: 4vw;
               border-radius: 5px;
               display: inline-block;
-              margin-top: 3vw;
+              margin-top: 2vw;
               margin-left: 0.5vw;
               font-weight: bold;
               text-align: center;
