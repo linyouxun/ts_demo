@@ -12,6 +12,7 @@
 /static/*
 #!/static/statistics
 !/static/test.html
+!/static/accout.png
 !/static/update.html
 !/static/test2.html
 !/static/login.html
