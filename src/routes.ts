@@ -13,6 +13,8 @@ import StatisticsList from './statistics/StatisticsList';
 import CommonStatisticsList from './statistics/CommonStatisticsList';
 import UserStatisticsList from './statistics/UserStatisticsList';
 import PageStatisticsList from './statistics/PageStatisticsList';
+import NewPageStatisticsList from './statistics/NewPageStatisticsList';
+
 // 用户管理
 import UserList from './user/UserList';
 
@@ -112,6 +114,13 @@ export const routes = [{
     breadcrumbName:'页面统计',
     component: PageStatisticsList,
     path:'/page',
+    children: [],
+    sideIcon: 'anticon anticon-file-word'
+  }, {
+    breadcrumbName:'页面统计-新版',
+    component: NewPageStatisticsList,
+    userLeve: power.admin,
+    path:'/newpage',
     children: [],
     sideIcon: 'anticon anticon-file-word'
   }, {

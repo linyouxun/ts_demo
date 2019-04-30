@@ -156,6 +156,14 @@
         "^/xcx/": ""
       }
     },
+    "/new-api/": {
+      "target": "http://localhost:3002",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/new-api/": ""
+      }
+    },
     "/api-wisdom/": {
       "target": "http://127.0.0.1:3002",
       "secure": false,
