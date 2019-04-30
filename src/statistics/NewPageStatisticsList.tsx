@@ -100,7 +100,7 @@ class StatisticsList extends React.Component<any, any> {
       limit: pageSize,
       cursor: currentPage,
       params: JSON.stringify(this.extraData)
-    }, `/new-api/statistics/list`, {
+    }, `/api-wisdom/statistics/list`, {
       method: 'GET'
     });
     this.setState({
