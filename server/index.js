@@ -23,7 +23,7 @@ app.use(session(CONFIG, app));
 
 // 添加mongo数据库
 const mongoose = require('mongoose');
-const url = "mongodb://localhost:27017/test";
+const url = "mongodb://218.244.145.61:27017/test";
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(url, { useNewUrlParser: true }, (e) => {

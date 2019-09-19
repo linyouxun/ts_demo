@@ -46,7 +46,7 @@ exports.commonHeaders = async (ctx, next) => {
   //   ctx.set("Access-Control-Allow-Origin", "http://localhost:3000");
   // } else {
   // }
-  ctx.set("Access-Control-Allow-Origin", ctx.header.origin || 'http://47.106.174.88');
+  ctx.set("Access-Control-Allow-Origin", '*');
   ctx.set("Access-Control-Allow-Credentials", "true");
   ctx.set("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
   ctx.set("Access-Control-Allow-Headers", "x-requested-with, accept, origin, content-type");

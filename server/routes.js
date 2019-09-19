@@ -92,7 +92,7 @@ module.exports = function() {
   router.get('/api2/logout', logout);
 
   // 用户信息
-  router.post('/api2/user/create', createUser);
+  router.get('/api2/user/create', createUser);
   router.post('/api2/user/update', updateUser);
   router.post('/api2/user/delete', deleteUser);
   router.get('/api2/user/list', checkUserInfo, listUser);

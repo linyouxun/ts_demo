@@ -5,12 +5,13 @@ const moment = require('moment');
 
 
 exports.createUser = async(ctx, next) => {
-  if (!(ctx.session.leve & power.admin)) {
-    return noAllow(ctx, next);
-  }
+  const { name = 'test' } = ctx.request.query;
+  // if (!(ctx.session.leve & power.admin)) {
+  //   return noAllow(ctx, next);
+  // }
   const res = await addConfigUserInfo({
-    parentId: '5b8cc9c0b0331c051477275b',
-    name: 'admin',
+    parentId: '5d832eb320b3421258b3f8e6',
+    name,
     age: 18,
     mobile: '',
     birthDate: +new Date(),

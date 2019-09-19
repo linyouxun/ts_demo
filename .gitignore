@@ -8,10 +8,11 @@
 /coverage
 
 # production
-/build
+# /build
 /static/*
 #!/static/statistics
 !/static/test.html
+!/static/html
 !/static/accout.png
 !/static/update.html
 !/static/test2.html
