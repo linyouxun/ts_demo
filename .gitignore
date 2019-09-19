@@ -6,7 +6,7 @@
 .vscode
 # testing
 /coverage
-
+/src
 # production
 # /build
 /static/*

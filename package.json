@@ -81,9 +81,6 @@
   "scripts": {
     "server": "node server/index.js",
     "devServer": "cross-env NODE_ENV=development nodemon server/index.js",
-    "start": "node scripts/start.js",
-    "proStart": "cross-env NODE_ENV=production node scripts/start.js",
-    "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
   "devDependencies": {

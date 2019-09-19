@@ -1,0 +1,270 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title></title>
+      <link rel="stylesheet" href="./css/swiper.min.css">
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              vertical-align: middle;
+              box-sizing: border-box;
+          }
+          html, body {
+              background:rgb(239, 239, 239);
+          }
+          img {
+              width: 100%;
+          }
+          .swiper-container1 {
+            width: 100%;
+            overflow: hidden;
+          }
+          .relative {
+              position: relative;
+          }
+          .relative .form {
+              right: 0;
+              top: 4vw;
+              margin: 4vw 0;
+          }
+          input {
+              outline: none;
+              width: 80vw;
+              height: 11vw;
+              line-height: 11vw;
+              font-size: 3.5vw;
+              border: 0;
+              padding: 0 10px;
+              border-radius: 5px;
+              margin-bottom: 4vw;
+              margin-left: 0.5vw;
+          }
+          #area {
+              width: 40vw;
+              background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAABiCAMAAADdj4uDAAAAM1BMVEUAAAAzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzPKmszLAAAAEHRSTlMAQL9/z+8QUDBwIGDfr5+PJJBo8gAAAKdJREFUWMPtz8sOgyAUhOFBDiB46bz/01aoYSdN3TXOtzjxwh8AIiIiIo8wzzc7MwsJN1gGUog3tmSddLhSvC/IE9fN1bd9pb1K+7EcI/L6qo5MxiZjYRP68n3CqFzp51LzTEvR5cDzdsWmOCyZcIiBXOP5KeOQggeG5Y7mRS5ojNsxlzBjxPX1mTzPtnGqZ3D4Vrr+hA9fy8TG/Vx2Kh9SioiIiPy/N7lBCP5zIHTUAAAAAElFTkSuQmCC');
+              background-repeat: no-repeat;
+              background-position: 100%;
+              background-size: 10vw;
+          }
+          select {
+              appearance: none;
+              -moz-appearance: none;
+              -webkit-appearance: none;
+              appearance: none;
+              border: 1px solid #9e9e9e;
+              width: 41vw;
+              height: 11vw;
+              line-height: 11vw;
+              height: calc(11vw + 2px);
+              line-height: calc(11vw + 2px);
+              border-radius: 5px;
+              padding: 0 10px;
+              background: url(./img/下拉.png) no-repeat right/7px 5px #fff;
+              background-position: 35vw;
+              margin-bottom: 2vw;
+              font-size: 4vw;
+              outline: none;
+          }
+
+          .submit-btn {
+              width: 80vw;
+              padding: 0 11px;
+              height: 11vw;
+              line-height: 11vw;
+              font-size: 4vw;
+              border-radius: 5px;
+              display: inline-block;
+              margin-top: 2vw;
+              margin-left: 0.5vw;
+              font-weight: bold;
+              text-align: center;
+          }
+          .link-btn {
+            display: block;
+            font-size: 4vw;
+            border: 0;
+            text-align: center;
+            font-weight: bold;
+          }
+
+          .modal-content {
+              padding-top: 20px;
+              padding-bottom: 25px;
+              background: #fff;
+              width: 80%;
+              display: inline-block;
+              border-radius: 5px;
+              overflow: hidden;
+              text-align: center;
+          }
+
+          .layui-m-layermain {
+              background-color: rgba(0,0,0,.5);
+              z-index: 9999;
+          }
+          .layui-m-layermain .layui-m-layersection {
+              pointer-events: all;
+          }
+          .title {
+              display: block;
+              background:rgb(158, 158, 158);
+              color: #fff;
+              margin-top: -20px;
+              height: 12vw;
+              font-size: 6vw;
+              line-height: 12vw;
+          }
+          .msg {
+              color: #333;
+              font-size: 5vw;
+              line-height: 10vw;
+              height: 10vw;
+          }
+          .msg2 {
+              color: #888;
+              font-size: 4vw;
+              line-height: 8vw;
+              height: 8vw;
+          }
+          .submit-btn2 {
+              width: 100%;
+              height: 11vw;
+              line-height: 11vw;
+              font-size: 5vw;
+              color:rgb(158, 158, 158);
+              display: inline-block;
+              font-weight: 500;
+              margin-bottom: -25px;
+              text-align: center;
+              border-top: 1px solid #efefef;
+          }
+          .header {
+              width: 100%;
+              height: 44px;
+              background: #fff;
+              border-bottom: .1rem solid #d7d7d7;
+              position: relative;
+              overflow: hidden;
+          }
+          .h-title {
+              width: 100%;
+              text-align: center;
+              line-height: 44px;
+              font-size: 16px;
+              color: #333;
+              font-weight: 700;
+              margin: 0 auto;
+              max-width: calc(100% - 10px);
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+          }
+      </style>
+  </head>
+  <body>
+  <div>
+    <img src="./img/1568879791390_t0120994188890c039a.jpg"/>
+  </div>
+  <style>
+    .form-item {
+      margin-left:10vw;
+      width:80vw;
+      border-radius: 0vw;
+    }
+    .relative .abs {
+      position: absolute;
+      top: 0vw;
+      margin: 0;
+    }
+  </style>
+  <div class="relative">
+    
+    <div class="form ">
+        
+    <style>
+      #mobile1 {
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+        /*border: 1px solid rgba(255,255,255,1);*/
+      }
+      /* #mobile1::-webkit-input-placeholder { WebKit browsers
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+      }
+      #mobile1::-moz-placeholder { Mozilla Firefox 4 to 18
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+      }
+      #mobile1::-moz-placeholder { Mozilla Firefox 19+
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+      }
+      #mobile1::-ms-input-placeholder { Internet Explorer 10+
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+      }*/
+    </style>
+    <input id="mobile1" class="form-item" placeholder="请输入电话号码">
+  
+    <style>
+      #name1 {
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+        /*border: 1px solid rgba(255,255,255,1);*/
+      }
+      /* #name1::-webkit-input-placeholder { WebKit browsers
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+      }
+      #name1::-moz-placeholder { Mozilla Firefox 4 to 18
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+      }
+      #name1::-moz-placeholder { Mozilla Firefox 19+
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+      }
+      #name1::-ms-input-placeholder { Internet Explorer 10+
+        color:rgba(0,0,0,1);
+        background-color:rgba(255,255,255,1);
+      }*/
+    </style>
+    <input id="name1" class="form-item" placeholder="请输入姓名">
+  
+        <div style="color:rgba(0,0,0,1);background-color:rgba(255,255,255,1)" id="submit1" class="submit-btn form-item" onclick="send1('#mobile1','#name1')">提交信息</div>
+    </div>
+  </div>
+  <div class="swiper-container1">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <img src="./img/1568882377471_t0120994188890c039a.jpg" class="swiper-lazy">
+        <div class="swiper-lazy-preloader"></div>
+      </div><div class="swiper-slide">
+        <img src="./img/1568882379420_t0120994188890c039a.jpg" class="swiper-lazy">
+        <div class="swiper-lazy-preloader"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="modal" class="layui-m-layermain" onclick="closeModal(event)" style="display:none;">
+    <div class="layui-m-layersection">
+        <div class="modal-content" onclick="stopPro(event)">
+            <span class="title">提示</span>
+            <div class="msg">您填写的信息已提交成功</div>
+            <div class="msg2">感谢您的参与</div>
+            <div class="submit-btn2" onclick="closeModal(event)">确定</div>
+        </div>
+    </div>
+  </div>
+  <script src="./js/swiper.min.js"></script>
+  <script src="./js/jquery.min.js"></script>
+  <script src="http://xcx.yoju360.com/dev/statistics/5d8334de47f15811385e2f3d/s.js"></script>
+  <script src="./js/layer.js"></script>
+  <script src="./js/index.js"></script>
+  </body>
+  </html>

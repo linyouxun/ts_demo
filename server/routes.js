@@ -3,7 +3,6 @@ const koaBody = require('koa-body');
 const path = require('path');
 const util = require('./utils/tools');
 const { addConfigHtml, listConfigHtml, getConfigHtmlItem, deleteConfigHtml, updateConfigHtml, downloadData, curlHtmlItem } = require('./controller/configHtml');
-const { statistics, statisticsjs, statisticsList, aggregateCount, aggregateCountTime } = require('./controller/statistics');
 const { customAdd, customList, customCount } = require('./controller/custom');
 const { cityLocation, cityList, cityListFull, citySetList } = require('./controller/city');
 const { addImg } = require('./controller/configFile');
@@ -64,19 +63,19 @@ module.exports = function() {
   router.get('/api2/active/download/:id', downloadData);
 
 
-  // 统计
-  router.get('/statistics/count.png', statistics);
-  router.get('/statistics/:id/count.png', statistics);
-  router.get('/statistics/s.js', statisticsjs);
-  router.get('/statistics/:id/s.js', statisticsjs);
-  router.get('/api2/statistics/list', statisticsList);
-  router.get('/api2/statistics/aggregateCount', aggregateCount);
-  router.get('/api2/statistics/aggregateCountTime', aggregateCountTime);
-  router.post('/custom/:id/add', customAdd);
-  router.options('/custom/:id/add', return204);
-  router.get('/api2/custom/list', customList);
-  router.get('/api2/custom/aggregateCount', customCount); // 报名信息统计
-  // router.get('/custom/:id/add.png', customAdd);
+  // // 统计
+  // router.get('/statistics/count.png', statistics);
+  // router.get('/statistics/:id/count.png', statistics);
+  // router.get('/statistics/s.js', statisticsjs);
+  // router.get('/statistics/:id/s.js', statisticsjs);
+  // router.get('/api2/statistics/list', statisticsList);
+  // router.get('/api2/statistics/aggregateCount', aggregateCount);
+  // router.get('/api2/statistics/aggregateCountTime', aggregateCountTime);
+  // router.post('/custom/:id/add', customAdd);
+  // router.options('/custom/:id/add', return204);
+  // router.get('/api2/custom/list', customList);
+  // router.get('/api2/custom/aggregateCount', customCount); // 报名信息统计
+  // // router.get('/custom/:id/add.png', customAdd);
 
   // 城市
   router.get('/api2/city/location', cityLocation);
@@ -111,7 +110,6 @@ module.exports = function() {
       };
     }
   });
-
 
   return router;
 }
